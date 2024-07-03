@@ -19,6 +19,8 @@
         "@fortawesome/fontawesome-svg-core": "^6.5.2",
         "@fortawesome/free-solid-svg-icons": "^6.5.2",
         "@fortawesome/react-fontawesome": "^0.2.2",
+        "@tanstack/react-query": "^5.49.2",
+        "axios": "^1.7.2",
         "framer-motion": "^11.2.12",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
@@ -27,6 +29,7 @@
         "@babel/preset-env": "^7.24.7",
         "@babel/preset-react": "^7.24.7",
         "@jest/globals": "^29.7.0",
+        "@tanstack/eslint-plugin-query": "^5.50.0",
         "@testing-library/jest-dom": "^6.4.6",
         "@testing-library/react": "^16.0.0",
         "@testing-library/user-event": "^14.5.2",
