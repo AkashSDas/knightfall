@@ -32,7 +32,7 @@ app.use(
         secret: process.env.COOKIE_SESSION_SECRET,
         resave: true,
         saveUninitialized: true,
-    })
+    }),
 );
 app.use(passport.session());
 

@@ -11,7 +11,7 @@ function developmentLogger(): Logger {
         format: format.combine(
             format.colorize(),
             format.timestamp({ format: "HH:mm:ss" }),
-            baseFormat
+            baseFormat,
         ),
         transports: [new transports.Console({})],
     });
