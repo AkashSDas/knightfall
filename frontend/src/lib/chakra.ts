@@ -1,4 +1,21 @@
 import { extendTheme } from "@chakra-ui/react";
+
+// ERROR: Comment this when generating theme types using the ChakraCLI else
+// it would give the following error:
+//
+// Chakra UI CLI  v2.4.1 by Chakra UI
+// Generate theme typings for autocomplete
+// ✘ [ERROR] No loader is configured for ".woff2" files: node_modules/.pnpm/@fontsource-variable+nunito@5.0.19/node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2
+//     node_modules/.pnpm/@fontsource-variable+nunito@5.0.19/node_modules/@fontsource-variable/nunito/index.css:47:7:
+//       47 │   src: url(./files/nunito-latin-wght-normal.woff2) format('woff2-variations');
+//
+// I've tried using unplugin-fonts/vite but it didn't worked.
+//
+// Also, in order to make ChakraCLI work with pnpm I had to install @chakra-ui/styled-system
+// as a dev dependency. https://github.com/chakra-ui/chakra-ui/issues/5919
+//
+// All of this is done for using ChakraCLI for custom types in colors, ... but
+// it isn't as beneficial as to go and lookout for above issues
 import "@fontsource-variable/nunito";
 
 export const theme = extendTheme({
