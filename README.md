@@ -1,1 +1,3 @@
-# Online Chess Game
+# Knightfall
+
+A online multiplayer chess game.

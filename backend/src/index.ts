@@ -1,9 +1,9 @@
 import { config } from "dotenv";
 import { app } from "./api";
 import { connectToDB } from "./utils/db";
-import logger from "./utils/logger";
+import { logger } from "./utils/logger";
 
-if (process.env.NODE_ENV != "production") config();
+if (process.env.NODE_ENV !== "production") config();
 
 connectToDB();
 

@@ -1,0 +1,7 @@
+# backend/.husky/pre-commit
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+cd ./backend
+pnpx lint-staged
+pnpm run lint

@@ -7,9 +7,9 @@ import expressSession from "express-session";
 import morgan from "morgan";
 import passport from "passport";
 import swaggerUI from "swagger-ui-express";
-import YAML from "yamljs";
+import { swaggerSpec } from "./utils/swagger";
 
-if (process.env.NODE_ENV != "production") config();
+if (process.env.NODE_ENV !== "production") config();
 
 // OAuth Passport Strategies. Should come after the config() call.
 
@@ -32,19 +32,18 @@ app.use(
         secret: process.env.COOKIE_SESSION_SECRET,
         resave: true,
         saveUninitialized: true,
-    })
+    }),
 );
 app.use(passport.session());
 
-const swaggerDoc = YAML.load("./swagger.yml");
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
+app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // ==============================
 // Routes
 // ==============================
 
 app.get("/api/test", function testRoute(req, res) {
-    res.status(200).json({ msg: "Online chess game" });
+    res.status(200).json({ message: "Knightfall is online." });
 });
 
 app.all("*", function handleRemainingRoute(req, res) {
