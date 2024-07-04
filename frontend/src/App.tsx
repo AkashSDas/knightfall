@@ -1,4 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Heading } from "@chakra-ui/react";
 import { useState } from "react";
 import { theme } from "./lib/chakra";
 import { queryClient } from "./lib/react-query";
@@ -10,7 +10,7 @@ export default function App() {
     return (
         <ChakraProvider theme={theme}>
             <QueryClientProvider client={queryClient}>
-                <h1>Knightfall</h1>
+                <Heading>Knightfall</Heading>
 
                 <button onClick={() => setCount((prev) => prev + 1)}>
                     {count}
