@@ -14,6 +14,8 @@ import { router as authRouter } from "./routes/auth";
 if (process.env.NODE_ENV !== "production") config();
 
 // OAuth Passport Strategies. Should come after the config() call.
+import "./passport/google-signup";
+import "./passport/google-login";
 
 /** Express app */
 export const app = express();
