@@ -20,9 +20,16 @@ export const emailLoginSchema = z.object({
     }),
 });
 
+export const emailCompleteMagicLinkLoginSchema = z.object({
+    params: z.object({ token: z.string().min(10, "Invalid token param") }),
+});
+
 // ====================================
 // Types
 // ====================================
 
 export type EmailSignup = z.infer<typeof emailSignupSchema>;
 export type EmailLogin = z.infer<typeof emailLoginSchema>;
+export type EmailCompleteMagicLinkLogin = z.infer<
+    typeof emailCompleteMagicLinkLoginSchema
+>;
