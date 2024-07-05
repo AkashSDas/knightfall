@@ -2,6 +2,8 @@ import {
     Severity,
     getModelForClass,
     modelOptions,
+    post,
+    pre,
     prop,
 } from "@typegoose/typegoose";
 import isEmail from "validator/lib/isEmail";
@@ -11,7 +13,63 @@ import { OAuthProviderSubDocument } from "./oauth-provider";
 import crypto from "crypto";
 import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
+import { BaseApiError } from "../utils/errors";
 
+/** Handle error due to violation of unique fields */
+function handleDuplicateError(err: unknown, user: any, next: any) {
+    if (err instanceof Error) {
+        // Duplicate caught by pre hook
+        if (err.message === "Duplicate") {
+            return next(new BaseApiError(400, "Username/email already used."));
+        }
+
+        // Duplicate constrain of Mongoose failed
+        if (err.name === "MongoError" && "code" in err && err.code === 11000) {
+            return next(new BaseApiError(400, "Username/email already used."));
+        }
+    }
+
+    return next();
+}
+
+/**
+ * @remark Since fields like username could be null, the unique flag
+ * is not set on them.
+ */
+@pre<UserDocument>("save", async function preMongooseSave(next) {
+    // Validate email and username uniqueness
+    const isEmailChanged = this.isModified("email");
+    const isUsernameChanged = this.isModified("username");
+
+    if (isEmailChanged || isUsernameChanged) {
+        let query = [];
+        if (isEmailChanged) query.push({ email: this.email });
+        if (isUsernameChanged) query.push({ username: this.username });
+
+        const exists = await User.exists({ $or: query });
+        if (exists?._id && !exists._id.equals(this._id)) {
+            return next(new Error("Duplicate"));
+        }
+    }
+})
+@post<UserDocument>("save", handleDuplicateError)
+@pre<UserDocument>("findOneAndUpdate", async function preMongooseSave(next) {
+    // Validate email and username uniqueness
+    const isEmailChanged = this.isModified("email");
+    const isUsernameChanged = this.isModified("username");
+
+    if (isEmailChanged || isUsernameChanged) {
+        let query = [];
+        if (isEmailChanged) query.push({ email: this.email });
+        if (isUsernameChanged) query.push({ username: this.username });
+
+        const exists = await User.exists({ $or: query });
+        if (exists?._id && !exists._id.equals(this._id)) {
+            return next(new Error("Duplicate"));
+        }
+    }
+})
+@post<UserDocument>("findOneAndUpdate", handleDuplicateError)
 @modelOptions({
     schemaOptions: {
         timestamps: true,
