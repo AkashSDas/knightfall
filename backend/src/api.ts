@@ -9,6 +9,8 @@ import passport from "passport";
 import swaggerUI from "swagger-ui-express";
 import { swaggerSpec } from "./utils/swagger";
 
+import { router as authRouter } from "./routes/auth";
+
 if (process.env.NODE_ENV !== "production") config();
 
 // OAuth Passport Strategies. Should come after the config() call.
@@ -41,6 +43,8 @@ app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // ==============================
 // Routes
 // ==============================
+
+app.use("/api/v1/auth", authRouter);
 
 app.get("/api/test", function testRoute(req, res) {
     res.status(200).json({ message: "Knightfall is online." });

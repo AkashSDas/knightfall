@@ -42,7 +42,7 @@ function handleDuplicateError(err: unknown, user: any, next: any) {
     const isUsernameChanged = this.isModified("username");
 
     if (isEmailChanged || isUsernameChanged) {
-        let query = [];
+        const query = [];
         if (isEmailChanged) query.push({ email: this.email });
         if (isUsernameChanged) query.push({ username: this.username });
 
@@ -59,7 +59,7 @@ function handleDuplicateError(err: unknown, user: any, next: any) {
     const isUsernameChanged = this.isModified("username");
 
     if (isEmailChanged || isUsernameChanged) {
-        let query = [];
+        const query = [];
         if (isEmailChanged) query.push({ email: this.email });
         if (isUsernameChanged) query.push({ username: this.username });
 
@@ -150,7 +150,7 @@ export class UserDocument {
 
     /** Genereate access token for JWT authentication. Short duration */
     createAccessToken(): string {
-        var payload = { _id: this._id, email: this.email };
+        const payload = { _id: this._id, email: this.email };
         return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
         });
@@ -158,7 +158,7 @@ export class UserDocument {
 
     /** Genereate refresh token for JWT authentication. Long duration */
     createRefreshToken(): string {
-        var payload = { _id: this._id, email: this.email };
+        const payload = { _id: this._id, email: this.email };
         return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
         });

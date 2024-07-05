@@ -1,5 +1,7 @@
 import { CookieOptions } from "express";
 
+export const REFRESH_TOKEN_COOKIE_KEY = "refreshToken";
+
 export const loginCookieConfig: CookieOptions = {
     httpOnly: true,
     secure: true,
