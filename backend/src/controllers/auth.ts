@@ -5,6 +5,7 @@ import { sendEmail } from "../utils/email";
 import { BaseApiError } from "../utils/errors";
 import { createHash } from "crypto";
 import { REFRESH_TOKEN_COOKIE_KEY, loginCookieConfig } from "../utils/auth";
+import jwt from "jsonwebtoken";
 
 export async function emailSignupCtrl(
     req: Request<unknown, unknown, schemas.EmailSignup["body"]>,
@@ -125,4 +126,68 @@ export async function completeOAuthCtrl(
 
     if (!user) throw new BaseApiError(401, "Unauthorized");
     return res.status(200).json({ user });
+}
+
+/**
+ * Get a new access token using refresh token
+ *
+ * @route GET /auth/access-token
+ * @remark Throwning an error inside the callback of `jwt.verify` was not working
+ * and there was a timeout error. So, I sent a response instead of throwing an error
+ * and it working fine. Follow the test cases regarding this.
+ */
+export async function accessTokenCtrl(req: Request, res: Response) {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+        throw new BaseApiError(401, "Unauthorized");
+    }
+
+    try {
+        jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET,
+            async function getNewAccessToken(
+                err: jwt.VerifyErrors,
+                decoded: string | jwt.JwtPayload,
+            ) {
+                if (err instanceof jwt.TokenExpiredError) {
+                    throw new BaseApiError(401, "Unauthorized. Token expired");
+                } else if (err instanceof jwt.JsonWebTokenError) {
+                    throw new BaseApiError(401, "Unauthorized. Invalid token");
+                } else if (err) {
+                    throw new BaseApiError(401, "Unauthorized");
+                }
+
+                const user = await User.findById((decoded as any)._id);
+                if (!user) {
+                    throw new BaseApiError(401, "Unauthorized");
+                }
+
+                const accessToken = user.createAccessToken();
+                return res.status(200).json({ user, accessToken });
+            },
+        );
+    } catch (error) {
+        throw new BaseApiError(401, "Unauthorized. Invalid token");
+    }
+}
+
+/**
+ * Logout user with email login or social login
+ * @route GET /auth/logout
+ */
+export async function logoutCtrl(req: Request, res: Response) {
+    if (req.cookies?.refreshToken) {
+        res.clearCookie(REFRESH_TOKEN_COOKIE_KEY, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+            // secure: process.env.NODE_ENV === "production",
+        });
+    } else if (req.logOut) {
+        req.logOut(function successfulOAuthLogout() {});
+    }
+
+    return res.status(200).json({ message: "Logged out" });
 }

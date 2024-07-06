@@ -84,3 +84,17 @@ router.put(
     handleMiddlewareError(ctrls.completeOAuthCtrl),
     sendErrorResponse,
 );
+
+// Get new access token (email/password login)
+router.get(
+    "/access-token",
+    handleMiddlewareError(ctrls.accessTokenCtrl),
+    sendErrorResponse,
+);
+
+// Logout
+router.get(
+    "/logout",
+    handleMiddlewareError(ctrls.logoutCtrl),
+    sendErrorResponse,
+);
