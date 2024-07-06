@@ -1,4 +1,5 @@
 import {
+    PropType,
     Severity,
     getModelForClass,
     modelOptions,
@@ -92,10 +93,15 @@ export class UserDocument {
         trim: true,
         maxlength: [256, "Username must be less than 256 characters long"],
         minlength: [2, "Username must be more than 2 characters long"],
+        index: true,
     })
     username?: string;
 
-    @prop({ type: String, validate: [isEmail, "Email is not valid"] })
+    @prop({
+        type: String,
+        validate: [isEmail, "Email is not valid"],
+        index: true,
+    })
     email: string;
 
     @prop({ type: Boolean, default: false, required: true })
@@ -117,12 +123,15 @@ export class UserDocument {
     @prop({ _id: false, type: () => ImageSubDocument })
     profilePic: ImageSubDocument;
 
-    @prop({
-        type: () => [OAuthProviderSubDocument],
-        _id: false,
-        required: true,
-        default: [],
-    })
+    @prop(
+        {
+            type: () => [OAuthProviderSubDocument],
+            _id: false,
+            required: true,
+            default: [],
+        },
+        PropType.ARRAY,
+    )
     oauthProviders: OAuthProviderSubDocument[];
 
     // =================================
