@@ -54,7 +54,11 @@ export async function initMagicLinkLoginCtrl(
         html: `Click on the link to login: <a href="${link}">${link}</a>`,
     });
 
-    return res.status(200).json({ message: "Account created" });
+    return res
+        .status(200)
+        .json({
+            message: "Email with login magic link is sent to your email.",
+        });
 }
 
 export async function completeMagicLinkLoginCtrl(

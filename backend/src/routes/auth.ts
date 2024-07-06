@@ -24,7 +24,7 @@ router.post(
     sendErrorResponse,
 );
 
-router.post(
+router.get(
     "/login/:token",
     validateResource(schemas.emailCompleteMagicLinkLoginSchema),
     handleMiddlewareError(ctrls.completeMagicLinkLoginCtrl),
