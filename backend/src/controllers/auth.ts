@@ -19,7 +19,7 @@ export async function emailSignupCtrl(
     });
 
     const token = user.createMagicLinkToken();
-    const link = `${process.env.FRONTEND_URL}/auth/login?magic-token=${token}`;
+    const link = `${process.env.FRONTEND_BASE_URL}/auth/login?magic-token=${token}`;
     await user.save({ validateModifiedOnly: true });
 
     // Not awaiting here so that we don't wait for the email to be sent
@@ -43,7 +43,7 @@ export async function initMagicLinkLoginCtrl(
     }
 
     const token = user.createMagicLinkToken();
-    const link = `${process.env.FRONTEND_URL}/auth/login?magic-token=${token}`;
+    const link = `${process.env.FRONTEND_BASE_URL}/auth/login?magic-token=${token}`;
     await user.save({ validateModifiedOnly: true });
 
     // Not awaiting here so that we don't wait for the email to be sent
