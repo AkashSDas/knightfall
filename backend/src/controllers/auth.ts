@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as schemas from "../schema/auth";
-import { User } from "../models/user";
+import { User, UserDocument } from "../models/user";
 import { sendEmail } from "../utils/email";
 import { BaseApiError } from "../utils/errors";
 import { createHash } from "crypto";
@@ -83,4 +83,46 @@ export async function completeMagicLinkLoginCtrl(
     res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken, loginCookieConfig);
 
     return res.status(200).json({ accessToken, user });
+}
+
+/**
+ * Cancel OAuth signup process and delete the user
+ *
+ * @route DELETE /auth/signup
+ * @remark User that logged in will be deleted and OAuth session will be logged out
+ *
+ * Middleware used are:
+ * - `verifyAuth`
+ */
+export async function cancelOAuthCtrl(req: Request, res: Response) {
+    if (!req.user) throw new BaseApiError(401, "Unauthorized");
+
+    const user = await User.findByIdAndDelete((req.user as UserDocument)?._id);
+    if (!user) throw new BaseApiError(401, "Unauthorized");
+
+    if (typeof req.logOut === "function") req.logOut(function () {});
+    return res.status(200).json({ user });
+}
+
+/**
+ * Complete user OAuth signup process by saving compulsory fields
+ *
+ * @route PUT /auth/complete-oauth
+ * @remark User that logged in will be updated with compulsory fields
+ *
+ * Middleware used are:
+ * - `verifyAuth`
+ */
+export async function completeOAuthCtrl(
+    req: Request<{}, {}, schemas.CompleteOAuth["body"]>,
+    res: Response,
+) {
+    const user = await User.findByIdAndUpdate(
+        (req.user as UserDocument)._id,
+        { $set: { username: req.body.username } },
+        { new: true },
+    );
+
+    if (!user) throw new BaseApiError(401, "Unauthorized");
+    return res.status(200).json({ user });
 }

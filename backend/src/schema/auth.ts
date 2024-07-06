@@ -24,6 +24,15 @@ export const emailCompleteMagicLinkLoginSchema = z.object({
     params: z.object({ token: z.string().min(10, "Invalid token param") }),
 });
 
+export const completeOAuthSchema = z.object({
+    body: z.object({
+        username: z
+            .string({ required_error: "Required" })
+            .min(2, "Username must be more than 2 characters long")
+            .max(256, "Username must be less than 256 characters long"),
+    }),
+});
+
 // ====================================
 // Types
 // ====================================
@@ -33,3 +42,4 @@ export type EmailLogin = z.infer<typeof emailLoginSchema>;
 export type EmailCompleteMagicLinkLogin = z.infer<
     typeof emailCompleteMagicLinkLoginSchema
 >;
+export type CompleteOAuth = z.infer<typeof completeOAuthSchema>;
