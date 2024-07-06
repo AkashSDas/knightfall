@@ -46,7 +46,7 @@ app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // Routes
 // ==============================
 
-app.use("/api/v1/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/api/test", function testRoute(req, res) {
     res.status(200).json({ message: "Knightfall is online." });
