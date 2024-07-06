@@ -8,3 +8,8 @@ export const loginCookieConfig: CookieOptions = {
     sameSite: "none",
     maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
 };
+
+export const STRATEGY = {
+    GOOGLE_SIGNUP: "google-signup",
+    GOOGLE_LOGIN: "google-login",
+};

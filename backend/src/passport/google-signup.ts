@@ -4,6 +4,7 @@ import { Profile, Strategy, VerifyCallback } from "passport-google-oauth20";
 import { User } from "../models/user";
 import { OAuthProvider } from "../models/oauth-provider";
 import { BaseApiError } from "../utils/errors";
+import { STRATEGY } from "../utils/auth";
 
 /** Check if the user exists or not. If not then create a new user else login the user. */
 async function verify(
@@ -65,4 +66,4 @@ passport.deserializeUser(async function deserializeSignupUser(_id, done) {
     done(error, user);
 });
 
-passport.use("google-signup", googleSignupStrategy());
+passport.use(STRATEGY.GOOGLE_SIGNUP, googleSignupStrategy());

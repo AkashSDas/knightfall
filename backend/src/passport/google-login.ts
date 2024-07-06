@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Profile, Strategy, VerifyCallback } from "passport-google-oauth20";
 import { User } from "../models/user";
+import { STRATEGY } from "../utils/auth";
 
 async function verify(
     _accessToken: string,
@@ -46,4 +47,4 @@ passport.deserializeUser(async function deserializeLoginUser(_id, done) {
     done(error, user);
 });
 
-passport.use("google-login", googleLoginStrategy());
+passport.use(STRATEGY.GOOGLE_LOGIN, googleLoginStrategy());
