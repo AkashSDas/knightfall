@@ -6,7 +6,7 @@ import { handleMiddlewareError } from "../utils/async";
 import { sendErrorResponse } from "../utils/errors";
 import passport from "passport";
 import { verifyAuth } from "../middlewares/auth";
-import { STRATEGY } from "../utils/auth";
+import { OAUTH_REDIRECT_INFO, STRATEGY } from "../utils/auth";
 import { config } from "dotenv";
 
 // This is needed for OAuth success. Not sure why, but removing fails
@@ -28,8 +28,8 @@ router
         "/signup/google/redirect",
         passport.authenticate(STRATEGY.GOOGLE_SIGNUP, {
             failureMessage: "Cannot signup with Google, please try again",
-            successRedirect: process.env.OAUTH_SIGNUP_SUCCESS_REDIRECT_URL,
-            failureRedirect: process.env.OAUTH_SIGNUP_FAILURE_REDIRECT_URL,
+            successRedirect: `${process.env.OAUTH_SIGNUP_SUCCESS_REDIRECT_URL}?info=${OAUTH_REDIRECT_INFO.signupSuccess}`,
+            failureRedirect: `${process.env.OAUTH_SIGNUP_FAILURE_REDIRECT_URL}?info=${OAUTH_REDIRECT_INFO.signupFailed}`,
         }),
     );
 
@@ -46,8 +46,8 @@ router
         "/login/google/redirect",
         passport.authenticate(STRATEGY.GOOGLE_LOGIN, {
             failureMessage: "Cannot login with Google, please try again",
-            successRedirect: process.env.OAUTH_LOGIN_SUCCESS_REDIRECT_URL,
-            failureRedirect: `${process.env.OAUTH_LOGIN_FAILURE_REDIRECT_URL}?info=signup-invalid`,
+            successRedirect: `${process.env.OAUTH_LOGIN_SUCCESS_REDIRECT_URL}?info=${OAUTH_REDIRECT_INFO.loginSuccess}`,
+            failureRedirect: `${process.env.OAUTH_LOGIN_FAILURE_REDIRECT_URL}?info=${OAUTH_REDIRECT_INFO.signupInvalid}`,
         }),
         function loginWithGoogleRedirect() {},
     );

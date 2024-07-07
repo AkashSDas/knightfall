@@ -13,3 +13,10 @@ export const STRATEGY = {
     GOOGLE_SIGNUP: "google-signup",
     GOOGLE_LOGIN: "google-login",
 } as const;
+
+export const OAUTH_REDIRECT_INFO = {
+    signupSuccess: "signup-success",
+    signupFailed: "signup-failed",
+    loginSuccess: "login-success",
+    signupInvalid: "signup-invalid",
+} as const;
