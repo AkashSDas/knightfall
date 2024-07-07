@@ -26,8 +26,8 @@ async function verify(
     try {
         const newUser = await User.create({
             email,
-            profileImage: { URL: picture },
-            oauthProviders: [{ id: sub, provider: OAuthProvider.GOOGLE }],
+            profilePic: { URL: picture },
+            oauthProviders: [{ sid: sub, provider: OAuthProvider.GOOGLE }],
         });
 
         return next(null, newUser);

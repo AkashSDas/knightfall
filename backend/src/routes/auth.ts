@@ -7,34 +7,18 @@ import { sendErrorResponse } from "../utils/errors";
 import passport from "passport";
 import { verifyAuth } from "../middlewares/auth";
 import { STRATEGY } from "../utils/auth";
+import { config } from "dotenv";
+
+// This is needed for OAuth success. Not sure why, but removing fails
+// redirect of OAuth signup/login
+if (process.env.NODE_ENV !== "production") config();
 
 export const router = Router();
-
-router.post(
-    "/signup",
-    validateResource(schemas.emailSignupSchema),
-    handleMiddlewareError(ctrls.emailSignupCtrl),
-    sendErrorResponse,
-);
-
-router.post(
-    "/login",
-    validateResource(schemas.emailLoginSchema),
-    handleMiddlewareError(ctrls.initMagicLinkLoginCtrl),
-    sendErrorResponse,
-);
-
-router.get(
-    "/login/:token",
-    validateResource(schemas.emailCompleteMagicLinkLoginSchema),
-    handleMiddlewareError(ctrls.completeMagicLinkLoginCtrl),
-    sendErrorResponse,
-);
 
 // Google OAuth (signup)
 router
     .get(
-        STRATEGY.GOOGLE_SIGNUP,
+        "/signup/google",
         passport.authenticate(STRATEGY.GOOGLE_SIGNUP, {
             scope: ["profile", "email"],
         }),
@@ -82,6 +66,27 @@ router.put(
     validateResource(schemas.completeOAuthSchema),
     handleMiddlewareError(verifyAuth),
     handleMiddlewareError(ctrls.completeOAuthCtrl),
+    sendErrorResponse,
+);
+
+router.post(
+    "/signup",
+    validateResource(schemas.emailSignupSchema),
+    handleMiddlewareError(ctrls.emailSignupCtrl),
+    sendErrorResponse,
+);
+
+router.post(
+    "/login",
+    validateResource(schemas.emailLoginSchema),
+    handleMiddlewareError(ctrls.initMagicLinkLoginCtrl),
+    sendErrorResponse,
+);
+
+router.get(
+    "/login/:token",
+    validateResource(schemas.emailCompleteMagicLinkLoginSchema),
+    handleMiddlewareError(ctrls.completeMagicLinkLoginCtrl),
     sendErrorResponse,
 );
 

@@ -12,4 +12,4 @@ export const loginCookieConfig: CookieOptions = {
 export const STRATEGY = {
     GOOGLE_SIGNUP: "google-signup",
     GOOGLE_LOGIN: "google-login",
-};
+} as const;
