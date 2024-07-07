@@ -16,7 +16,9 @@ import { extendTheme } from "@chakra-ui/react";
 //
 // All of this is done for using ChakraCLI for custom types in colors, ... but
 // it isn't as beneficial as to go and lookout for above issues
-import "@fontsource-variable/nunito";
+
+// This is not working
+// import "@fontsource-variable/nunito";
 
 export const theme = extendTheme({
     styles: {
@@ -28,6 +30,11 @@ export const theme = extendTheme({
         },
     },
     components: {
+        Text: {
+            baseStyle: {
+                fontFamily: "body",
+            },
+        },
         Button: {
             baseStyle: {
                 fontFamily: "display",
@@ -56,7 +63,7 @@ export const theme = extendTheme({
                     },
                 },
                 contained: {
-                    color: "gray.900",
+                    color: "gray.800",
                     bgColor: "gray.50",
                     borderRadius: "10px",
                     borderBottom: "6px solid",
