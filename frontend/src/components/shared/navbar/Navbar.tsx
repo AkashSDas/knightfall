@@ -46,21 +46,11 @@ export function Navbar() {
             {/* Desktop navbar actions */}
             <Show above="md">
                 <HStack gap="1.5rem">
-                    <Button
-                        variant="contained"
-                        as={Link}
-                        to="/auth/login"
-                        onMouseDown={() => navigate("/auth/login")}
-                    >
+                    <Button variant="contained" as={Link} to="/auth/login">
                         Login
                     </Button>
 
-                    <Button
-                        variant="primary"
-                        as={Link}
-                        to="/auth/signup"
-                        onMouseDown={() => navigate("/auth/signup")}
-                    >
+                    <Button variant="primary" as={Link} to="/auth/signup">
                         Signup
                     </Button>
                 </HStack>
@@ -130,7 +120,6 @@ export function Navbar() {
                                     variant="contained"
                                     as={Link}
                                     to="/auth/login"
-                                    onMouseDown={() => navigate("/auth/login")}
                                     h="44px"
                                     w="100%"
                                 >
@@ -141,7 +130,6 @@ export function Navbar() {
                                     variant="primary"
                                     as={Link}
                                     to="/auth/signup"
-                                    onMouseDown={() => navigate("/auth/signup")}
                                     h="44px"
                                     w="100%"
                                 >
