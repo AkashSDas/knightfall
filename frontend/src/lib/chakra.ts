@@ -19,12 +19,76 @@ import { extendTheme } from "@chakra-ui/react";
 import "@fontsource-variable/nunito";
 
 export const theme = extendTheme({
-    components: {},
+    styles: {
+        global: {
+            "html, body": {
+                backgroundColor: "gray.800",
+                color: "gray.50",
+            },
+        },
+    },
+    components: {
+        Button: {
+            baseStyle: {
+                fontFamily: "display",
+                fontWeight: "600",
+                borderRadius: "4px",
+                height: "44px",
+                letterSpacing: "0.5px",
+            },
+            variants: {
+                primary: {
+                    bgColor: "brand.500",
+                    borderRadius: "10px",
+                    borderBottom: "6px solid",
+                    borderBottomColor: "brand.700",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: {
+                        bgColor: "brand.600",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "brand.700",
+                    },
+                    _active: {
+                        bgColor: "brand.600",
+                        borderBottom: "2px solid",
+                        borderBottomColor: "brand.700",
+                    },
+                },
+                contained: {
+                    color: "gray.900",
+                    bgColor: "gray.50",
+                    borderRadius: "10px",
+                    borderBottom: "6px solid",
+                    borderBottomColor: "gray.200",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: {
+                        bgColor: "gray.100",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "gray.200",
+                    },
+                    _active: {
+                        bgColor: "gray.100",
+                        borderBottom: "2px solid",
+                        borderBottomColor: "gray.200",
+                    },
+                },
+                ghost: {
+                    color: "gray.200",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: { bgColor: "gray.600" },
+                    _active: { bgColor: "gray.700" },
+                },
+            },
+        },
+    },
     fonts: {
         heading: `'Nunito', sans-serif`,
         body: `'Nunito', sans-serif`,
         body2: `'Nunito', sans-serif`,
-        cubano: `'Cubano', sans-serif`,
+        display: `'Cubano', sans-serif`,
     },
     colors: {
         transparent: "transparent",

@@ -1,9 +1,10 @@
 import { Heading } from "@chakra-ui/react";
+import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 
 export function LoginPage() {
     return (
-        <div>
+        <BaseLayout>
             <Heading fontFamily="cubano">Login</Heading>
-        </div>
+        </BaseLayout>
     );
 }

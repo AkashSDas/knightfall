@@ -1,18 +1,10 @@
-import { Heading, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { Heading } from "@chakra-ui/react";
+import { BaseLayout } from "../components/shared/layout/BaseLayout";
 
 export function HomePage() {
-    const [count, setCount] = useState(0);
-
     return (
-        <div>
-            <Text fontFamily="cubano">Good morning</Text>
-
+        <BaseLayout>
             <Heading fontFamily="cubano">Knightfall</Heading>
-
-            <button onClick={() => setCount((prev) => prev + 1)}>
-                {count}
-            </button>
-        </div>
+        </BaseLayout>
     );
 }
