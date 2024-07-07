@@ -31,6 +31,7 @@ export function Navbar() {
             bgColor="gray.800"
             borderBottom="1px solid"
             borderBottomColor="gray.900"
+            zIndex={1}
         >
             <Link to="/">
                 <Image
