@@ -30,6 +30,30 @@ export const theme = extendTheme({
         },
     },
     components: {
+        FormLabel: {
+            baseStyle: {
+                color: "gray.100",
+                fontWeight: "bold",
+            },
+        },
+        Input: {
+            variants: {
+                contained: {
+                    field: {
+                        height: "48px",
+                        borderRadius: "10px",
+                        border: "2px solid",
+                        borderColor: "gray.900",
+                        bgColor: "gray.400",
+                        boxShadow: "inset 4px -4px 0px rgba(0,0,0,0.25)",
+                        fontWeight: "500",
+                        _placeholder: {
+                            color: "gray.300",
+                        },
+                    },
+                },
+            },
+        },
         Text: {
             baseStyle: {
                 fontFamily: "body",

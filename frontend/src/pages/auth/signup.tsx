@@ -15,6 +15,7 @@ import GoogleSvg from "../../assets/images/google.svg";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { OAUTH_REDIRECT_INFO, OAUTH_REDIRECT_INFO_KEY } from "../../utils/auth";
+import { SignupForm } from "../../components/auth/SignupForm";
 
 function openSignupWindow(): void {
     window.open(
@@ -97,6 +98,8 @@ export function SignupPage() {
                         <Text fontFamily="cubano">OR</Text>
                         <Divider w="100%" borderStyle="dashed" />
                     </HStack>
+
+                    <SignupForm />
                 </VStack>
             </Center>
         </BaseLayout>
