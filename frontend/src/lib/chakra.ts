@@ -79,6 +79,11 @@ export const theme = extendTheme({
                         bgColor: "brand.600",
                         borderBottom: "6px solid",
                         borderBottomColor: "brand.700",
+                        _disabled: {
+                            bgColor: "brand.600",
+                            borderBottom: "6px solid",
+                            borderBottomColor: "brand.700",
+                        },
                     },
                     _active: {
                         bgColor: "brand.600",
@@ -98,6 +103,11 @@ export const theme = extendTheme({
                         bgColor: "gray.100",
                         borderBottom: "6px solid",
                         borderBottomColor: "gray.200",
+                        _disabled: {
+                            bgColor: "gray.100",
+                            borderBottom: "6px solid",
+                            borderBottomColor: "gray.200",
+                        },
                     },
                     _active: {
                         bgColor: "gray.100",
@@ -109,7 +119,10 @@ export const theme = extendTheme({
                     color: "gray.200",
                     transition:
                         "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                    _hover: { bgColor: "gray.600" },
+                    _hover: {
+                        bgColor: "gray.600",
+                        _disabled: { bgColor: "gray.600" },
+                    },
                     _active: { bgColor: "gray.700" },
                 },
             },

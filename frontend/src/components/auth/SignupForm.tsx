@@ -101,6 +101,7 @@ export function SignupForm() {
                 isLoading={mutation.isPending}
                 h="48px"
                 w="100%"
+                onMouseDown={() => form.trigger()}
             >
                 Create Account
             </Button>
