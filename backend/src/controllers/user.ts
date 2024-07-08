@@ -39,3 +39,14 @@ export async function getUserNameOrEmailExists(
     if (user) return res.status(200).json({ exists: true });
     return res.status(200).json({ exists: false });
 }
+
+/**
+ * Get logged in user info
+ * @route GET /user/profile
+ *
+ * Middelewares used:
+ * - `verifyAuth`
+ */
+export async function getLoggedInUserProfile(req: Request, res: Response) {
+    return res.status(200).json({ user: req.user as UserDocument });
+}
