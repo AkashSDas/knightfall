@@ -6,6 +6,8 @@ const endpoints = {
     // Auth
     EMAIL_SIGNUP: "/api/auth/signup",
     NEW_ACCESS_TOKEN: "/api/auth/access-token",
+    CANCEL_OAUTH_SIGNUP: "/api/auth/cancel-oauth",
+    COMPLETE_OAUTH_SIGNUP: "/api/auth/complete-oauth",
 
     // User
     GET_LOGGED_IN_USER_PROFILE: "/api/user/profile",
