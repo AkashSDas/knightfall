@@ -7,15 +7,15 @@ import {
     Image,
     Text,
     VStack,
-    useToast,
 } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import LogoChip from "../../assets/images/text-logo-chip.svg";
 import GoogleSvg from "../../assets/images/google.svg";
-import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
-import { OAUTH_REDIRECT_INFO, OAUTH_REDIRECT_INFO_KEY } from "../../utils/auth";
 import { SignupForm } from "../../components/auth/SignupForm";
+import { useUser } from "../../hooks/auth";
+import { CancelOAuthText } from "../../components/auth/CancelOAuthText";
+import { CompleteOAuthSignupForm } from "../../components/auth/CompleteOAuthSignupForm";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function openSignupWindow(): void {
     window.open(
@@ -25,24 +25,16 @@ function openSignupWindow(): void {
 }
 
 export function SignupPage() {
-    const toast = useToast();
-    const [searchParams] = useSearchParams();
+    const { isLoggedIn, user, isSignupCompleted } = useUser();
+    const navigate = useNavigate();
 
     useEffect(
-        function checkForSuccessfulSignup() {
-            switch (searchParams.get(OAUTH_REDIRECT_INFO_KEY)) {
-                case OAUTH_REDIRECT_INFO.signupSuccess:
-                    toast({
-                        id: OAUTH_REDIRECT_INFO.signupSuccess,
-                        title: "Success",
-                        description: "Login email is sent to your gmail",
-                        status: "success",
-                        duration: 9000,
-                        isClosable: true,
-                    });
+        function () {
+            if (isSignupCompleted) {
+                navigate("/");
             }
         },
-        [searchParams, toast]
+        [isSignupCompleted, navigate]
     );
 
     return (
@@ -65,41 +57,46 @@ export function SignupPage() {
                             Signup
                         </Heading>
 
-                        <Text
-                            display="flex"
-                            gap="8px"
-                            alignItems="center"
-                            color="gray.300"
-                        >
-                            Create an account on{" "}
-                            <Image
-                                src={LogoChip}
-                                alt="Knightfall"
-                                display="inline-block"
-                                h="20px"
-                            />
-                        </Text>
+                        {!isLoggedIn ? (
+                            <Text color="gray.300">
+                                Create an account on{" "}
+                                <Text
+                                    as="span"
+                                    fontWeight="700"
+                                    color="gray.200"
+                                >
+                                    Knightfall
+                                </Text>
+                                .
+                            </Text>
+                        ) : (
+                            <CancelOAuthText email={user?.email} />
+                        )}
                     </VStack>
 
-                    <Button
-                        variant="contained"
-                        leftIcon={<Image src={GoogleSvg} alt="Google" />}
-                        h="48px"
-                        w="100%"
-                        aria-label="Signup with Google"
-                        onMouseDown={openSignupWindow}
-                        onClick={openSignupWindow}
-                    >
-                        Continue with Google
-                    </Button>
+                    {!isLoggedIn ? (
+                        <Button
+                            variant="contained"
+                            leftIcon={<Image src={GoogleSvg} alt="Google" />}
+                            h="48px"
+                            w="100%"
+                            aria-label="Signup with Google"
+                            onMouseDown={openSignupWindow}
+                            onClick={openSignupWindow}
+                        >
+                            Continue with Google
+                        </Button>
+                    ) : null}
 
-                    <HStack w="100%">
-                        <Divider w="100%" borderStyle="dashed" />
-                        <Text fontFamily="cubano">OR</Text>
-                        <Divider w="100%" borderStyle="dashed" />
-                    </HStack>
+                    {!isLoggedIn ? (
+                        <HStack w="100%">
+                            <Divider w="100%" borderStyle="dashed" />
+                            <Text fontFamily="cubano">OR</Text>
+                            <Divider w="100%" borderStyle="dashed" />
+                        </HStack>
+                    ) : null}
 
-                    <SignupForm />
+                    {!isLoggedIn ? <SignupForm /> : <CompleteOAuthSignupForm />}
                 </VStack>
             </Center>
         </BaseLayout>

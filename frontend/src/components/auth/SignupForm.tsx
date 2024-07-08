@@ -8,15 +8,10 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
-import { object, string } from "zod";
+import { object, string, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authService } from "../../services/auth";
-
-export type EmailSignupInputs = {
-    email: string;
-    username: string;
-};
 
 const schema = object({
     email: string({ required_error: "Required" }).email({
@@ -26,6 +21,8 @@ const schema = object({
         .min(2, { message: "Too short" })
         .max(256, { message: "Too long" }),
 });
+
+export type EmailSignupInputs = z.infer<typeof schema>;
 
 export function SignupForm() {
     const toast = useToast();
