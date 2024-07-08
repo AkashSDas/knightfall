@@ -54,22 +54,27 @@ function handleDuplicateError(err: unknown, user: any, next: any) {
     }
 })
 @post<UserDocument>("save", handleDuplicateError)
-@pre<UserDocument>("findOneAndUpdate", async function preMongooseSave(next) {
-    // Validate email and username uniqueness
-    const isEmailChanged = this.isModified("email");
-    const isUsernameChanged = this.isModified("username");
+@pre<UserDocument>(
+    "findOneAndUpdate",
+    async function preFindOneAndUpdateHook(next) {
+        const user = (this as any).getQuery();
+        const update = (this as any).getUpdate() as any;
 
-    if (isEmailChanged || isUsernameChanged) {
-        const query = [];
-        if (isEmailChanged) query.push({ email: this.email });
-        if (isUsernameChanged) query.push({ username: this.username });
+        // Validate email and username uniqueness
+        if (update.email || update.username) {
+            const query = [];
+            if (update.email) query.push({ email: update.email });
+            if (update.username) query.push({ username: update.username });
+            const exists = await User.exists({ $or: query });
 
-        const exists = await User.exists({ $or: query });
-        if (exists?._id && !exists._id.equals(this._id)) {
-            return next(new Error("Duplicate"));
+            if (exists?._id && !exists._id.equals(user._id)) {
+                return next(new Error("Duplicate"));
+            }
         }
-    }
-})
+
+        return next();
+    },
+)
 @post<UserDocument>("findOneAndUpdate", handleDuplicateError)
 @modelOptions({
     schemaOptions: {
