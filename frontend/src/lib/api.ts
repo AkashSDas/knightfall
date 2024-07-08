@@ -1,9 +1,14 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { AnyZodObject } from "zod";
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "../utils/auth";
 
 const endpoints = {
     // Auth
     EMAIL_SIGNUP: "/api/auth/signup",
+    NEW_ACCESS_TOKEN: "/api/auth/access-token",
+
+    // User
+    GET_LOGGED_IN_USER_PROFILE: "/api/user/profile",
 } as const;
 
 export const HTTP_METHOD = {
@@ -14,7 +19,7 @@ export const HTTP_METHOD = {
     DELETE: "DELETE",
 };
 
-type Ok<T> = { data: T } | null;
+type Ok<T> = T | null;
 type Err = { message: string; data: unknown; fromServer: boolean } | null;
 
 class APIProvider {
@@ -30,7 +35,7 @@ class APIProvider {
     }
 
     private getAccessToken(): string {
-        const token = localStorage.getItem("accessToken");
+        const token = localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
         if (typeof token !== "string") throw new Error("Token not found");
         return token;
     }
@@ -73,6 +78,8 @@ class APIProvider {
                     await zodSchema.parseAsync(data);
                 }
 
+                return [data, null];
+            } else {
                 return [data, null];
             }
         } catch (e) {
