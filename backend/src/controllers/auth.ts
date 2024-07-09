@@ -54,11 +54,9 @@ export async function initMagicLinkLoginCtrl(
         html: `Click on the link to login: <a href="${link}">${link}</a>`,
     });
 
-    return res
-        .status(200)
-        .json({
-            message: "Email with login magic link is sent to your email.",
-        });
+    return res.status(200).json({
+        message: "Email with login magic link is sent to your email.",
+    });
 }
 
 export async function completeMagicLinkLoginCtrl(
@@ -79,8 +77,8 @@ export async function completeMagicLinkLoginCtrl(
         throw new BaseApiError(400, "Invalid token");
     }
 
-    delete user.magicLinkToken;
-    delete user.magicLinkTokenExpiresAt;
+    user.magicLinkToken = undefined;
+    user.magicLinkTokenExpiresAt = undefined;
     await user.save({ validateModifiedOnly: true });
 
     const accessToken = user.createAccessToken();
