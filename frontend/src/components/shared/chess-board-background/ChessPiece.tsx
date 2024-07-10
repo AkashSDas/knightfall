@@ -33,7 +33,6 @@ export function ChessPiece(props: { rowIndex: number; colIndex: number }) {
             const inInterval = setInterval(
                 () => {
                     doAnimate = Math.random() > 0.5;
-                    console.log({ doAnimate });
 
                     if (doAnimate) {
                         animate(
