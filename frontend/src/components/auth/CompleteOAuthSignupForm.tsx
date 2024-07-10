@@ -15,6 +15,10 @@ import { authService } from "../../services/auth";
 import { useUser } from "../../hooks/auth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useButtonAnimatedIcon } from "../../hooks/ui";
+import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChessQueen } from "@fortawesome/free-solid-svg-icons";
 
 const schema = object({
     username: string({ required_error: "Required" })
@@ -33,6 +37,8 @@ export function CompleteOAuthSignupForm() {
     });
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+
+    const btn = useButtonAnimatedIcon();
 
     const mutation = useMutation({
         async mutationFn(payload: CompleteOAuthSignupInputs) {
@@ -108,7 +114,17 @@ export function CompleteOAuthSignupForm() {
                 isLoading={mutation.isPending}
                 h="48px"
                 w="100%"
-                onMouseDown={() => form.trigger()}
+                as={motion.button}
+                onHoverStart={btn.onHoverStart}
+                onHoverEnd={btn.onHoverEnd}
+                leftIcon={
+                    <FontAwesomeIcon
+                        style={{ marginBottom: "2px" }}
+                        icon={faChessQueen}
+                        size="sm"
+                        bounce={btn.bounce}
+                    />
+                }
             >
                 Complete Signup
             </Button>
