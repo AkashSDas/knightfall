@@ -12,6 +12,10 @@ import { object, string, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authService } from "../../services/auth";
+import { useButtonAnimatedIcon } from "../../hooks/ui";
+import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChessKing } from "@fortawesome/free-solid-svg-icons";
 
 const schema = object({
     email: string({ required_error: "Required" }).email({
@@ -30,6 +34,8 @@ export function SignupForm() {
         defaultValues: { email: "", username: "" },
         resolver: zodResolver(schema),
     });
+
+    const btn = useButtonAnimatedIcon();
 
     const mutation = useMutation({
         async mutationFn(payload: EmailSignupInputs) {
@@ -98,7 +104,17 @@ export function SignupForm() {
                 isLoading={mutation.isPending}
                 h="48px"
                 w="100%"
-                onMouseDown={() => form.trigger()}
+                as={motion.button}
+                onHoverStart={btn.onHoverStart}
+                onHoverEnd={btn.onHoverEnd}
+                leftIcon={
+                    <FontAwesomeIcon
+                        style={{ marginBottom: "2px" }}
+                        icon={faChessKing}
+                        size="sm"
+                        bounce={btn.bounce}
+                    />
+                }
             >
                 Create Account
             </Button>

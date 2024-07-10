@@ -1,6 +1,5 @@
 import {
     Button,
-    Center,
     Divider,
     HStack,
     Heading,
@@ -9,13 +8,15 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import GoogleSvg from "../../assets/images/google.svg";
 import { SignupForm } from "../../components/auth/SignupForm";
 import { useUser } from "../../hooks/auth";
 import { CancelOAuthText } from "../../components/auth/CancelOAuthText";
 import { CompleteOAuthSignupForm } from "../../components/auth/CompleteOAuthSignupForm";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
+import GoogleSvg from "../../assets/images/google.svg";
 
 function openSignupWindow(): void {
     window.open(
@@ -39,8 +40,24 @@ export function SignupPage() {
 
     return (
         <BaseLayout>
-            <Center mt="2rem" as="main" px="1rem">
+            <VStack
+                as="main"
+                py="2rem"
+                px="1rem"
+                h={{ base: "calc(100vh - 56px)", md: "calc(100vh - 72px)" }}
+                overflowX="hidden"
+                overflowY="auto"
+                pos="relative"
+            >
                 <VStack
+                    as={motion.main}
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{
+                        opacity: 1,
+                        y: 0,
+                        transition: { delay: 0.2, duration: 0.5 },
+                    }}
+                    zIndex={10}
                     bgColor="gray.700"
                     borderRadius="10px"
                     border={{ base: "1.5px solid", md: "2px solid" }}
@@ -50,7 +67,7 @@ export function SignupPage() {
                     maxW="600px"
                     gap={{ base: "18px", md: "2rem" }}
                     p={{ base: "12px", md: "2rem" }}
-                    shadow="lg"
+                    shadow="dark-lg"
                 >
                     <VStack alignItems="start" gap="1rem">
                         <Heading as="h1" fontFamily="cubano">
@@ -81,7 +98,6 @@ export function SignupPage() {
                             h="48px"
                             w="100%"
                             aria-label="Signup with Google"
-                            onMouseDown={openSignupWindow}
                             onClick={openSignupWindow}
                         >
                             Continue with Google
@@ -98,7 +114,11 @@ export function SignupPage() {
 
                     {!isLoggedIn ? <SignupForm /> : <CompleteOAuthSignupForm />}
                 </VStack>
-            </Center>
+
+                <ChessBoardBackground
+                    h={{ base: "calc(100vh - 56px)", md: "calc(100vh - 72px)" }}
+                />
+            </VStack>
         </BaseLayout>
     );
 }
