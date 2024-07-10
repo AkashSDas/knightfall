@@ -14,7 +14,7 @@ export default function App() {
         <ChakraProvider theme={theme}>
             <QueryClientProvider client={queryClient}>
                 <Provider store={store}>
-                    <RouterProvider router={router} />;
+                    <RouterProvider router={router} />
                 </Provider>
             </QueryClientProvider>
         </ChakraProvider>

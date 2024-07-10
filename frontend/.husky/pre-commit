@@ -4,4 +4,3 @@
 
 cd ./frontend
 pnpx lint-staged
-pnpm run lint

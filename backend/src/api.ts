@@ -9,9 +9,14 @@ import passport from "passport";
 import swaggerUI from "swagger-ui-express";
 import { swaggerSpec } from "./utils/swagger";
 
+import { router as authRouter } from "./routes/auth";
+import { router as userRouter } from "./routes/user";
+
 if (process.env.NODE_ENV !== "production") config();
 
 // OAuth Passport Strategies. Should come after the config() call.
+import "./passport/google-signup";
+import "./passport/google-login";
 
 /** Express app */
 export const app = express();
@@ -41,6 +46,9 @@ app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // ==============================
 // Routes
 // ==============================
+
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 app.get("/api/test", function testRoute(req, res) {
     res.status(200).json({ message: "Knightfall is online." });
