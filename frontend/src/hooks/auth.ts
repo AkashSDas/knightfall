@@ -1,12 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+    UseMutationResult,
+    useMutation,
+    useQuery,
+} from "@tanstack/react-query";
 import { authService } from "../services/auth";
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "../utils/auth";
-import { userService } from "../services/user";
-import { useMemo } from "react";
+import {
+    ACCESS_TOKEN_LOCAL_STORAGE_KEY,
+    MAGIC_LINK_LOGIN_PARAM_KEY,
+} from "../utils/auth";
+import { GetLoggedInUserProfile, userService } from "../services/user";
+import { useCallback, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAppToast } from "./ui";
 
 function useAccessToken() {
     // Get user logged in using email address (JWT)
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ["accessToken"],
         async queryFn() {
             const [ok, err] = await authService.getNewAccessToken();
@@ -14,6 +23,10 @@ function useAccessToken() {
                 localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
                 return { accessToken: null, user: null };
             } else {
+                localStorage.setItem(
+                    ACCESS_TOKEN_LOCAL_STORAGE_KEY,
+                    ok.accessToken
+                );
                 return { user: ok.user, accessToken: ok.accessToken };
             }
         },
@@ -29,15 +42,30 @@ function useAccessToken() {
         accessToken: data?.accessToken,
         isLoading,
         error,
+        refetch,
     };
 }
+
+type UseUserReturn = {
+    error: Error | null;
+    isLoading: boolean;
+    user: GetLoggedInUserProfile["user"] | null | undefined;
+    isLoggedIn: boolean;
+    isSignupCompleted: boolean;
+    logoutMutation: UseMutationResult<void, Error, void, unknown>;
+    pushToLogin: () => void;
+
+    /** User who is logged in and whose signup is completed */
+    isAuthenticated: boolean;
+};
 
 /**
  * This hook handles getting logged in user who have logged in either using email
  * address JWT or an OAuth provider.
  */
-export function useUser() {
+export function useUser(): UseUserReturn {
     const auth = useAccessToken();
+    const navigate = useNavigate();
 
     // Make request only if the `useAccessToken` has failed to get user
     // that would only mean either the user has signed up using OAuth or
@@ -50,6 +78,7 @@ export function useUser() {
             // is not logged in using access token
             const [ok, err] = await userService.getLoggedInUserProfile();
             if (err || !ok) {
+                localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
                 return { user: null };
             } else {
                 return { user: ok.user };
@@ -68,15 +97,18 @@ export function useUser() {
      * or has partially completed it (incase of OAuth signup)
      */
     const isSignupCompleted = useMemo(
-        function checkSignupStatus() {
+        function checkSignupStatus(): boolean {
             if (auth.user) {
-                return auth.user.username && auth.user.email;
+                return (
+                    auth.user.username !== undefined &&
+                    auth.user.email !== undefined
+                );
             }
 
             if (loggedInUser.data?.user) {
                 return (
-                    loggedInUser.data.user.username &&
-                    loggedInUser.data.user.email
+                    loggedInUser.data.user.username !== undefined &&
+                    loggedInUser.data.user.email !== undefined
                 );
             }
 
@@ -85,11 +117,72 @@ export function useUser() {
         [auth.user, loggedInUser.data?.user]
     );
 
+    const logoutMutation = useMutation({
+        async mutationFn() {
+            localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
+            await authService.logout();
+            await Promise.all([loggedInUser.refetch(), auth.refetch()]);
+        },
+    });
+
+    const pushToLogin = useCallback(
+        function () {
+            navigate("/auth/login");
+        },
+        [navigate]
+    );
+
+    const isLoggedIn = auth.user != null || loggedInUser.data?.user != null;
+
     return {
         error: auth.error ?? loggedInUser.error,
         isLoading: auth.isLoading || loggedInUser.isLoading,
         user: auth.user ?? loggedInUser.data?.user,
-        isLoggedIn: auth.user != null || loggedInUser.data?.user != null,
+        isLoggedIn,
         isSignupCompleted,
+        logoutMutation,
+        isAuthenticated: isLoggedIn && isSignupCompleted,
+        pushToLogin,
     };
+}
+
+export function useMagicLinkLogin() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { errorToast } = useAppToast();
+    const auth = useAccessToken();
+    const navigate = useNavigate();
+
+    const mutation = useMutation({
+        async mutationFn({ token }: { token: string }) {
+            const [ok, err] =
+                await authService.magicLinkTokenVerification(token);
+
+            if (err || !ok) {
+                errorToast(err?.message ?? "Failed to login, please try again");
+            } else {
+                // Since user is logged in using magic link, we need to refetch
+                // the access token to get user info and new access token. This
+                // is redundant call since `ok` will have the latest access token
+                // and user info
+                await auth.refetch();
+                navigate("/");
+            }
+        },
+    });
+
+    useEffect(
+        function checkForIncompleteSignup() {
+            const token = searchParams.get(MAGIC_LINK_LOGIN_PARAM_KEY);
+
+            if (typeof token === "string") {
+                mutation.mutateAsync({ token }).finally(() => {
+                    searchParams.delete(MAGIC_LINK_LOGIN_PARAM_KEY);
+                    setSearchParams(searchParams);
+                });
+            }
+        },
+        [searchParams]
+    );
+
+    return { isPending: mutation.isPending };
 }
