@@ -16,10 +16,12 @@ import LogoImg from "../../../assets/images/chess-logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useUser } from "../../../hooks/auth";
 
 export function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
+    const { isAuthenticated, logoutMutation } = useUser();
 
     return (
         <HStack
@@ -45,15 +47,28 @@ export function Navbar() {
 
             {/* Desktop navbar actions */}
             <Show above="md">
-                <HStack gap="1.5rem">
-                    <Button variant="contained" as={Link} to="/auth/login">
-                        Login
-                    </Button>
+                {isAuthenticated ? (
+                    <HStack gap="1.5rem">
+                        <Button
+                            variant="contained"
+                            disabled={logoutMutation.isPending}
+                            isLoading={logoutMutation.isPending}
+                            onClick={() => logoutMutation.mutateAsync()}
+                        >
+                            Logout
+                        </Button>
+                    </HStack>
+                ) : (
+                    <HStack gap="1.5rem">
+                        <Button variant="contained" as={Link} to="/auth/login">
+                            Login
+                        </Button>
 
-                    <Button variant="primary" as={Link} to="/auth/signup">
-                        Signup
-                    </Button>
-                </HStack>
+                        <Button variant="primary" as={Link} to="/auth/signup">
+                            Signup
+                        </Button>
+                    </HStack>
+                )}
             </Show>
 
             {/* Mobile navbar */}
@@ -116,25 +131,42 @@ export function Navbar() {
                                 px="1rem"
                                 w="100%"
                             >
-                                <Button
-                                    variant="contained"
-                                    as={Link}
-                                    to="/auth/login"
-                                    h="44px"
-                                    w="100%"
-                                >
-                                    Login
-                                </Button>
+                                {isAuthenticated ? (
+                                    <Button
+                                        variant="contained"
+                                        disabled={logoutMutation.isPending}
+                                        isLoading={logoutMutation.isPending}
+                                        onClick={() =>
+                                            logoutMutation.mutateAsync()
+                                        }
+                                        w="100%"
+                                        h="44px"
+                                    >
+                                        Logout
+                                    </Button>
+                                ) : (
+                                    <>
+                                        <Button
+                                            variant="contained"
+                                            as={Link}
+                                            to="/auth/login"
+                                            h="44px"
+                                            w="100%"
+                                        >
+                                            Login
+                                        </Button>
 
-                                <Button
-                                    variant="primary"
-                                    as={Link}
-                                    to="/auth/signup"
-                                    h="44px"
-                                    w="100%"
-                                >
-                                    Signup
-                                </Button>
+                                        <Button
+                                            variant="primary"
+                                            as={Link}
+                                            to="/auth/signup"
+                                            h="44px"
+                                            w="100%"
+                                        >
+                                            Signup
+                                        </Button>
+                                    </>
+                                )}
                             </HStack>
                         </DrawerBody>
                     </DrawerContent>
