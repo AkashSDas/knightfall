@@ -4,11 +4,16 @@ import { UserSchema } from "../utils/zod";
 
 const GetLoggedInUserProfile = z.object({ user: UserSchema });
 
+export type GetLoggedInUserProfile = z.infer<typeof GetLoggedInUserProfile>;
+
 class UserService {
     constructor() {}
 
     async getLoggedInUserProfile() {
-        return await api.fetch<z.infer<typeof GetLoggedInUserProfile>>(
+        return await api.fetch<
+            GetLoggedInUserProfile,
+            "GET_LOGGED_IN_USER_PROFILE"
+        >(
             "GET_LOGGED_IN_USER_PROFILE",
             { method: HTTP_METHOD.GET },
             (data, status) =>
