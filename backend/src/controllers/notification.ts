@@ -40,7 +40,9 @@ export async function getLoggedInUserNotificationsCtrl(
     // Setting the X-Total-Count header
     res.set("X-Total-Count", totalCount.toString());
 
-    return res.status(200).json({ notifications });
+    return res
+        .status(200)
+        .json({ notifications, totalCount, nextPageOffset: offset + limit });
 }
 
 export async function markNotificationsAsSeenCtrl(

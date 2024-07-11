@@ -61,11 +61,15 @@ export function validateResource(schema: AnyZodObject) {
         try {
             // If the schema is able to parse the given fields then it means that
             // user has provided the required fields
-            schema.parse({
+            const output = schema.parse({
                 body: req.body,
                 query: req.query,
                 params: req.params,
             });
+
+            req.body = output.body;
+            req.query = output.query;
+            req.params = output.params;
             return next();
         } catch (error) {
             if (error instanceof ZodError) {
