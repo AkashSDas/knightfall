@@ -8,6 +8,7 @@ import {
 import { UserDocument } from "./user";
 import { SchemaTypes, Types } from "mongoose";
 
+/** Types of notification supported */
 export const NOTIFICATION_TYPE = {
     /** Will only display title and no additional info */
     DEFAULT: "default",
@@ -24,7 +25,7 @@ export const NOTIFICATION_TYPE = {
         toJSON: { virtuals: true },
         typeKey: "type",
     },
-    options: { allowMixed: Severity.ALLOW, customName: "user" },
+    options: { allowMixed: Severity.ALLOW, customName: "notification" },
 })
 export class NotificationDocument {
     // =================================

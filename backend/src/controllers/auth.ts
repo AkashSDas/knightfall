@@ -6,6 +6,7 @@ import { BaseApiError } from "../utils/errors";
 import { createHash } from "crypto";
 import { REFRESH_TOKEN_COOKIE_KEY, loginCookieConfig } from "../utils/auth";
 import jwt from "jsonwebtoken";
+import { Notifiy } from "../utils/notification";
 
 export async function emailSignupCtrl(
     req: Request<unknown, unknown, schemas.EmailSignup["body"]>,
@@ -84,6 +85,14 @@ export async function completeMagicLinkLoginCtrl(
     const accessToken = user.createAccessToken();
     const refreshToken = user.createRefreshToken();
     res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken, loginCookieConfig);
+
+    new Notifiy(user._id)
+        .createNotification({
+            type: "loginWelcomeBack",
+            title: "Welcome back",
+            maxAge: new Date(Date.now() + 10 * 60 * 1000), // 10mins
+        })
+        .then((instance) => instance.sendNotification());
 
     return res.status(200).json({ accessToken, user });
 }
