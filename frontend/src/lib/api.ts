@@ -16,6 +16,10 @@ const endpoints = {
 
     // User
     GET_LOGGED_IN_USER_PROFILE: "/api/user/profile",
+
+    // Notification
+    GET_NOTIFICATIONS: "/api/notification",
+    MARK_NOTIFICATION_AS_SEEN: "/api/notification/mark-seen",
 } as const;
 
 export const HTTP_METHOD = {
@@ -117,7 +121,8 @@ class APIProvider {
 
             if (checkConditions) {
                 if (zodSchema) {
-                    await zodSchema.parseAsync(data);
+                    const output = (await zodSchema.parseAsync(data)) as T;
+                    return [output, null];
                 }
 
                 return [data, null];

@@ -129,16 +129,13 @@ export const theme = extendTheme({
                 subtle: {
                     fontFamily: "body",
                     borderRadius: "10px",
-                    bgColor: "gray.600",
+                    bgColor: "gray.500",
                     color: "gray.200",
+                    fontWeight: "600",
                     transition:
                         "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                    _hover: {
-                        bgColor: "gray.700",
-                    },
-                    _active: {
-                        bgColor: "gray.800",
-                    },
+                    _hover: { bgColor: "gray.600" },
+                    _active: { bgColor: "gray.700" },
                 },
             },
         },
