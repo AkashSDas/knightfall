@@ -7,6 +7,7 @@ import { createHash } from "crypto";
 import { REFRESH_TOKEN_COOKIE_KEY, loginCookieConfig } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import { Notifiy } from "../utils/notification";
+import { logger } from "../utils/logger";
 
 export async function emailSignupCtrl(
     req: Request<unknown, unknown, schemas.EmailSignup["body"]>,
@@ -53,7 +54,9 @@ export async function initMagicLinkLoginCtrl(
         subject: "Magic link login",
         text: `Click on the link to login: ${link}`,
         html: `Click on the link to login: <a href="${link}">${link}</a>`,
-    });
+    })
+        .then(() => logger.info(`Successfully sent email: ${user.email}`))
+        .catch((e) => logger.error(`Failed to send email: ${user.email} ${e}`));
 
     return res.status(200).json({
         message: "Email with login magic link is sent to your email.",
@@ -92,7 +95,8 @@ export async function completeMagicLinkLoginCtrl(
             title: "Welcome back",
             maxAge: new Date(Date.now() + 10 * 60 * 1000), // 10mins
         })
-        .then((instance) => instance.sendNotification());
+        .then((instance) => instance.sendNotification())
+        .catch((e) => logger.error(`Failed to send notification: ${e}`));
 
     return res.status(200).json({ accessToken, user });
 }
