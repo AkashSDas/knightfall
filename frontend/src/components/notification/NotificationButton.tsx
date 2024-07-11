@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Center,
     Divider,
     HStack,
     IconButton,
@@ -8,21 +9,22 @@ import {
     MenuButton,
     MenuList,
     Portal,
+    Spinner,
     Text,
 } from "@chakra-ui/react";
-import {
-    faArrowCircleRight,
-    faBell,
-    faGhost,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowCircleRight, faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useButtonAnimatedIcon } from "../../hooks/ui";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
+import { EmptyNotification } from "./EmptyNotification";
+import { useNotifications } from "../../hooks/notification";
+import { NotificationCard } from "./NotificationCard";
 
 export function NotificationButton() {
     const btn = useButtonAnimatedIcon();
     const controls = useAnimation();
+    const { notifications, isLoading } = useNotifications({ limit: 5 });
 
     return (
         <Menu
@@ -73,12 +75,10 @@ export function NotificationButton() {
                                 borderBottomColor="blue.700"
                                 bgColor="blue.500"
                                 transition="background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
-                                _hover={{
-                                    bgColor: "blue.600",
-                                }}
+                                _hover={{ bgColor: "blue.600" }}
                                 _active={{
                                     bgColor: "blue.600",
-                                    borderBottom: "2px solid",
+                                    borderBottom: "1px solid",
                                     borderBottomColor: "blue.700",
                                 }}
                             >
@@ -88,7 +88,26 @@ export function NotificationButton() {
 
                         <Divider my="12px" />
 
-                        <EmptyNotification />
+                        {notifications.length === 0 && !isLoading ? (
+                            <EmptyNotification />
+                        ) : null}
+
+                        {isLoading ? (
+                            <Center my="2rem">
+                                <Spinner
+                                    size="xl"
+                                    color="gray.500"
+                                    thickness="4px"
+                                />
+                            </Center>
+                        ) : null}
+
+                        {notifications.map((notification) => (
+                            <NotificationCard
+                                key={notification.id}
+                                notification={notification}
+                            />
+                        ))}
 
                         <Divider my="12px" />
 
@@ -122,32 +141,5 @@ export function NotificationButton() {
                 </AnimatePresence>
             </Portal>
         </Menu>
-    );
-}
-
-function EmptyNotification() {
-    return (
-        <HStack
-            color="gray.400"
-            py="24px"
-            w="100%"
-            justifyContent="center"
-            as={motion.div}
-            initial={{ opacity: 0.7 }}
-            animate={{
-                opacity: 1,
-                transition: {
-                    duration: 0.5,
-                    ease: "circInOut",
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                },
-            }}
-        >
-            <FontAwesomeIcon icon={faGhost} size="2xl" />
-            <Text fontSize="30px" fontFamily="cubano">
-                Empty
-            </Text>
-        </HStack>
     );
 }
