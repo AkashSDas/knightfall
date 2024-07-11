@@ -13,9 +13,9 @@ export const io = new Server(httpServer, {
 });
 
 io.on("connection", function connectToWebSocket(socket) {
-    logger.info("Connected to websocket");
+    logger.info(`Consumer connected to websocket: ${socket.id}`);
 
     socket.on("disconnect", function socketDisconnected() {
-        logger.info("Disconnected from websocket");
+        logger.info(`Consumer disconnected from websocket: ${socket.id}`);
     });
 });

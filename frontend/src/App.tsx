@@ -6,18 +6,18 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { routes } from "./lib/routes";
-import { useWebSocket } from "./hooks/websocket";
+import { SocketProvider } from "./providers/SocketProvider";
 
 const router = createBrowserRouter(routes);
 
 export default function App() {
-    useWebSocket();
-
     return (
         <ChakraProvider theme={theme}>
             <QueryClientProvider client={queryClient}>
                 <Provider store={store}>
-                    <RouterProvider router={router} />
+                    <SocketProvider>
+                        <RouterProvider router={router} />
+                    </SocketProvider>
                 </Provider>
             </QueryClientProvider>
         </ChakraProvider>

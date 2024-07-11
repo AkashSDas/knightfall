@@ -1,12 +1,8 @@
-import { useEffect } from "react";
-import io from "socket.io-client";
+import { PropsWithChildren, useEffect } from "react";
+import { SocketContext, socket } from "../lib/websocket";
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-    autoConnect: true,
-});
-
-export function useWebSocket() {
-    useEffect(() => {
+export function SocketProvider(props: PropsWithChildren<unknown>) {
+    useEffect(function handleWebSocketConnection() {
         socket.connect();
 
         socket.on("connect", () => {
@@ -29,4 +25,10 @@ export function useWebSocket() {
             socket.disconnect();
         }
     }, []);
+
+    return (
+        <SocketContext.Provider value={{ socket: socket }}>
+            {props.children}
+        </SocketContext.Provider>
+    );
 }
