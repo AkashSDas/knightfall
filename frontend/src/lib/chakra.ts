@@ -117,6 +117,7 @@ export const theme = extendTheme({
                 },
                 ghost: {
                     color: "gray.200",
+                    borderRadius: "10px",
                     transition:
                         "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                     _hover: {
@@ -124,6 +125,20 @@ export const theme = extendTheme({
                         _disabled: { bgColor: "gray.600" },
                     },
                     _active: { bgColor: "gray.700" },
+                },
+                subtle: {
+                    fontFamily: "body",
+                    borderRadius: "10px",
+                    bgColor: "gray.600",
+                    color: "gray.200",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: {
+                        bgColor: "gray.700",
+                    },
+                    _active: {
+                        bgColor: "gray.800",
+                    },
                 },
             },
         },
