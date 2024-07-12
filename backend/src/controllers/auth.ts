@@ -96,7 +96,7 @@ export async function completeMagicLinkLoginCtrl(
             maxAge: new Date(Date.now() + 10 * 60 * 1000), // 10mins
         })
         .then((instance) => instance.sendNotification())
-        .catch((e) => logger.error(`Failed to send notification: ${e}`));
+        .catch((e) => logger.error(`[👋 FAILED notification]: ${e}`));
 
     return res.status(200).json({ accessToken, user });
 }
