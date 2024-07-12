@@ -13,9 +13,25 @@ export const io = new Server(httpServer, {
 });
 
 io.on("connection", function connectToWebSocket(socket) {
-    logger.info(`Consumer connected to websocket: ${socket.id}`);
+    logger.info(`[🟢 socket] CONNECTED: ${socket.id}`);
 
     socket.on("disconnect", function socketDisconnected() {
-        logger.info(`Consumer disconnected from websocket: ${socket.id}`);
+        logger.info(`[🟢 socket] DISCONNECTED: ${socket.id}`);
+    });
+
+    // ================================
+    // Notification
+    // ================================
+
+    socket.on("joinNotification", function joinNotification({ userId }) {
+        const roomName = `notification_${userId}`;
+        socket.join(roomName);
+        logger.info(`[🔔 notification] JOIN: ${roomName}`);
+    });
+
+    socket.on("leaveNotification", function leaveNotification({ userId }) {
+        const roomName = `notification_${userId}`;
+        socket.leave(roomName);
+        logger.info(`[🔔 notification] LEAVE: ${roomName}`);
     });
 });

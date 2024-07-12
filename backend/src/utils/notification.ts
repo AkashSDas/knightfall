@@ -6,6 +6,7 @@ import {
     NotificationDocument,
 } from "../models/notification";
 import { io } from "../websocket";
+import { logger } from "./logger";
 
 /** Default limit of notificiations to fetch in `getLoggedInUserNotificationsCtrl` */
 export const GET_LOGGED_IN_USER_NOTIFICATIONS_LIMIT = 10;
@@ -71,6 +72,8 @@ export class Notifiy {
             );
         }
 
-        io.to(`notification_${this.userId}`).emit("notification", this.payload);
+        const roomName = `notification_${this.userId}`;
+        logger.info(`[👋 SEND notification]: ${roomName}`);
+        io.to(roomName).emit("notification", this.payload);
     }
 }
