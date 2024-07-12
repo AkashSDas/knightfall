@@ -28,7 +28,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { notificationService } from "../../services/notification";
 import { useUser } from "../../hooks/auth";
 
-export function NotificationButton() {
+export function NotificationMenu() {
     const btn = useButtonAnimatedIcon();
     const controls = useAnimation();
     const { notifications, isLoading } = useNotifications({ limit: 5 });

@@ -17,7 +17,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/auth";
-import { NotificationButton } from "../../notification/NotificationButton";
+import { NotificationMenu } from "../../notification/NotificationMenu";
+import { UserProfileMenu } from "./UserProfileMenu";
 
 export function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -50,7 +51,9 @@ export function Navbar() {
             <Show above="md">
                 {isAuthenticated ? (
                     <HStack gap="1.5rem">
-                        <NotificationButton />
+                        <NotificationMenu />
+
+                        <UserProfileMenu />
 
                         <Button
                             variant="contained"
