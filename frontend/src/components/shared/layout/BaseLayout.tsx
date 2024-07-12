@@ -1,9 +1,22 @@
 import { Box } from "@chakra-ui/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { Navbar } from "../navbar";
 import ChessBg from "../../../assets/images/chess-board-bg.png";
+import { useLocation } from "react-router-dom";
 
 export function BaseLayout(props: PropsWithChildren<unknown>) {
+    const location = useLocation();
+    const bgImage = useMemo(
+        function () {
+            if (location.pathname === "/") {
+                return `url('${ChessBg}')`;
+            } else {
+                return undefined;
+            }
+        },
+        [location]
+    );
+
     return (
         <Box pos="relative">
             <Box zIndex={1} pos="relative">
@@ -16,7 +29,7 @@ export function BaseLayout(props: PropsWithChildren<unknown>) {
                     pos: "absolute",
                     top: "0",
                     left: "0",
-                    backgroundImage: `url('${ChessBg}')`,
+                    backgroundImage: bgImage,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",

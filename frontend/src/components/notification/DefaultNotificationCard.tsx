@@ -33,6 +33,7 @@ export function DefaultNotificationCard(props: {
             borderRadius="10px"
             gap="10px"
             alignItems="start"
+            w="100%"
         >
             <Center
                 h="28px"
