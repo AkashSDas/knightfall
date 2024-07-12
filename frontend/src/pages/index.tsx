@@ -156,11 +156,12 @@ export function HomePage() {
                             </Box>
                         }
                         sx={{
-                            borderBottom: "7px solid",
+                            borderRadius: "15px",
+                            borderBottom: "6px solid",
                             borderBottomColor: "brand.700",
                             _hover: {
                                 bgColor: "brand.600",
-                                borderBottom: "7px solid",
+                                borderBottom: "6px solid",
                                 borderBottomColor: "brand.700",
                                 _disabled: {
                                     bgColor: "brand.600",
@@ -170,7 +171,7 @@ export function HomePage() {
                             },
                             _active: {
                                 bgColor: "brand.600",
-                                borderBottom: "2px solid",
+                                borderBottom: "1px solid",
                                 borderBottomColor: "brand.700",
                             },
                         }}
