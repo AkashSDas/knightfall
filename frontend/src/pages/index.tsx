@@ -155,6 +155,25 @@ export function HomePage() {
                                 />
                             </Box>
                         }
+                        sx={{
+                            borderBottom: "7px solid",
+                            borderBottomColor: "brand.700",
+                            _hover: {
+                                bgColor: "brand.600",
+                                borderBottom: "7px solid",
+                                borderBottomColor: "brand.700",
+                                _disabled: {
+                                    bgColor: "brand.600",
+                                    borderBottom: "6px solid",
+                                    borderBottomColor: "brand.700",
+                                },
+                            },
+                            _active: {
+                                bgColor: "brand.600",
+                                borderBottom: "2px solid",
+                                borderBottomColor: "brand.700",
+                            },
+                        }}
                     >
                         Play
                     </Button>
