@@ -6,6 +6,10 @@ export const socket: Socket = io(import.meta.env.VITE_BACKEND_URL, {
     autoConnect: false, // Disable autoConnect to manually connect
 });
 
-export const SocketContext = createContext<{ socket: Socket | null }>({
+export const SocketContext = createContext<{
+    socket: Socket | null;
+    isConnected: boolean;
+}>({
     socket: null,
+    isConnected: false,
 });

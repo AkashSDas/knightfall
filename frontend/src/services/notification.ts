@@ -22,16 +22,16 @@ const SignupWelcomeNotificationSchema = z
     .object({ type: z.literal(NOTIFICATION_TYPE.SIGNUP_WELCOME) })
     .merge(NotificationBaseSchema);
 
+export const NotificationSchema = z.union([
+    DefaultNotificationSchema,
+    LoginWelcomeBackNotificationSchema,
+    SignupWelcomeNotificationSchema,
+]);
+
 const GetNotificationsSchema = z.object({
     totalCount: z.number().min(0),
     nextPageOffset: z.number().min(0),
-    notifications: z.array(
-        z.union([
-            DefaultNotificationSchema,
-            LoginWelcomeBackNotificationSchema,
-            SignupWelcomeNotificationSchema,
-        ])
-    ),
+    notifications: z.array(NotificationSchema),
 });
 
 type GetMany = z.infer<typeof GetNotificationsSchema>;
