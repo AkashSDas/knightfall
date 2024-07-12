@@ -24,11 +24,26 @@ import {
     useNotifications,
 } from "../../hooks/notification";
 import { NotificationCard } from "./NotificationCard";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { notificationService } from "../../services/notification";
+import { useUser } from "../../hooks/auth";
 
 export function NotificationButton() {
     const btn = useButtonAnimatedIcon();
     const controls = useAnimation();
     const { notifications, isLoading } = useNotifications({ limit: 5 });
+    const hasUnseenMessage = notifications.some((n) => n.seen === false);
+    const queryClient = useQueryClient();
+    const { user } = useUser();
+
+    const mutation = useMutation({
+        mutationFn: () => notificationService.markAsSeen(),
+        onSuccess() {
+            queryClient.invalidateQueries({
+                queryKey: ["notifications", user?.id],
+            });
+        },
+    });
 
     useNotificationRoom();
     useListenToNotifications();
@@ -47,8 +62,13 @@ export function NotificationButton() {
                 onClick={() => {
                     controls.start({ visibility: "visible", opacity: 1, y: 0 });
                 }}
+                color={hasUnseenMessage ? "blue.400" : "gray.200"}
             >
-                <FontAwesomeIcon icon={faBell} size="xl" shake={btn.bounce} />
+                <FontAwesomeIcon
+                    icon={faBell}
+                    size="xl"
+                    shake={btn.bounce || hasUnseenMessage}
+                />
             </MenuButton>
 
             <Portal>
@@ -71,6 +91,11 @@ export function NotificationButton() {
                             </Text>
 
                             <Button
+                                isDisabled={
+                                    mutation.isPending || !hasUnseenMessage
+                                }
+                                onClick={() => mutation.mutateAsync()}
+                                isLoading={mutation.isPending}
                                 fontFamily="body"
                                 fontWeight="700"
                                 h="34px"
@@ -141,6 +166,7 @@ export function NotificationButton() {
                             h="38px"
                             fontSize="14px"
                             justifyContent="space-between"
+                            _active={{ bgColor: "gray.600" }}
                         >
                             View More
                         </Button>

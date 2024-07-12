@@ -57,11 +57,14 @@ export async function markNotificationsAsSeenCtrl(
     const userId = (req.user as UserDocument)._id;
     const { markAll, ids } = req.query;
 
-    if (markAll) {
-        await Notification.updateMany({ userId, seen: false }, { seen: true });
+    if (markAll === "true") {
+        await Notification.updateMany(
+            { user: userId, seen: false },
+            { seen: true },
+        );
     } else {
         await Notification.updateMany(
-            { _id: { $in: ids }, userId, seen: false },
+            { _id: { $in: ids }, user: userId, seen: false },
             { seen: true },
         );
     }

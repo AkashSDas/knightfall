@@ -69,7 +69,11 @@ class NotificationService {
     async markAsSeen() {
         return await api.fetch(
             "MARK_NOTIFICATION_AS_SEEN",
-            { method: HTTP_METHOD.PATCH, params: { markAll: "true" } },
+            {
+                method: HTTP_METHOD.PATCH,
+                params: { markAll: "true" },
+                isProtected: true,
+            },
             (_, status) => status === 204
         );
     }

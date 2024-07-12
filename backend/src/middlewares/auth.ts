@@ -6,10 +6,10 @@ import { User } from "../models/user";
 async function verifyJwt(req: Request, res: Response, next: NextFunction) {
     // Check if the bearer token is present in the request header
     const authHeader =
-        req.headers.authorization ||
-        (req.headers.Authorization as string) ||
-        req.cookies.accessToken ||
-        req.body.accessToken;
+        req.headers?.authorization ||
+        (req.headers?.Authorization as string) ||
+        req.cookies?.accessToken ||
+        req.body?.accessToken;
 
     if (!authHeader?.startsWith("Bearer ")) {
         throw new BaseApiError(401, "Unauthorized");
