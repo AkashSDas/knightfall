@@ -18,13 +18,20 @@ import { useButtonAnimatedIcon } from "../../hooks/ui";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
 import { EmptyNotification } from "./EmptyNotification";
-import { useNotifications } from "../../hooks/notification";
+import {
+    useListenToNotifications,
+    useNotificationRoom,
+    useNotifications,
+} from "../../hooks/notification";
 import { NotificationCard } from "./NotificationCard";
 
 export function NotificationButton() {
     const btn = useButtonAnimatedIcon();
     const controls = useAnimation();
     const { notifications, isLoading } = useNotifications({ limit: 5 });
+
+    useNotificationRoom();
+    useListenToNotifications();
 
     return (
         <Menu

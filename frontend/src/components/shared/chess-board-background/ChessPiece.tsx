@@ -8,6 +8,8 @@ import {
     CHESS_PIECES,
 } from "../../../utils/chess";
 
+const ANIMATION_DURATION = 30;
+
 function getRandomPiece() {
     const pieces = Object.values(CHESS_PIECES);
     const colors = Object.values(CHESS_PIECE_COLOR);
@@ -46,7 +48,7 @@ export function ChessPiece(props: { rowIndex: number; colIndex: number }) {
                         );
                     }
                 },
-                1000 * 4 + (colIndex * 1 + rowIndex * 0.2)
+                1000 * ANIMATION_DURATION + (colIndex * 1 + rowIndex * 0.2)
             );
 
             const outInterval = setInterval(
@@ -63,7 +65,8 @@ export function ChessPiece(props: { rowIndex: number; colIndex: number }) {
                         );
                     }
                 },
-                1000 * 4.5 + (colIndex * 1 + rowIndex * 0.2)
+                1000 * (ANIMATION_DURATION + 0.5) +
+                    (colIndex * 1 + rowIndex * 0.2)
             );
 
             return () => {
