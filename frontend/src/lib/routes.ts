@@ -8,6 +8,7 @@ import { NotificationsPage } from "../pages/user/notifications";
 import { SettingsPage } from "../pages/user/settings";
 import { HistoryPage } from "../pages/user/history";
 import { FriendsPage } from "../pages/user/friends";
+import { UserPublicProfilePage } from "../pages/public/user-public-profile";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -37,5 +38,9 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
         path: "/friends",
         Component: FriendsPage,
+    },
+    {
+        path: "/player/:playerId",
+        Component: UserPublicProfilePage,
     },
 ];
