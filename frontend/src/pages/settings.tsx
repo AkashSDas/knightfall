@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPeopleGroup, faSkull } from "@fortawesome/free-solid-svg-icons";
 import { UpdateUserProfileForm } from "../components/settings/profile/UpdateUserProfileForm";
 import { AuthProtectedBaseLayout } from "../components/shared/layout/AuthProtectedBaseLayout";
+import { ChessBoardBackground } from "../components/shared/chess-board-background/ChessBoardBackground";
+import { textShadowStyle } from "../lib/chakra";
 
 export function SettingsPage() {
     return (
@@ -25,19 +27,28 @@ export function SettingsPage() {
 function SettingsContent() {
     return (
         <BaseLayout>
-            <Center py="2rem" px="1rem">
+            <Center
+                py="2rem"
+                px="1rem"
+                pos="relative"
+                overflowX="hidden"
+                overflowY="hidden"
+                as="main"
+            >
                 <VStack
                     w="100%"
                     maxW="700px"
                     as="main"
                     alignItems="start"
                     gap="1rem"
+                    zIndex={10}
                 >
                     <Heading
                         fontFamily="cubano"
                         as="h1"
                         letterSpacing="1px"
                         fontSize={{ base: "2.5rem", md: "3.5rem" }}
+                        css={textShadowStyle}
                     >
                         Settings
                     </Heading>
@@ -73,6 +84,8 @@ function SettingsContent() {
                         </TabPanels>
                     </Tabs>
                 </VStack>
+
+                <ChessBoardBackground h="140px" />
             </Center>
         </BaseLayout>
     );

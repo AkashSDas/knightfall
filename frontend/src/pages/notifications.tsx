@@ -19,6 +19,8 @@ import { notificationService } from "../services/notification";
 import { EmptyNotification } from "../components/notification/EmptyNotification";
 import { NotificationCard } from "../components/notification/NotificationCard";
 import { AuthProtectedBaseLayout } from "../components/shared/layout/AuthProtectedBaseLayout";
+import { textShadowStyle } from "../lib/chakra";
+import { ChessBoardBackground } from "../components/shared/chess-board-background/ChessBoardBackground";
 
 export function NotificationsPage() {
     return (
@@ -48,19 +50,28 @@ function NotificationContent() {
 
     return (
         <BaseLayout>
-            <Center py="2rem" px="1rem">
+            <Center
+                py="2rem"
+                px="1rem"
+                pos="relative"
+                overflowX="hidden"
+                overflowY="hidden"
+                as="main"
+            >
                 <VStack
                     w="100%"
                     maxW="700px"
                     as="main"
                     alignItems="start"
                     gap="1rem"
+                    zIndex={10}
                 >
                     <Heading
                         fontFamily="cubano"
                         as="h1"
                         letterSpacing="1px"
                         fontSize={{ base: "2.5rem", md: "3.5rem" }}
+                        css={textShadowStyle}
                     >
                         Notifications
                     </Heading>
@@ -117,6 +128,8 @@ function NotificationContent() {
                         />
                     ))}
                 </VStack>
+
+                <ChessBoardBackground h="140px" />
             </Center>
         </BaseLayout>
     );

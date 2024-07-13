@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import { css } from "@emotion/react";
 
 // ERROR: Comment this when generating theme types using the ChakraCLI else
 // it would give the following error:
@@ -239,3 +240,7 @@ export const theme = extendTheme({
         },
     },
 });
+
+export const textShadowStyle = css`
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75);
+`;
