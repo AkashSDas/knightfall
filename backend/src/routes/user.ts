@@ -18,6 +18,7 @@ router.post(
 router.patch(
     "/profile",
     validateResource(schemas.updateProfileSchema),
+    handleMiddlewareError(middlewares.verifyAuth),
     handleMiddlewareError(ctrls.updateProfileCtrl),
     sendErrorResponse,
 );

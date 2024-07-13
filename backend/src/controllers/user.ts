@@ -2,18 +2,53 @@ import { Request, Response } from "express";
 import * as schemas from "../schema/user";
 import { User, UserDocument } from "../models/user";
 import { BaseApiError } from "../utils/errors";
+import { v2 as cloudinary } from "cloudinary";
+import { CLOUDINARY_DIR } from "../utils/cloudinary";
+import { logger } from "../utils/logger";
 
 /** Controller to update user profile */
 export async function updateProfileCtrl(
     req: Request<unknown, unknown, schemas.UpdateProfile["body"]>,
     res: Response,
 ) {
-    const user = await User.findByIdAndUpdate((req.user as UserDocument)._id, {
-        $set: req.body,
-    });
+    const profilePic = req.files?.profilePic;
+    const user = req.user as UserDocument;
 
-    await user.save({ validateModifiedOnly: true });
-    return res.status(201).json({ message: "Account created" });
+    if (profilePic && !Array.isArray(profilePic)) {
+        if (!user.profilePic.id) {
+            cloudinary.uploader
+                .upload(profilePic.tempFilePath, {
+                    folder: CLOUDINARY_DIR.USER_PROFILE,
+                })
+                .then((info) => {
+                    logger.info(`Uploaded profile pic: ${info.url}`);
+                    return User.findByIdAndUpdate(user._id, {
+                        $set: {
+                            profilePic: { URL: info.url, id: info.public_id },
+                        },
+                    });
+                })
+                .catch((e) => {
+                    logger.error(`Failed to upload profile pic: ${e}`);
+                });
+        } else {
+            cloudinary.uploader
+                .upload(profilePic.tempFilePath, {
+                    public_id: (req.user as UserDocument).profilePic.id,
+                    overwrite: true,
+                })
+                .then((info) => {
+                    logger.info(`Uploaded profile pic: ${info.url}`);
+                })
+                .catch((e) => {
+                    logger.error(`Failed to upload profile pic: ${e}`);
+                });
+        }
+    }
+
+    await User.findByIdAndUpdate(user._id, { $set: req.body });
+
+    return res.status(200).json({ message: "Profile updated" });
 }
 
 export async function getUserNameOrEmailExists(
