@@ -11,4 +11,5 @@ export const UserSchema = z.object({
     ),
     createdAt: z.string().transform((v) => new Date(v)),
     updatedAt: z.string().transform((v) => new Date(v)),
+    winPoints: z.number().min(0),
 });

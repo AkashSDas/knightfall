@@ -139,6 +139,9 @@ export class UserDocument {
     )
     oauthProviders: OAuthProviderSubDocument[];
 
+    @prop({ type: Number, default: 0, min: 0 })
+    winPoints: number;
+
     // =================================
     // Instance methods
     // =================================
