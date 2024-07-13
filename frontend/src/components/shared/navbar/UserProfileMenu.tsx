@@ -2,10 +2,12 @@ import {
     Avatar,
     Button,
     Divider,
+    HStack,
     Menu,
     MenuButton,
     MenuList,
     Portal,
+    Text,
 } from "@chakra-ui/react";
 import { useUser } from "../../../hooks/auth";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
@@ -67,6 +69,36 @@ export function UserProfileMenu() {
                         p="1rem"
                         boxShadow="dark-lg"
                     >
+                        <Link to={`/player/${user.id}`}>
+                            <HStack
+                                px="12px"
+                                w="100%"
+                                justifyContent="start"
+                                gap="12px"
+                                h="38px"
+                                borderRadius="10px"
+                                _hover={{ bgColor: "gray.600" }}
+                            >
+                                <Avatar
+                                    border="1.5px solid black"
+                                    src={user.profilePic.URL}
+                                    h="26px"
+                                    w="26px"
+                                    objectFit="cover"
+                                />
+
+                                <Text
+                                    fontSize="14px"
+                                    fontWeight="600"
+                                    color="gray.200"
+                                >
+                                    @{user.username}
+                                </Text>
+                            </HStack>
+                        </Link>
+
+                        <Divider my="12px" borderColor="gray.500" />
+
                         <Link to="/history">
                             <UserProfileMenuItem
                                 icon={faTrophy}
