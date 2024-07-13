@@ -17,6 +17,9 @@ const endpoints = {
     // User
     GET_LOGGED_IN_USER_PROFILE: "/api/user/profile",
     UPDATE_USER_PROFILE: "/api/user/profile",
+    GET_PUBLIC_PROFILE({ userId }: { userId: string }) {
+        return `/api/user/profile/${userId}`;
+    },
 
     // Notification
     GET_NOTIFICATIONS: "/api/notification",
@@ -93,7 +96,8 @@ class APIProvider {
             let endpoint: string;
             if (typeof url !== "string") {
                 if ("urlPayload" in config) {
-                    endpoint = url(config.urlPayload);
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    endpoint = url(config.urlPayload as any);
                 } else {
                     throw new Error(
                         `'config.urlPayload' is missing for ${action}`
