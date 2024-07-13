@@ -24,6 +24,14 @@ class UserService {
             GetLoggedInUserProfile
         );
     }
+
+    async updateProfile(payload: FormData) {
+        return await api.fetch(
+            "UPDATE_USER_PROFILE",
+            { method: HTTP_METHOD.PATCH, isProtected: true, data: payload },
+            (_data, status) => status === 200
+        );
+    }
 }
 
 export const userService = new UserService();

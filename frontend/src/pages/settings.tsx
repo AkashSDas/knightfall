@@ -11,6 +11,7 @@ import {
 import { BaseLayout } from "../components/shared/layout/BaseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPeopleGroup, faSkull } from "@fortawesome/free-solid-svg-icons";
+import { UpdateUserProfileForm } from "../components/settings/profile/UpdateUserProfileForm";
 
 export function SettingsPage() {
     return (
@@ -55,7 +56,9 @@ export function SettingsPage() {
                         </TabList>
 
                         <TabPanels>
-                            <TabPanel>Profile form</TabPanel>
+                            <TabPanel>
+                                <UpdateUserProfileForm />
+                            </TabPanel>
 
                             <TabPanel>Friends List</TabPanel>
                         </TabPanels>

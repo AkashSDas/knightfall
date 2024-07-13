@@ -16,6 +16,7 @@ const endpoints = {
 
     // User
     GET_LOGGED_IN_USER_PROFILE: "/api/user/profile",
+    UPDATE_USER_PROFILE: "/api/user/profile",
 
     // Notification
     GET_NOTIFICATIONS: "/api/notification",
