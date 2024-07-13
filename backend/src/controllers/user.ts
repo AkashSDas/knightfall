@@ -88,15 +88,10 @@ export async function getLoggedInUserProfile(req: Request, res: Response) {
 }
 
 export async function getUserPublicProfile(
-    req: Request<
-        unknown,
-        unknown,
-        unknown,
-        schemas.GetUserPublicProfile["query"]
-    >,
+    req: Request<schemas.GetUserPublicProfile["params"]>,
     res: Response,
 ) {
-    const { userId } = req.query;
+    const { userId } = req.params;
 
     const results = await User.aggregate([
         {

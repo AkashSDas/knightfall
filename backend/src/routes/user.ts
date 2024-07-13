@@ -31,7 +31,7 @@ router.get(
 );
 
 router.get(
-    "/public-profile",
+    "/profile/:userId",
     validateResource(schemas.getUserPublicProfileSchema),
     handleMiddlewareError(ctrls.getUserPublicProfile),
     sendErrorResponse,

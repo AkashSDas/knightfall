@@ -34,7 +34,7 @@ export const checkUsernameOrEmailAlreadyTakenSchema = z.object({
 });
 
 export const getUserPublicProfileSchema = z.object({
-    query: z.object({
+    params: z.object({
         userId: z
             .string({ required_error: "Required" })
             .refine((val) => Types.ObjectId.isValid(val), {
