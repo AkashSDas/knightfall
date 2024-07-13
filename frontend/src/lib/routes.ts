@@ -5,6 +5,7 @@ import { HomePage } from "../pages";
 import { SignupPage } from "../pages/auth/signup";
 import { LoginPage } from "../pages/auth/login";
 import { NotificationsPage } from "../pages/notifications";
+import { SettingsPage } from "../pages/settings";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -22,5 +23,9 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
         path: "/notifications",
         Component: NotificationsPage,
+    },
+    {
+        path: "/settings",
+        Component: SettingsPage,
     },
 ];

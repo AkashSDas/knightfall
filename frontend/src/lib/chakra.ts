@@ -30,6 +30,33 @@ export const theme = extendTheme({
         },
     },
     components: {
+        Tabs: {
+            defaultProps: {
+                variant: "buttonTab",
+            },
+            variants: {
+                buttonTab: {
+                    tab: {
+                        mr: "8px",
+                        bgColor: "gray.500",
+                        borderRadius: "10px",
+                        fontWeight: "700",
+                        borderBottom: "4.5px solid",
+                        borderBottomColor: "gray.700",
+                        transition:
+                            "background-color 0.2s ease-in-out, border-bottom-width 0.2s ease-in-out",
+                        _hover: { bgColor: "gray.600" },
+                        _selected: {
+                            bgColor: "blue.600",
+                            borderBottom: "4.5px solid",
+                            borderBottomColor: "blue.900",
+                        },
+                        gap: "8px",
+                        maxW: "120px",
+                    },
+                },
+            },
+        },
         FormLabel: {
             baseStyle: {
                 color: "gray.100",
