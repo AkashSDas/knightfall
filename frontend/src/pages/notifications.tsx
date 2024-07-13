@@ -18,8 +18,17 @@ import {
 import { notificationService } from "../services/notification";
 import { EmptyNotification } from "../components/notification/EmptyNotification";
 import { NotificationCard } from "../components/notification/NotificationCard";
+import { AuthProtectedBaseLayout } from "../components/shared/layout/AuthProtectedBaseLayout";
 
 export function NotificationsPage() {
+    return (
+        <AuthProtectedBaseLayout>
+            <NotificationContent />
+        </AuthProtectedBaseLayout>
+    );
+}
+
+function NotificationContent() {
     const { notifications, isLoading } = useNotifications({ limit: 5 });
     const hasUnseenMessage = notifications.some((n) => n.seen === false);
     const queryClient = useQueryClient();

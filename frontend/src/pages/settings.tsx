@@ -12,8 +12,17 @@ import { BaseLayout } from "../components/shared/layout/BaseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPeopleGroup, faSkull } from "@fortawesome/free-solid-svg-icons";
 import { UpdateUserProfileForm } from "../components/settings/profile/UpdateUserProfileForm";
+import { AuthProtectedBaseLayout } from "../components/shared/layout/AuthProtectedBaseLayout";
 
 export function SettingsPage() {
+    return (
+        <AuthProtectedBaseLayout>
+            <SettingsContent />
+        </AuthProtectedBaseLayout>
+    );
+}
+
+function SettingsContent() {
     return (
         <BaseLayout>
             <Center py="2rem" px="1rem">
