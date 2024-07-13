@@ -6,6 +6,8 @@ import { SignupPage } from "../pages/auth/signup";
 import { LoginPage } from "../pages/auth/login";
 import { NotificationsPage } from "../pages/notifications";
 import { SettingsPage } from "../pages/settings";
+import { HistoryPage } from "../pages/history";
+import { FriendsPage } from "../pages/friends";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -27,5 +29,13 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
         path: "/settings",
         Component: SettingsPage,
+    },
+    {
+        path: "/history",
+        Component: HistoryPage,
+    },
+    {
+        path: "/friends",
+        Component: FriendsPage,
     },
 ];
