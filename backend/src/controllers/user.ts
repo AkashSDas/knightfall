@@ -104,15 +104,15 @@ export async function getUserPublicProfile(
             },
         },
         {
-            $unwind: "$users",
-        },
-        {
-            $set: {
-                rank: { $add: ["$index", 1] }, // Assuming index starts from 0
+            $unwind: {
+                path: "$users",
+                includeArrayIndex: "index",
             },
         },
         {
-            $unset: "_id",
+            $set: {
+                rank: { $add: ["$index", 1] }, // Ensure index starts from 0
+            },
         },
         {
             $project: {
@@ -138,9 +138,7 @@ export async function getUserPublicProfile(
             },
         },
         {
-            $match: {
-                id: new Types.ObjectId(userId),
-            },
+            $unset: "_id",
         },
     ]);
 
