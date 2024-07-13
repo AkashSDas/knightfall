@@ -16,6 +16,14 @@ import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import { BaseApiError } from "../utils/errors";
 
+export const ACHIEVEMENT = {
+    STRATEGIST: "strategist",
+    WARRIOR: "warrior",
+    SPEED: "speed",
+    CASUAL: "casual",
+    SURVIVOR: "survivor",
+} as const;
+
 /** Handle error due to violation of unique fields */
 function handleDuplicateError(err: unknown, user: any, next: any) {
     if (err instanceof Error) {
@@ -141,6 +149,13 @@ export class UserDocument {
 
     @prop({ type: Number, default: 0, min: 0 })
     winPoints: number;
+
+    @prop({
+        type: () => [String],
+        enum: Object.values(ACHIEVEMENT),
+        required: true,
+    })
+    achievements: (typeof ACHIEVEMENT)[keyof typeof ACHIEVEMENT][];
 
     // =================================
     // Instance methods

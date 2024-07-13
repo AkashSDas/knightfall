@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { z } from "zod";
 
 // ====================================
@@ -16,7 +17,7 @@ export const updateProfileSchema = z.object({
         .strict({ message: "Extra fields not allowed" }),
 });
 
-export const checkUsernameOrEmailAlreadyTaken = z.object({
+export const checkUsernameOrEmailAlreadyTakenSchema = z.object({
     body: z
         .object({
             username: z
@@ -32,11 +33,22 @@ export const checkUsernameOrEmailAlreadyTaken = z.object({
         .strict({ message: "Extra fields not allowed" }),
 });
 
+export const getUserPublicProfileSchema = z.object({
+    query: z.object({
+        userId: z
+            .string({ required_error: "Required" })
+            .refine((val) => Types.ObjectId.isValid(val), {
+                message: "Invalid 'userId'.",
+            }),
+    }),
+});
+
 // ====================================
 // Types
 // ====================================
 
 export type UpdateProfile = z.infer<typeof updateProfileSchema>;
 export type CheckUsernameOrEmailAlreadyTaken = z.infer<
-    typeof checkUsernameOrEmailAlreadyTaken
+    typeof checkUsernameOrEmailAlreadyTakenSchema
 >;
+export type GetUserPublicProfile = z.infer<typeof getUserPublicProfileSchema>;

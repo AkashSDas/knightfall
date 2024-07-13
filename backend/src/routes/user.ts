@@ -10,7 +10,7 @@ export const router = Router();
 
 router.post(
     "/check-uniqueness",
-    validateResource(schemas.checkUsernameOrEmailAlreadyTaken),
+    validateResource(schemas.checkUsernameOrEmailAlreadyTakenSchema),
     handleMiddlewareError(ctrls.getUserNameOrEmailExists),
     sendErrorResponse,
 );
@@ -27,5 +27,12 @@ router.get(
     "/profile",
     handleMiddlewareError(middlewares.verifyAuth),
     handleMiddlewareError(ctrls.getLoggedInUserProfile),
+    sendErrorResponse,
+);
+
+router.get(
+    "/public-profile",
+    validateResource(schemas.getUserPublicProfileSchema),
+    handleMiddlewareError(ctrls.getUserPublicProfile),
     sendErrorResponse,
 );

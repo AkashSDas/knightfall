@@ -5,6 +5,7 @@ import { BaseApiError } from "../utils/errors";
 import { v2 as cloudinary } from "cloudinary";
 import { CLOUDINARY_DIR } from "../utils/cloudinary";
 import { logger } from "../utils/logger";
+import { Types } from "mongoose";
 
 /** Controller to update user profile */
 export async function updateProfileCtrl(
@@ -84,4 +85,73 @@ export async function getUserNameOrEmailExists(
  */
 export async function getLoggedInUserProfile(req: Request, res: Response) {
     return res.status(200).json({ user: req.user as UserDocument });
+}
+
+export async function getUserPublicProfile(
+    req: Request<
+        unknown,
+        unknown,
+        unknown,
+        schemas.GetUserPublicProfile["query"]
+    >,
+    res: Response,
+) {
+    const { userId } = req.query;
+
+    const results = await User.aggregate([
+        {
+            $sort: { winPoints: -1 },
+        },
+        {
+            $group: {
+                _id: null,
+                users: { $push: "$$ROOT" },
+            },
+        },
+        {
+            $unwind: "$users",
+        },
+        {
+            $set: {
+                rank: { $add: ["$index", 1] }, // Assuming index starts from 0
+            },
+        },
+        {
+            $unset: "_id",
+        },
+        {
+            $project: {
+                id: "$users._id",
+                username: "$users.username",
+                isBanned: "$users.isBanned",
+                profilePic: "$users.profilePic",
+                winPoints: "$users.winPoints",
+                achievements: "$users.achievements",
+                rank: {
+                    $switch: {
+                        branches: [
+                            { case: { $eq: ["$rank", 1] }, then: "Top 1" },
+                            { case: { $eq: ["$rank", 2] }, then: "Top 2" },
+                            { case: { $eq: ["$rank", 3] }, then: "Top 3" },
+                            { case: { $lte: ["$rank", 10] }, then: "Top 10" },
+                            { case: { $lte: ["$rank", 50] }, then: "Top 50" },
+                            { case: { $lte: ["$rank", 100] }, then: "Top 100" },
+                        ],
+                        default: "Above 100",
+                    },
+                },
+            },
+        },
+        {
+            $match: {
+                id: new Types.ObjectId(userId),
+            },
+        },
+    ]);
+
+    if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ user: results[0] });
 }
