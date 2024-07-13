@@ -4,10 +4,10 @@ import { createBrowserRouter } from "react-router-dom";
 import { HomePage } from "../pages";
 import { SignupPage } from "../pages/auth/signup";
 import { LoginPage } from "../pages/auth/login";
-import { NotificationsPage } from "../pages/notifications";
-import { SettingsPage } from "../pages/settings";
-import { HistoryPage } from "../pages/history";
-import { FriendsPage } from "../pages/friends";
+import { NotificationsPage } from "../pages/user/notifications";
+import { SettingsPage } from "../pages/user/settings";
+import { HistoryPage } from "../pages/user/history";
+import { FriendsPage } from "../pages/user/friends";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {

@@ -1,7 +1,7 @@
 import { Center, VStack, Heading } from "@chakra-ui/react";
-import { BaseLayout } from "../components/shared/layout/BaseLayout";
+import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 
-export function FriendsPage() {
+export function HistoryPage() {
     return (
         <BaseLayout>
             <Center py="2rem" px="1rem">
@@ -18,7 +18,7 @@ export function FriendsPage() {
                         letterSpacing="1px"
                         fontSize={{ base: "2.5rem", md: "3.5rem" }}
                     >
-                        Friends
+                        History
                     </Heading>
                 </VStack>
             </Center>

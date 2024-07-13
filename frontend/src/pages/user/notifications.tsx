@@ -7,20 +7,20 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../components/shared/layout/BaseLayout";
+import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "../hooks/auth";
+import { useUser } from "../../hooks/auth";
 import {
     useListenToNotifications,
     useNotificationRoom,
     useNotifications,
-} from "../hooks/notification";
-import { notificationService } from "../services/notification";
-import { EmptyNotification } from "../components/notification/EmptyNotification";
-import { NotificationCard } from "../components/notification/NotificationCard";
-import { AuthProtectedBaseLayout } from "../components/shared/layout/AuthProtectedBaseLayout";
-import { textShadowStyle } from "../lib/chakra";
-import { ChessBoardBackground } from "../components/shared/chess-board-background/ChessBoardBackground";
+} from "../../hooks/notification";
+import { notificationService } from "../../services/notification";
+import { EmptyNotification } from "../../components/notification/EmptyNotification";
+import { NotificationCard } from "../../components/notification/NotificationCard";
+import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
+import { textShadowStyle } from "../../lib/chakra";
+import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
 
 export function NotificationsPage() {
     return (

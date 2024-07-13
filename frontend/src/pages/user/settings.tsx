@@ -8,13 +8,13 @@ import {
     TabPanel,
     TabPanels,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../components/shared/layout/BaseLayout";
+import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPeopleGroup, faSkull } from "@fortawesome/free-solid-svg-icons";
-import { UpdateUserProfileForm } from "../components/settings/profile/UpdateUserProfileForm";
-import { AuthProtectedBaseLayout } from "../components/shared/layout/AuthProtectedBaseLayout";
-import { ChessBoardBackground } from "../components/shared/chess-board-background/ChessBoardBackground";
-import { textShadowStyle } from "../lib/chakra";
+import { UpdateUserProfileForm } from "../../components/settings/profile/UpdateUserProfileForm";
+import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
+import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
+import { textShadowStyle } from "../../lib/chakra";
 
 export function SettingsPage() {
     return (
