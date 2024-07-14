@@ -32,6 +32,14 @@ export async function emailSignupCtrl(
         html: `Click on the link to login: <a href="${link}">${link}</a>`,
     });
 
+    new Notifiy(user._id)
+        .createNotification({
+            type: "signupWelcome",
+            title: "Welcome to Knightfall",
+        })
+        .then((instance) => instance.sendNotification())
+        .catch((e) => logger.error(`[👋 FAILED notification]: ${e}`));
+
     return res.status(201).json({ message: "Account created" });
 }
 
@@ -140,6 +148,15 @@ export async function completeOAuthCtrl(
     );
 
     if (!user) throw new BaseApiError(401, "Unauthorized");
+
+    new Notifiy(user._id)
+        .createNotification({
+            type: "signupWelcome",
+            title: "Welcome to Knightfall",
+        })
+        .then((instance) => instance.sendNotification())
+        .catch((e) => logger.error(`[👋 FAILED notification]: ${e}`));
+
     return res.status(200).json({ user });
 }
 
