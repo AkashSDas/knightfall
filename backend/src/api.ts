@@ -12,6 +12,7 @@ import { swaggerSpec } from "./utils/swagger";
 import { router as authRouter } from "./routes/auth";
 import { router as userRouter } from "./routes/user";
 import { router as notificationRouter } from "./routes/notification";
+import { router as friendRouter } from "./routes/friend";
 
 if (process.env.NODE_ENV !== "production") config();
 
@@ -51,6 +52,7 @@ app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/notification", notificationRouter);
+app.use("/api/friend", friendRouter);
 
 app.get("/api/test", function testRoute(req, res) {
     res.status(200).json({ message: "Knightfall is online." });
