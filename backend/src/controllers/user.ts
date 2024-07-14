@@ -140,6 +140,9 @@ export async function getUserPublicProfile(
         {
             $unset: "_id",
         },
+        {
+            $match: { id: new Types.ObjectId(userId) },
+        },
     ]);
 
     if (results.length === 0) {

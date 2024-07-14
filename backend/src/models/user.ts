@@ -68,11 +68,14 @@ function handleDuplicateError(err: unknown, user: any, next: any) {
         const user = (this as any).getQuery();
         const update = (this as any).getUpdate() as any;
 
+        const emailUpdate = update?.["$set"]?.email;
+        const usernameUpdate = update?.["$set"]?.username;
+
         // Validate email and username uniqueness
-        if (update.email || update.username) {
+        if (emailUpdate || usernameUpdate) {
             const query = [];
-            if (update.email) query.push({ email: update.email });
-            if (update.username) query.push({ username: update.username });
+            if (emailUpdate) query.push({ email: emailUpdate });
+            if (usernameUpdate) query.push({ username: usernameUpdate });
             const exists = await User.exists({ $or: query });
 
             if (exists?._id && !exists._id.equals(user._id)) {
@@ -150,11 +153,22 @@ export class UserDocument {
     @prop({ type: Number, default: 0, min: 0 })
     winPoints: number;
 
-    @prop({
-        type: () => [String],
-        enum: Object.values(ACHIEVEMENT),
-        required: true,
-    })
+    @prop(
+        {
+            type: () => [String],
+            required: true,
+            default: [],
+            validate: {
+                validator: (achievements: string[]) => {
+                    return achievements.every((item) => {
+                        return Object.values(ACHIEVEMENT).includes(item as any);
+                    });
+                },
+                message: "Invalid achievements",
+            },
+        },
+        PropType.ARRAY,
+    )
     achievements: (typeof ACHIEVEMENT)[keyof typeof ACHIEVEMENT][];
 
     // =================================

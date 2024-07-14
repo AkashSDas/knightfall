@@ -159,6 +159,10 @@ export async function accessTokenCtrl(req: Request, res: Response) {
     }
 
     try {
+        // Not using `BaseApiError` inside `jwt.verify` callback error is thrown
+        // inside a callback function, it doesn't propagate to the outer context.
+        // This means the error won't be caught by the `handleMiddlewareError` function.
+
         jwt.verify(
             refreshToken,
             process.env.REFRESH_TOKEN_SECRET,
@@ -167,16 +171,16 @@ export async function accessTokenCtrl(req: Request, res: Response) {
                 decoded: string | jwt.JwtPayload,
             ) {
                 if (err instanceof jwt.TokenExpiredError) {
-                    throw new BaseApiError(401, "Unauthorized. Token expired");
+                    return res.status(401).json({ message: "Unauthorized" });
                 } else if (err instanceof jwt.JsonWebTokenError) {
-                    throw new BaseApiError(401, "Unauthorized. Invalid token");
+                    return res.status(401).json({ message: "Unauthorized" });
                 } else if (err) {
-                    throw new BaseApiError(401, "Unauthorized");
+                    return res.status(401).json({ message: "Unauthorized" });
                 }
 
                 const user = await User.findById((decoded as any)._id);
                 if (!user) {
-                    throw new BaseApiError(401, "Unauthorized");
+                    return res.status(401).json({ message: "Unauthorized" });
                 }
 
                 const accessToken = user.createAccessToken();
@@ -184,7 +188,7 @@ export async function accessTokenCtrl(req: Request, res: Response) {
             },
         );
     } catch (error) {
-        throw new BaseApiError(401, "Unauthorized. Invalid token");
+        throw new BaseApiError(401, "Unauthorized");
     }
 }
 
