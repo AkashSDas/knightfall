@@ -10,11 +10,16 @@ import {
 } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPeopleGroup, faSkull } from "@fortawesome/free-solid-svg-icons";
+import {
+    faHashtag,
+    faPeopleGroup,
+    faSkull,
+} from "@fortawesome/free-solid-svg-icons";
 import { UpdateUserProfileForm } from "../../components/settings/profile/UpdateUserProfileForm";
 import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
 import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
 import { textShadowStyle } from "../../lib/chakra";
+import { SocialLogins } from "../../components/settings/profile/SocialLogins";
 
 export function SettingsPage() {
     return (
@@ -67,11 +72,8 @@ function SettingsContent() {
                             </Tab>
 
                             <Tab>
-                                <FontAwesomeIcon
-                                    icon={faPeopleGroup}
-                                    size="sm"
-                                />
-                                Friends
+                                <FontAwesomeIcon icon={faHashtag} size="sm" />
+                                Socail Login
                             </Tab>
                         </TabList>
 
@@ -80,7 +82,9 @@ function SettingsContent() {
                                 <UpdateUserProfileForm />
                             </TabPanel>
 
-                            <TabPanel>Friends List</TabPanel>
+                            <TabPanel>
+                                <SocialLogins />
+                            </TabPanel>
                         </TabPanels>
                     </Tabs>
                 </VStack>

@@ -53,7 +53,7 @@ export const theme = extendTheme({
                             borderBottomColor: "blue.900",
                         },
                         gap: "8px",
-                        maxW: "120px",
+                        minW: "120px",
                     },
                 },
             },
