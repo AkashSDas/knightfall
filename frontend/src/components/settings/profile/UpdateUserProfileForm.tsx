@@ -56,8 +56,14 @@ export function UpdateUserProfileForm() {
 
             return userService.updateProfile(formData);
         },
-        onSuccess(_data, _variables, _context) {
-            successToast("Porfile update");
+        onSuccess(data, _variables, _context) {
+            const [ok, err] = data;
+
+            if (err || !ok) {
+                errorToast(err?.message ?? "Failed to update profile");
+            } else {
+                successToast("Porfile update");
+            }
         },
         onError(error, _variables, _context) {
             errorToast(error.message);

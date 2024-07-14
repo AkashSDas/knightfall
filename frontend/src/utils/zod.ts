@@ -5,7 +5,7 @@ export const UserSchema = z.object({
     username: z.string().optional(),
     email: z.string(),
     isBanned: z.boolean(),
-    profilePic: z.object({ URL: z.string() }),
+    profilePic: z.object({ URL: z.string(), id: z.string().optional() }),
     oauthProviders: z.array(
         z.object({ sid: z.string(), provider: z.string() })
     ),
