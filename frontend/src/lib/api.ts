@@ -20,6 +20,7 @@ const endpoints = {
     GET_PUBLIC_PROFILE({ userId }: { userId: string }) {
         return `/api/user/profile/${userId}`;
     },
+    SEARCH_PLAYERS: "/api/user/search-players",
 
     // Notification
     GET_NOTIFICATIONS: "/api/notification",

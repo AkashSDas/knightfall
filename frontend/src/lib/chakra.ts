@@ -31,6 +31,14 @@ export const theme = extendTheme({
         },
     },
     components: {
+        Tooltip: {
+            baseStyle: {
+                border: "1.5px solid",
+                borderColor: "gray.600",
+                borderRadius: "6px",
+                px: "8px !important",
+            },
+        },
         Tabs: {
             defaultProps: {
                 variant: "buttonTab",

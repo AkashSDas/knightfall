@@ -10,7 +10,7 @@ import { HistoryPage } from "../pages/user/history";
 import { FriendsPage } from "../pages/user/friends";
 import { UserPublicProfilePage } from "../pages/public/user-public-profile";
 import { GlobalChatPage } from "../pages/public/global-chat";
-import { SearchPage } from "../pages/public/search";
+import { SearchPlayersPage } from "../pages/public/search-players";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -51,6 +51,6 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     },
     {
         path: "/search",
-        Component: SearchPage,
+        Component: SearchPlayersPage,
     },
 ];
