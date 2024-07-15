@@ -15,7 +15,12 @@ import {
 import LogoImg from "../../../assets/images/chess-logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBars,
+    faCommentDots,
+    faSearch,
+    faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/auth";
 import { NotificationMenu } from "../../notification/NotificationMenu";
 import { UserProfileMenu } from "./UserProfileMenu";
@@ -49,32 +54,50 @@ export function Navbar() {
 
             {/* Desktop navbar actions */}
             <Show above="md">
-                {isAuthenticated ? (
-                    <HStack gap="1.5rem">
-                        <NotificationMenu />
+                <HStack gap="1.5rem">
+                    <IconButton
+                        as={Link}
+                        to="/search"
+                        aria-label="Search Players"
+                        variant="ghost"
+                    >
+                        <FontAwesomeIcon icon={faSearch} size="lg" />
+                    </IconButton>
 
-                        <UserProfileMenu />
+                    <IconButton
+                        as={Link}
+                        to="/global-chat"
+                        aria-label="Global Chat"
+                        variant="ghost"
+                    >
+                        <FontAwesomeIcon icon={faCommentDots} size="lg" />
+                    </IconButton>
 
-                        <Button
-                            variant="contained"
-                            disabled={logoutMutation.isPending}
-                            isLoading={logoutMutation.isPending}
-                            onClick={() => logoutMutation.mutateAsync()}
-                        >
-                            Logout
-                        </Button>
-                    </HStack>
-                ) : (
-                    <HStack gap="1.5rem">
-                        <Button variant="contained" as={Link} to="/auth/login">
-                            Login
-                        </Button>
+                    {isAuthenticated ? (
+                        <>
+                            <NotificationMenu />
+                            <UserProfileMenu />
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                variant="contained"
+                                as={Link}
+                                to="/auth/login"
+                            >
+                                Login
+                            </Button>
 
-                        <Button variant="primary" as={Link} to="/auth/signup">
-                            Signup
-                        </Button>
-                    </HStack>
-                )}
+                            <Button
+                                variant="primary"
+                                as={Link}
+                                to="/auth/signup"
+                            >
+                                Signup
+                            </Button>
+                        </>
+                    )}
+                </HStack>
             </Show>
 
             {/* Mobile navbar */}

@@ -9,6 +9,8 @@ import { SettingsPage } from "../pages/user/settings";
 import { HistoryPage } from "../pages/user/history";
 import { FriendsPage } from "../pages/user/friends";
 import { UserPublicProfilePage } from "../pages/public/user-public-profile";
+import { GlobalChatPage } from "../pages/public/global-chat";
+import { SearchPage } from "../pages/public/search";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -42,5 +44,13 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
         path: "/player/:playerId",
         Component: UserPublicProfilePage,
+    },
+    {
+        path: "/global-chat",
+        Component: GlobalChatPage,
+    },
+    {
+        path: "/search",
+        Component: SearchPage,
     },
 ];

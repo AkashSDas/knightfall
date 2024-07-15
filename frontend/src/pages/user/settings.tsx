@@ -10,11 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faHashtag,
-    faPeopleGroup,
-    faSkull,
-} from "@fortawesome/free-solid-svg-icons";
+import { faHashtag, faSkull } from "@fortawesome/free-solid-svg-icons";
 import { UpdateUserProfileForm } from "../../components/settings/profile/UpdateUserProfileForm";
 import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
 import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";

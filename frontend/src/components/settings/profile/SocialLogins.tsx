@@ -1,18 +1,9 @@
-import {
-    Box,
-    Center,
-    Divider,
-    HStack,
-    Heading,
-    Image,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
+import { Center, HStack, Heading, Image, Text, VStack } from "@chakra-ui/react";
 import { useUser } from "../../../hooks/auth";
 import { textShadowStyle } from "../../../lib/chakra";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GoogleImage from "../../../assets/images/google.svg";
-import { faGhost, faSkull } from "@fortawesome/free-solid-svg-icons";
+import { faGhost } from "@fortawesome/free-solid-svg-icons";
 
 export function SocialLogins() {
     const { isAuthenticated, user } = useUser();
