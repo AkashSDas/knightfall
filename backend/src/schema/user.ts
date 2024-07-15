@@ -43,6 +43,41 @@ export const getUserPublicProfileSchema = z.object({
     }),
 });
 
+export const searchPlayerByUsernameOrUserIdSchema = z.object({
+    query: z
+        .object({
+            queryText: z
+                .string({ required_error: "Required" })
+                .min(2, "Too short")
+                .max(256, "Too long"),
+            limit: z
+                .string()
+                .regex(/^\d+$/)
+                .transform((limit) => parseInt(limit, 10))
+                .optional()
+                .refine((val) => val > 0, {
+                    message: "'limit' must be a positive integer.",
+                })
+                .refine((val) => val <= 20, {
+                    message: "'limit' must not exceed 20.",
+                }),
+            offset: z
+                .string()
+                .regex(/^\d+$/)
+                .transform((offset) => parseInt(offset, 10))
+                .optional()
+                .refine((val) => val >= 0, {
+                    message: "'offset' must be a positive integer.",
+                }),
+        })
+        .refine(
+            (data) => {
+                return !(data.limit !== undefined && data.offset === undefined);
+            },
+            { message: "'offset' must be provided if 'limit' is provided." },
+        ),
+});
+
 // ====================================
 // Types
 // ====================================
@@ -52,3 +87,6 @@ export type CheckUsernameOrEmailAlreadyTaken = z.infer<
     typeof checkUsernameOrEmailAlreadyTakenSchema
 >;
 export type GetUserPublicProfile = z.infer<typeof getUserPublicProfileSchema>;
+export type SearchPlayerByUsernameOrUserId = z.infer<
+    typeof searchPlayerByUsernameOrUserIdSchema
+>;

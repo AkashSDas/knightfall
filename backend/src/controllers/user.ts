@@ -151,3 +151,45 @@ export async function getUserPublicProfile(
 
     return res.status(200).json({ user: results[0] });
 }
+
+export async function searchPlayerByUsernameOrUserId(
+    req: Request<
+        unknown,
+        unknown,
+        unknown,
+        schemas.SearchPlayerByUsernameOrUserId["query"]
+    >,
+    res: Response,
+) {
+    const { queryText, limit, offset } = req.query;
+
+    if (Types.ObjectId.isValid(queryText)) {
+        const [players, totalCount] = await Promise.all([
+            User.aggregate([
+                { $match: { _id: new Types.ObjectId(queryText) } },
+                { $limit: limit },
+                { $skip: offset },
+            ]),
+            User.countDocuments({ _id: new Types.ObjectId(queryText) }),
+        ]);
+
+        return res
+            .status(200)
+            .json({ players, totalCount, nextPageOffset: offset + limit });
+    } else {
+        const [players, totalCount] = await Promise.all([
+            User.aggregate([
+                { $match: { username: { $regex: queryText, $options: "i" } } },
+                { $limit: limit },
+                { $skip: offset },
+            ]),
+            User.countDocuments({
+                username: { $regex: queryText, $options: "i" },
+            }),
+        ]);
+
+        return res
+            .status(200)
+            .json({ players, totalCount, nextPageOffset: offset + limit });
+    }
+}

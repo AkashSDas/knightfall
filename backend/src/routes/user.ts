@@ -36,3 +36,10 @@ router.get(
     handleMiddlewareError(ctrls.getUserPublicProfile),
     sendErrorResponse,
 );
+
+router.get(
+    "/search-players",
+    validateResource(schemas.searchPlayerByUsernameOrUserIdSchema),
+    handleMiddlewareError(ctrls.searchPlayerByUsernameOrUserId),
+    sendErrorResponse,
+);
