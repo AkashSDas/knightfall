@@ -8,6 +8,7 @@ import {
     MenuList,
     Portal,
     Text,
+    Tooltip,
 } from "@chakra-ui/react";
 import { useUser } from "../../../hooks/auth";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
@@ -32,28 +33,30 @@ export function UserProfileMenu() {
                 controls.start({ visibility: "hidden", opacity: 0, y: -10 });
             }}
         >
-            <MenuButton
-                as={Button}
-                variant="unstyled"
-                onClick={() => {
-                    controls.start({
-                        visibility: "visible",
-                        opacity: 1,
-                        y: 0,
-                    });
-                }}
-            >
-                <Avatar
-                    src={user.profilePic.URL}
-                    h="38px"
-                    w="38px"
-                    border="2px solid #303230"
-                    boxShadow="0px 0px 0px 2px #616261"
-                    transition="transform 0.3s ease-in-out"
-                    _hover={{ transform: "scale(0.95)" }}
-                    _active={{ transform: "scale(0.9)" }}
-                />
-            </MenuButton>
+            <Tooltip label="Profile" openDelay={500}>
+                <MenuButton
+                    as={Button}
+                    variant="unstyled"
+                    onClick={() => {
+                        controls.start({
+                            visibility: "visible",
+                            opacity: 1,
+                            y: 0,
+                        });
+                    }}
+                >
+                    <Avatar
+                        src={user.profilePic.URL}
+                        h="38px"
+                        w="38px"
+                        border="2px solid #303230"
+                        boxShadow="0px 0px 0px 2px #616261"
+                        transition="transform 0.3s ease-in-out"
+                        _hover={{ transform: "scale(0.95)" }}
+                        _active={{ transform: "scale(0.9)" }}
+                    />
+                </MenuButton>
+            </Tooltip>
 
             <Portal>
                 <AnimatePresence mode="wait">

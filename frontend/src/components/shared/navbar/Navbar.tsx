@@ -10,6 +10,8 @@ import {
     IconButton,
     Image,
     Show,
+    Text,
+    Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
 import LogoImg from "../../../assets/images/chess-logo.png";
@@ -17,6 +19,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
+    faChessKing,
     faCommentDots,
     faSearch,
     faXmark,
@@ -42,36 +45,55 @@ export function Navbar() {
             borderBottomColor="gray.900"
             zIndex={1}
         >
-            <Link to="/">
-                <Image
-                    onMouseDown={() => navigate("/")}
-                    src={LogoImg}
-                    alt="Knightfall Logo"
-                    w="37.85px"
-                    h="30.09px"
-                />
-            </Link>
+            <Tooltip
+                label={
+                    <Text>
+                        <FontAwesomeIcon
+                            icon={faChessKing}
+                            size="sm"
+                            style={{ marginRight: "6px" }}
+                            bounce
+                        />
+                        Knightfall
+                    </Text>
+                }
+                openDelay={500}
+            >
+                <Link to="/">
+                    <Image
+                        onMouseDown={() => navigate("/")}
+                        src={LogoImg}
+                        alt="Knightfall Logo"
+                        w="37.85px"
+                        h="30.09px"
+                    />
+                </Link>
+            </Tooltip>
 
             {/* Desktop navbar actions */}
             <Show above="md">
                 <HStack gap="1.5rem">
-                    <IconButton
-                        as={Link}
-                        to="/search"
-                        aria-label="Search Players"
-                        variant="ghost"
-                    >
-                        <FontAwesomeIcon icon={faSearch} size="lg" />
-                    </IconButton>
+                    <Tooltip label="Search Players" openDelay={500}>
+                        <IconButton
+                            as={Link}
+                            to="/search"
+                            aria-label="Search Players"
+                            variant="ghost"
+                        >
+                            <FontAwesomeIcon icon={faSearch} size="lg" />
+                        </IconButton>
+                    </Tooltip>
 
-                    <IconButton
-                        as={Link}
-                        to="/global-chat"
-                        aria-label="Global Chat"
-                        variant="ghost"
-                    >
-                        <FontAwesomeIcon icon={faCommentDots} size="lg" />
-                    </IconButton>
+                    <Tooltip label="Global Chat" openDelay={500}>
+                        <IconButton
+                            as={Link}
+                            to="/global-chat"
+                            aria-label="Global Chat"
+                            variant="ghost"
+                        >
+                            <FontAwesomeIcon icon={faCommentDots} size="lg" />
+                        </IconButton>
+                    </Tooltip>
 
                     {isAuthenticated ? (
                         <>

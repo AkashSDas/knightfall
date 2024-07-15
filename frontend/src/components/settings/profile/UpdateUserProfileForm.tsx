@@ -9,6 +9,7 @@ import {
     IconButton,
     Image,
     Input,
+    Tooltip,
     VStack,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -103,20 +104,22 @@ export function UpdateUserProfileForm() {
                     borderColor="gray.700"
                 />
 
-                <IconButton
-                    aria-label="Open image uploader"
-                    onClick={() => imgRef.current?.click()}
-                    variant="contained"
-                    shadow="dark-lg"
-                    pos="absolute"
-                    bottom="8px"
-                    right="8px"
-                    borderBottomWidth="4px"
-                    _hover={{ borderBottomWidth: "4px" }}
-                    _active={{ borderBottomWidth: "1px" }}
-                >
-                    <FontAwesomeIcon icon={faCamera} size="lg" />
-                </IconButton>
+                <Tooltip label="Change profile picture" openDelay={500}>
+                    <IconButton
+                        aria-label="Open image uploader"
+                        onClick={() => imgRef.current?.click()}
+                        variant="contained"
+                        shadow="dark-lg"
+                        pos="absolute"
+                        bottom="8px"
+                        right="8px"
+                        borderBottomWidth="4px"
+                        _hover={{ borderBottomWidth: "4px" }}
+                        _active={{ borderBottomWidth: "1px" }}
+                    >
+                        <FontAwesomeIcon icon={faCamera} size="lg" />
+                    </IconButton>
+                </Tooltip>
 
                 <input
                     type="file"

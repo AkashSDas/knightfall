@@ -169,7 +169,10 @@ export function SearchPlayersPage() {
                                         borderColor="gray.900 !important"
                                     />
 
-                                    <Tooltip label={player.username}>
+                                    <Tooltip
+                                        label={player.username}
+                                        openDelay={500}
+                                    >
                                         <Text
                                             flexGrow={1}
                                             noOfLines={1}
@@ -179,7 +182,10 @@ export function SearchPlayersPage() {
                                         </Text>
                                     </Tooltip>
 
-                                    <Tooltip label="Make friend">
+                                    <Tooltip
+                                        label="Make friend"
+                                        openDelay={500}
+                                    >
                                         <IconButton
                                             aria-label="Make friend"
                                             variant="ghost"

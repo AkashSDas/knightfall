@@ -11,6 +11,7 @@ import {
     Portal,
     Spinner,
     Text,
+    Tooltip,
 } from "@chakra-ui/react";
 import { faArrowCircleRight, faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -54,22 +55,28 @@ export function NotificationMenu() {
                 controls.start({ visibility: "hidden", opacity: 0, y: -10 });
             }}
         >
-            <MenuButton
-                as={IconButton}
-                variant="ghost"
-                onMouseEnter={btn.onHoverStart}
-                onMouseLeave={btn.onHoverEnd}
-                onClick={() => {
-                    controls.start({ visibility: "visible", opacity: 1, y: 0 });
-                }}
-                color={hasUnseenMessage ? "blue.400" : "gray.200"}
-            >
-                <FontAwesomeIcon
-                    icon={faBell}
-                    size="xl"
-                    shake={btn.bounce || hasUnseenMessage}
-                />
-            </MenuButton>
+            <Tooltip label="Notifications" openDelay={500}>
+                <MenuButton
+                    as={IconButton}
+                    variant="ghost"
+                    onMouseEnter={btn.onHoverStart}
+                    onMouseLeave={btn.onHoverEnd}
+                    onClick={() => {
+                        controls.start({
+                            visibility: "visible",
+                            opacity: 1,
+                            y: 0,
+                        });
+                    }}
+                    color={hasUnseenMessage ? "blue.400" : "gray.200"}
+                >
+                    <FontAwesomeIcon
+                        icon={faBell}
+                        size="xl"
+                        shake={btn.bounce || hasUnseenMessage}
+                    />
+                </MenuButton>
+            </Tooltip>
 
             <Portal>
                 <AnimatePresence mode="wait">
