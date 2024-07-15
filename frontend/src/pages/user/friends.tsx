@@ -1,27 +1,31 @@
-import { Center, VStack, Heading } from "@chakra-ui/react";
+import { VStack, Text } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
+import { AnimatePresence, motion } from "framer-motion";
+import { Sidebar } from "../../components/friends-chat/sidebar/Sidebar";
+import { friendsChatSelectors } from "../../store/friends-chat/slice";
+import { useAppSelector } from "../../hooks/store";
 
 export function FriendsPage() {
+    const { isSidebarOpen } = useAppSelector(
+        friendsChatSelectors.selectSidebar
+    );
+
     return (
         <BaseLayout>
-            <Center py="2rem" px="1rem">
+            <Sidebar />
+
+            <AnimatePresence mode="wait">
                 <VStack
-                    w="100%"
-                    maxW="700px"
-                    as="main"
-                    alignItems="start"
-                    gap="1rem"
+                    as={motion.main}
+                    transition="margin 0.2 cubic-bezier(0.4, 0, 0.2, 1)"
+                    initial={{ marginLeft: "400px" }}
+                    animate={{ marginLeft: !isSidebarOpen ? "40px" : "400px" }}
+                    bgColor="yellow.700"
                 >
-                    <Heading
-                        fontFamily="cubano"
-                        as="h1"
-                        letterSpacing="1px"
-                        fontSize={{ base: "2.5rem", md: "3.5rem" }}
-                    >
-                        Friends
-                    </Heading>
+                    <Text>Hello</Text>
+                    <Text alignSelf="end">Good</Text>
                 </VStack>
-            </Center>
+            </AnimatePresence>
         </BaseLayout>
     );
 }

@@ -6,8 +6,12 @@ import { UnknownAction, ThunkAction, configureStore } from "@reduxjs/toolkit";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type * as _Redux from "@reduxjs/toolkit";
 
+import { friendsChatSlice } from "./friends-chat/slice";
+
 export const store = configureStore({
-    reducer: {},
+    reducer: {
+        friendsChat: friendsChatSlice.reducer,
+    },
 });
 
 export type AppDispatch = typeof store.dispatch;
