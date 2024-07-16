@@ -2,9 +2,8 @@ import {
     VStack,
     Tooltip,
     IconButton,
-    Text,
-    HStack,
     Button,
+    useBreakpointValue,
 } from "@chakra-ui/react";
 import {
     faAngleDoubleLeft,
@@ -17,9 +16,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../../hooks/store";
 import {
+    FriendsChatState,
     friendsChatActions,
     friendsChatSelectors,
 } from "../../../store/friends-chat/slice";
+import { useEffect } from "react";
 
 export function Sidebar() {
     const controls = useAnimation();
@@ -27,12 +28,40 @@ export function Sidebar() {
         friendsChatSelectors.selectSidebar
     );
     const dispatch = useAppDispatch();
+    const isMd = useBreakpointValue({ base: false, md: true }, { ssr: false });
+
+    function openContent(payload: FriendsChatState["mainContent"]) {
+        dispatch(friendsChatActions.setMainContent(payload));
+    }
+
+    useEffect(
+        function () {
+            if (isMd) {
+                openContent({ type: "friends" });
+                controls.start({
+                    translateX: "0px",
+                    transition: { ease: "easeInOut" },
+                });
+                dispatch(friendsChatActions.setSidebarOpen(true));
+            } else {
+                openContent({ type: "friends" });
+                controls.start({
+                    translateX: "-240px",
+                    transition: { ease: "easeInOut" },
+                });
+                dispatch(friendsChatActions.setSidebarOpen(false));
+            }
+        },
+        [isMd]
+    );
+
+    if (!isMd) return null;
 
     return (
         <AnimatePresence mode="wait">
             <VStack
                 alignItems="start"
-                w="240px"
+                w={isMd ? "240px" : "0px"}
                 bgColor="gray.700"
                 borderRight="2px solid"
                 borderRightColor="gray.600"
@@ -111,6 +140,8 @@ export function Sidebar() {
                     </IconButton>
                 </Tooltip>
 
+                {/* Top content */}
+
                 <VStack alignItems="start" w="100%" my="2rem" gap={0}>
                     <Tooltip
                         label="Search your friends"
@@ -133,6 +164,7 @@ export function Sidebar() {
                             transition="all 0.2s ease-in-out"
                             h="38px"
                             borderRadius="8px"
+                            onClick={() => openContent({ type: "search" })}
                         >
                             Search
                         </Button>
@@ -154,6 +186,9 @@ export function Sidebar() {
                             justifyContent="start"
                             h="38px"
                             borderRadius="8px"
+                            onClick={() =>
+                                openContent({ type: "friendRequests" })
+                            }
                         >
                             Friend Requests
                         </Button>
@@ -179,6 +214,7 @@ export function Sidebar() {
                             justifyContent="start"
                             h="38px"
                             borderRadius="8px"
+                            onClick={() => openContent({ type: "blocked" })}
                         >
                             Blocked
                         </Button>

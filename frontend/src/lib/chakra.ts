@@ -151,6 +151,30 @@ export const theme = extendTheme({
                         borderBottomColor: "gray.200",
                     },
                 },
+                darkContained: {
+                    color: "gray.100",
+                    bgColor: "gray.500",
+                    borderRadius: "10px",
+                    borderBottom: "6px solid",
+                    borderBottomColor: "gray.600",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: {
+                        bgColor: "gray.600",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "gray.700",
+                        _disabled: {
+                            bgColor: "gray.700",
+                            borderBottom: "6px solid",
+                            borderBottomColor: "gray.700",
+                        },
+                    },
+                    _active: {
+                        bgColor: "gray.700",
+                        borderBottom: "2px solid",
+                        borderBottomColor: "gray.700",
+                    },
+                },
                 ghost: {
                     color: "gray.200",
                     borderRadius: "10px",
