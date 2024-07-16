@@ -26,7 +26,7 @@ import { getWinPointsSrc } from "../../utils/achievements";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const schema = object({ queryText: string({ required_error: "Required" }) });
+const schema = object({ queryText: string({}).optional() });
 export type SearchInputs = z.infer<typeof schema>;
 
 export function SearchPlayersPage() {
@@ -36,10 +36,18 @@ export function SearchPlayersPage() {
     });
     const [searchText, setSearchText] = useState("");
 
-    const { fetchMore, hasMore, isLoading, players, isFetchingMore } =
-        useSearchPlayers({ searchText });
+    const {
+        fetchMore,
+        hasMore,
+        isLoading,
+        players,
+        totalCount,
+        isFetchingMore,
+    } = useSearchPlayers({ searchText });
 
-    const submit = form.handleSubmit((data) => setSearchText(data.queryText));
+    const submit = form.handleSubmit((data) =>
+        setSearchText(data.queryText ?? "")
+    );
 
     return (
         <BaseLayout>
@@ -72,7 +80,6 @@ export function SearchPlayersPage() {
                                 form.formState.errors.queryText ? true : false
                             }
                             mb="0.5rem"
-                            isRequired
                         >
                             <FormLabel fontSize="14px">
                                 Username or ID
@@ -106,7 +113,7 @@ export function SearchPlayersPage() {
                     </HStack>
 
                     <InfiniteScroll
-                        dataLength={players.length}
+                        dataLength={totalCount}
                         next={fetchMore}
                         hasMore={hasMore}
                         style={{ width: "100%" }}
@@ -154,12 +161,13 @@ export function SearchPlayersPage() {
                                     px="12px"
                                     h="60px"
                                     borderRadius="10px"
-                                    bgColor="gray.600"
+                                    bgColor="gray.700"
                                     border="1.5px solid"
-                                    borderColor="gray.500"
+                                    borderColor="gray.600"
                                     cursor="pointer"
-                                    _hover={{ bgColor: "gray.700" }}
                                     role="grid"
+                                    mb="12px"
+                                    transition="all 0.2s ease-in-out"
                                 >
                                     <Avatar
                                         src={player.profilePic.URL}

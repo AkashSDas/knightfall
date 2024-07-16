@@ -12,13 +12,14 @@ export function useSearchPlayers({
     isLoading: boolean;
     players: SearchPlayers["players"];
     isFetchingMore: boolean;
+    totalCount: number;
     fetchMore: () => void;
 } {
     const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } =
         useInfiniteQuery({
             // eslint-disable-next-line @tanstack/query/exhaustive-deps
             queryKey: ["searchPlayers", searchText],
-            enabled: searchText.length > 2,
+            // enabled: searchText.length > 2,
             queryFn: ({ pageParam }) => {
                 return userService.searchPlayers(searchText, limit, pageParam);
             },
@@ -44,12 +45,11 @@ export function useSearchPlayers({
             [] as SearchPlayers["players"]
         ) ?? [];
 
-    console.log({ data, players });
-
     return {
         players,
         isLoading,
         fetchMore: fetchNextPage,
+        totalCount: data?.pages[0]?.totalCount ?? 0,
         hasMore: hasNextPage,
         isFetchingMore: isFetchingNextPage,
     };
