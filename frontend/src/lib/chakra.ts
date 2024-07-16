@@ -154,6 +154,7 @@ export const theme = extendTheme({
                 ghost: {
                     color: "gray.200",
                     borderRadius: "10px",
+                    fontFamily: "body",
                     transition:
                         "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                     _hover: {

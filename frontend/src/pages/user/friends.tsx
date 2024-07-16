@@ -18,8 +18,8 @@ export function FriendsPage() {
                 <VStack
                     as={motion.main}
                     transition="margin 0.2 cubic-bezier(0.4, 0, 0.2, 1)"
-                    initial={{ marginLeft: "400px" }}
-                    animate={{ marginLeft: !isSidebarOpen ? "40px" : "400px" }}
+                    initial={{ marginLeft: "240px" }}
+                    animate={{ marginLeft: !isSidebarOpen ? "40px" : "240px" }}
                     bgColor="yellow.700"
                 >
                     <Text>Hello</Text>

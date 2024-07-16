@@ -1,7 +1,17 @@
-import { VStack, Tooltip, IconButton, Text } from "@chakra-ui/react";
+import {
+    VStack,
+    Tooltip,
+    IconButton,
+    Text,
+    HStack,
+    Button,
+} from "@chakra-ui/react";
 import {
     faAngleDoubleLeft,
+    faBan,
     faGripLinesVertical,
+    faInbox,
+    faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
@@ -22,7 +32,7 @@ export function Sidebar() {
         <AnimatePresence mode="wait">
             <VStack
                 alignItems="start"
-                w="400px"
+                w="240px"
                 bgColor="gray.700"
                 borderRight="2px solid"
                 borderRightColor="gray.600"
@@ -34,11 +44,15 @@ export function Sidebar() {
                 initial={{ translateX: "0" }}
                 animate={controls}
                 role="group"
-                px="40px"
+                px={isSidebarOpen ? "8px" : "40px"}
             >
-                <Text>Hello</Text>
+                {/* Open and close sidebar buttons */}
 
-                <Tooltip label={"Close sidebar"} openDelay={500}>
+                <Tooltip
+                    label={"Close sidebar"}
+                    openDelay={200}
+                    placement="right"
+                >
                     <IconButton
                         opacity={0}
                         _groupHover={{ opacity: isSidebarOpen ? 1 : 0 }}
@@ -46,18 +60,18 @@ export function Sidebar() {
                         variant="ghost"
                         aria-label="Close sidebar"
                         color="gray.200"
-                        h="38px"
+                        h="28px"
                         right="4px"
                         top="4px"
+                        borderRadius="8px"
+                        px="8px"
                         pos="absolute"
                         transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
                         _active={{ bgColor: "gray.600" }}
                         onClick={() => {
                             controls.start({
-                                translateX: "-360px",
-                                transition: {
-                                    ease: "easeInOut",
-                                },
+                                translateX: "-200px",
+                                transition: { ease: "easeInOut" },
                             });
                             dispatch(friendsChatActions.setSidebarOpen(false));
                         }}
@@ -66,7 +80,11 @@ export function Sidebar() {
                     </IconButton>
                 </Tooltip>
 
-                <Tooltip label={"Open sidebar"} openDelay={500}>
+                <Tooltip
+                    label={"Open sidebar"}
+                    openDelay={200}
+                    placement="right"
+                >
                     <IconButton
                         opacity={isSidebarOpen ? 0 : 1}
                         pointerEvents={!isSidebarOpen ? "initial" : "none"}
@@ -82,9 +100,7 @@ export function Sidebar() {
                         onClick={() => {
                             controls.start({
                                 translateX: "0px",
-                                transition: {
-                                    ease: "easeInOut",
-                                },
+                                transition: { ease: "easeInOut" },
                             });
                             dispatch(friendsChatActions.setSidebarOpen(true));
                         }}
@@ -94,6 +110,80 @@ export function Sidebar() {
                         <FontAwesomeIcon icon={faGripLinesVertical} size="sm" />
                     </IconButton>
                 </Tooltip>
+
+                <VStack alignItems="start" w="100%" my="2rem" gap={0}>
+                    <Tooltip
+                        label="Search your friends"
+                        openDelay={200}
+                        placement="right"
+                    >
+                        <Button
+                            variant="ghost"
+                            leftIcon={
+                                <FontAwesomeIcon
+                                    icon={faSearch}
+                                    size="sm"
+                                    style={{ marginRight: "8px" }}
+                                />
+                            }
+                            fontSize="14px"
+                            w="100%"
+                            _active={{ bgColor: "gray.600" }}
+                            justifyContent="start"
+                            transition="all 0.2s ease-in-out"
+                            h="38px"
+                            borderRadius="8px"
+                        >
+                            Search
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip label="Inbox" openDelay={200} placement="right">
+                        <Button
+                            variant="ghost"
+                            leftIcon={
+                                <FontAwesomeIcon
+                                    icon={faInbox}
+                                    size="sm"
+                                    style={{ marginRight: "8px" }}
+                                />
+                            }
+                            fontSize="14px"
+                            w="100%"
+                            _active={{ bgColor: "gray.600" }}
+                            justifyContent="start"
+                            h="38px"
+                            borderRadius="8px"
+                        >
+                            Friend Requests
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip
+                        label="Blocked users"
+                        openDelay={200}
+                        placement="right"
+                    >
+                        <Button
+                            variant="ghost"
+                            leftIcon={
+                                <FontAwesomeIcon
+                                    icon={faBan}
+                                    size="sm"
+                                    style={{ marginRight: "8px" }}
+                                />
+                            }
+                            fontSize="14px"
+                            w="100%"
+                            _active={{ bgColor: "gray.600" }}
+                            justifyContent="start"
+                            h="38px"
+                            borderRadius="8px"
+                        >
+                            Blocked
+                        </Button>
+                    </Tooltip>
+                </VStack>
             </VStack>
         </AnimatePresence>
     );
