@@ -167,8 +167,9 @@ export async function searchPlayerByUsernameOrUserId(
         const [players, totalCount] = await Promise.all([
             User.aggregate([
                 { $match: { _id: new Types.ObjectId(queryText) } },
-                { $limit: limit },
+                { $sort: { username: 1 } },
                 { $skip: offset },
+                { $limit: limit },
             ]),
             User.countDocuments({ _id: new Types.ObjectId(queryText) }),
         ]);
@@ -177,19 +178,39 @@ export async function searchPlayerByUsernameOrUserId(
             .status(200)
             .json({ players, totalCount, nextPageOffset: offset + limit });
     } else {
-        const [players, totalCount] = await Promise.all([
-            User.aggregate([
-                { $match: { username: { $regex: queryText, $options: "i" } } },
-                { $limit: limit },
-                { $skip: offset },
-            ]),
-            User.countDocuments({
-                username: { $regex: queryText, $options: "i" },
-            }),
-        ]);
+        if (queryText === "") {
+            const [players, totalCount] = await Promise.all([
+                User.aggregate([
+                    { $sort: { username: 1 } },
+                    { $skip: offset },
+                    { $limit: limit },
+                ]),
+                User.countDocuments({}),
+            ]);
 
-        return res
-            .status(200)
-            .json({ players, totalCount, nextPageOffset: offset + limit });
+            return res
+                .status(200)
+                .json({ players, totalCount, nextPageOffset: offset + limit });
+        } else {
+            const [players, totalCount] = await Promise.all([
+                User.aggregate([
+                    {
+                        $match: {
+                            username: { $regex: queryText, $options: "i" },
+                        },
+                    },
+                    { $sort: { username: 1 } },
+                    { $skip: offset },
+                    { $limit: limit },
+                ]),
+                User.countDocuments({
+                    username: { $regex: queryText, $options: "i" },
+                }),
+            ]);
+
+            return res
+                .status(200)
+                .json({ players, totalCount, nextPageOffset: offset + limit });
+        }
     }
 }

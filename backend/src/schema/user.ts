@@ -48,7 +48,6 @@ export const searchPlayerByUsernameOrUserIdSchema = z.object({
         .object({
             queryText: z
                 .string({ required_error: "Required" })
-                .min(2, "Too short")
                 .max(256, "Too long"),
             limit: z
                 .string()
