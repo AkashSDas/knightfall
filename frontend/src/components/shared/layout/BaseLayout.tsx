@@ -4,11 +4,13 @@ import { Navbar } from "../navbar";
 import ChessBg from "../../../assets/images/chess-board-bg.png";
 import { useLocation } from "react-router-dom";
 
+const pathnames: string[] = ["/", "/friends"];
+
 export function BaseLayout(props: PropsWithChildren<unknown>) {
     const location = useLocation();
     const bgImage = useMemo(
         function () {
-            if (location.pathname === "/") {
+            if (pathnames.includes(location.pathname)) {
                 return `url('${ChessBg}')`;
             } else {
                 return undefined;
@@ -38,6 +40,7 @@ export function BaseLayout(props: PropsWithChildren<unknown>) {
                     w: "100vw",
                     overflow: "hidden",
                     zIndex: 0,
+                    opacity: "30%",
                 }}
             />
         </Box>
