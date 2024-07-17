@@ -12,7 +12,6 @@ export const FRIEND_REQUEST_STATUS = {
     PENDING: "pending",
     ACCEPTED: "accepted",
     REJECTED: "rejected",
-    BLOCKED: "blocked",
 } as const;
 
 @modelOptions({

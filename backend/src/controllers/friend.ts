@@ -73,20 +73,40 @@ export async function getLoggedInUserFriends(
     req: Request<schemas.GetLoggedInUserFriends["query"]>,
     res: Response,
 ) {
+    // Get friend requests
+    // 1. Where the `status` is accepted. There it doesn't matter whether
+    // `type` is "from" or "to" as the `status` is accepted.
+    // 2. `type` as "from" means where the request is FROM the logged in user
+    // 3. `type` as "to" means where the request is TO the logged in user
+    // 4. With the combination of `type` and `requestStatus` like pending, rejected
+    // we can get request other requests like requests that the user
+    // has received or has sent, or like requests that user has rejected
+
     const { requestStatus, type } = req.query;
 
-    let typeQuery: Record<string, Types.ObjectId> = {
-        toUser: (req.user as UserDocument)._id,
-    };
-    if (type === "from") {
-        typeQuery = { fromUser: (req.user as UserDocument)._id };
+    if (requestStatus === FRIEND_REQUEST_STATUS.ACCEPTED) {
+        const friends = await Friend.find({ status: requestStatus })
+            .populate("fromUser")
+            .populate("toUser");
+
+        return res.status(200).json({ friends });
+    } else {
+        let typeQuery: Record<string, Types.ObjectId> = {
+            toUser: (req.user as UserDocument)._id,
+        };
+        if (type === "from") {
+            typeQuery = { fromUser: (req.user as UserDocument)._id };
+        }
+
+        const friends = await Friend.find({
+            status: requestStatus,
+            ...typeQuery,
+        })
+            .populate("fromUser")
+            .populate("toUser");
+
+        return res.status(200).json({ friends });
     }
-
-    const friends = Friend.find({ status: requestStatus, ...typeQuery })
-        .populate("fromUser")
-        .populate("toUser");
-
-    return res.status(200).json({ friends });
 }
 
 export async function updateFriendRequestStatus(

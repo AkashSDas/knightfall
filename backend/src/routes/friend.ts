@@ -9,7 +9,7 @@ import { validateResource } from "../middlewares/zod";
 export const router = Router();
 
 router.get(
-    "/me",
+    "/request",
     validateResource(schemas.getLoggedInUserFriends),
     handleMiddlewareError(middlewares.verifyAuth),
     handleMiddlewareError(ctrls.getLoggedInUserFriends),
