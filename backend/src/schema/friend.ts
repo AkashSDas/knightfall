@@ -7,7 +7,7 @@ import { FRIEND_REQUEST_STATUS } from "../models/friend";
 // ====================================
 
 export const sendFriendRequest = z.object({
-    query: z.object({
+    body: z.object({
         toUserId: z.string().refine((val) => Types.ObjectId.isValid(val), {
             message: "Invalid 'userId'",
         }),
