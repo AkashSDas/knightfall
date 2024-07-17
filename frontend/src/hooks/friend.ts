@@ -55,13 +55,13 @@ export function useFriendManager() {
     /** Logged in user's requests that the other users have rejected */
     const rejectedRequestsQuery = useGetFriends(
         FRIEND_REQUEST_STATUS.REJECTED,
-        "to"
+        "from"
     );
 
     /** Requests that the logged in user has rejected */
     const blockedRequestsQuery = useGetFriends(
         FRIEND_REQUEST_STATUS.REJECTED,
-        "from"
+        "to"
     );
 
     const sendRequestMutation = useMutation({
