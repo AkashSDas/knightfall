@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Notification } from "../../services/notification";
 import { formatNotificationDate } from "../../utils/datetime";
 import { Link } from "react-router-dom";
+import { useFriendManager } from "../../hooks/friend";
 
 export function ReceivedFriendRequestNotificationCard(props: {
     notification: Extract<
@@ -12,6 +13,7 @@ export function ReceivedFriendRequestNotificationCard(props: {
     >;
 }) {
     const { notification } = props;
+    const { acceptRequest, rejectRequest } = useFriendManager();
 
     return (
         <HStack
@@ -53,8 +55,29 @@ export function ReceivedFriendRequestNotificationCard(props: {
 
                 {notification.type === "receivedFriendRequest" ? (
                     <HStack mt="0.5rem">
-                        <Button variant="success">Accept</Button>
-                        <Button variant="error">Reject</Button>
+                        <Button
+                            variant="success"
+                            isLoading={acceptRequest.isPending}
+                            onClick={() => {
+                                acceptRequest.mutation(
+                                    notification.metadata.friendRequestId
+                                );
+                            }}
+                        >
+                            Accept
+                        </Button>
+
+                        <Button
+                            variant="error"
+                            isLoading={rejectRequest.isPending}
+                            onClick={() => {
+                                rejectRequest.mutation(
+                                    notification.metadata.friendRequestId
+                                );
+                            }}
+                        >
+                            Reject
+                        </Button>
                     </HStack>
                 ) : null}
             </VStack>

@@ -26,6 +26,7 @@ const ReceivedFriendRequestNotificationSchema = z
     .object({
         type: z.literal(NOTIFICATION_TYPE.RECEIVED_FRIEND_REQUEST),
         metadata: z.object({
+            friendRequestId: z.string(),
             userId: z.string(),
             profilePicURL: z.string(),
         }),
@@ -36,6 +37,7 @@ const AcceptedFriendRequestNotificationSchema = z
     .object({
         type: z.literal(NOTIFICATION_TYPE.ACCEPTED_FRIEND_REQUEST),
         metadata: z.object({
+            friendRequestId: z.string(),
             userId: z.string(),
             profilePicURL: z.string(),
         }),
