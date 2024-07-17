@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { friendService } from "../services/friend";
 import { useAppToast } from "./ui";
 import { useUser } from "./auth";
@@ -33,7 +33,8 @@ function useGetFriends(
 
 export function useFriendManager() {
     const { infoToast } = useAppToast();
-    const { isAuthenticated, pushToLogin } = useUser();
+    const { user, isAuthenticated, pushToLogin } = useUser();
+    const queryClient = useQueryClient();
 
     // "from" here doesn't matter as its going to get friend
     // whose request the user has accepted or vice versa
@@ -75,10 +76,64 @@ export function useFriendManager() {
         },
     });
 
+    const acceptFriendRequestMutation = useMutation({
+        mutationFn: async (requestId: string) => {
+            const msg = await friendService.updateFriendRequestStatus(
+                FRIEND_REQUEST_STATUS.ACCEPTED,
+                requestId
+            );
+
+            infoToast(msg);
+
+            if (msg.toLowerCase().includes("updated")) {
+                await queryClient.invalidateQueries({
+                    queryKey: [
+                        isAuthenticated,
+                        user?.id,
+                        "friends",
+                        FRIEND_REQUEST_STATUS.ACCEPTED,
+                        "from",
+                    ],
+                });
+            }
+        },
+    });
+
+    const rejectFriendRequestMutation = useMutation({
+        mutationFn: async (requestId: string) => {
+            const msg = await friendService.updateFriendRequestStatus(
+                FRIEND_REQUEST_STATUS.REJECTED,
+                requestId
+            );
+
+            infoToast(msg);
+
+            if (msg.toLowerCase().includes("updated")) {
+                await queryClient.invalidateQueries({
+                    queryKey: [
+                        isAuthenticated,
+                        user?.id,
+                        "friends",
+                        FRIEND_REQUEST_STATUS.REJECTED,
+                        "to", // request where logged in user is sent request
+                    ],
+                });
+            }
+        },
+    });
+
     return {
         sendRequest: {
             mutation: sendRequestMutation.mutateAsync,
             isPending: sendRequestMutation.isPending,
+        },
+        acceptRequest: {
+            mutation: acceptFriendRequestMutation.mutateAsync,
+            isPending: acceptFriendRequestMutation.isPending,
+        },
+        rejectRequest: {
+            mutation: rejectFriendRequestMutation.mutateAsync,
+            isPending: rejectFriendRequestMutation.isPending,
         },
         acceptedFriendsQuery,
         receivedRequestsQuery,

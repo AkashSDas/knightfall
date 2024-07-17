@@ -29,6 +29,7 @@ const endpoints = {
     // Friend
     SEND_FRIEND_REQUEST: "/api/friend/request",
     GET_FRIEND_REQUESTS: "/api/friend/request",
+    UPDATE_FRIEND_REQUEST_STATUS: "/api/friend/request",
 } as const;
 
 export const HTTP_METHOD = {

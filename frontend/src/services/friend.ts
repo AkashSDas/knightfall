@@ -78,6 +78,30 @@ class FriendService {
             return "Friend request sent";
         }
     }
+
+    async updateFriendRequestStatus(
+        requestStatus: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
+        friendId: string
+    ): Promise<string> {
+        const [ok, err] = await api.fetch("UPDATE_FRIEND_REQUEST_STATUS", {
+            method: HTTP_METHOD.PATCH,
+            data: { friendId, requestStatus },
+            isProtected: true,
+        });
+
+        if (err || !ok) {
+            return err?.message ?? "Failed to update friend request status";
+        } else if (
+            typeof ok === "object" &&
+            ok !== null &&
+            "message" in ok &&
+            typeof ok.message === "string"
+        ) {
+            return ok.message;
+        } else {
+            return "Friend request status updated";
+        }
+    }
 }
 
 export const friendService = new FriendService();
