@@ -113,18 +113,16 @@ export async function updateFriendRequestStatus(
     req: Request<unknown, unknown, schemas.UpdateFriendRequestStatus["body"]>,
     res: Response,
 ) {
-    const { requestStatus, type } = req.body;
+    const { requestStatus, friendId } = req.body;
 
-    let typeQuery: Record<string, Types.ObjectId> = {
-        toUser: (req.user as UserDocument)._id,
-    };
-    if (type === "from") {
-        typeQuery = { fromUser: (req.user as UserDocument)._id };
+    const friend = await Friend.findOneAndUpdate(
+        { _id: friendId },
+        { status: requestStatus },
+    );
+
+    if (!friend) {
+        throw new BaseApiError(400, "Friend request does not exists.");
     }
 
-    const friends = Friend.find({ status: requestStatus, ...typeQuery })
-        .populate("fromUser")
-        .populate("toUser");
-
-    return res.status(200).json({ friends });
+    return res.status(200).json({ message: "Friend request updated." });
 }

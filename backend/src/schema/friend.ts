@@ -19,7 +19,6 @@ export const getLoggedInUserFriends = z.object({
         requestStatus: z.enum(
             [
                 FRIEND_REQUEST_STATUS.ACCEPTED,
-                FRIEND_REQUEST_STATUS.BLOCKED,
                 FRIEND_REQUEST_STATUS.PENDING,
                 FRIEND_REQUEST_STATUS.REJECTED,
             ],
@@ -34,13 +33,16 @@ export const updateFriendRequestStatus = z.object({
         requestStatus: z.enum(
             [
                 FRIEND_REQUEST_STATUS.ACCEPTED,
-                FRIEND_REQUEST_STATUS.BLOCKED,
                 FRIEND_REQUEST_STATUS.PENDING,
                 FRIEND_REQUEST_STATUS.REJECTED,
             ],
             { required_error: "Required" },
         ),
-        type: z.enum(["from", "to"], { required_error: "Required" }),
+        friendId: z
+            .string({ required_error: "Required" })
+            .refine((val) => Types.ObjectId.isValid(val), {
+                message: "Invalid 'friendId'",
+            }),
     }),
 });
 
