@@ -198,6 +198,52 @@ export const theme = extendTheme({
                     _hover: { bgColor: "gray.600" },
                     _active: { bgColor: "gray.700" },
                 },
+                success: {
+                    bgColor: "green.500",
+                    borderRadius: "10px",
+                    borderBottom: "6px solid",
+                    borderBottomColor: "green.700",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: {
+                        bgColor: "green.600",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "green.700",
+                        _disabled: {
+                            bgColor: "green.600",
+                            borderBottom: "6px solid",
+                            borderBottomColor: "green.700",
+                        },
+                    },
+                    _active: {
+                        bgColor: "green.600",
+                        borderBottom: "2px solid",
+                        borderBottomColor: "green.700",
+                    },
+                },
+                error: {
+                    bgColor: "red.500",
+                    borderRadius: "10px",
+                    borderBottom: "6px solid",
+                    borderBottomColor: "red.700",
+                    transition:
+                        "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _hover: {
+                        bgColor: "red.600",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "red.700",
+                        _disabled: {
+                            bgColor: "red.600",
+                            borderBottom: "6px solid",
+                            borderBottomColor: "red.700",
+                        },
+                    },
+                    _active: {
+                        bgColor: "red.600",
+                        borderBottom: "2px solid",
+                        borderBottomColor: "red.700",
+                    },
+                },
             },
         },
     },

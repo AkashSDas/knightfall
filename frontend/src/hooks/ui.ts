@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 export function useAppToast() {
     const errorToast = useToast();
     const successToast = useToast();
+    const infoToast = useToast();
 
     const showErrorToast = useCallback(
         function (message: string, id?: string) {
@@ -33,9 +34,23 @@ export function useAppToast() {
         [successToast]
     );
 
+    const showInfoToast = useCallback(
+        function (message: string) {
+            successToast({
+                title: "Info",
+                description: message,
+                status: "info",
+                duration: 5000,
+                isClosable: true,
+            });
+        },
+        [successToast]
+    );
+
     return {
         errorToast: showErrorToast,
         successToast: showSuccessToast,
+        infoToast: showInfoToast,
     };
 }
 
