@@ -6,4 +6,7 @@ export const NOTIFICATION_TYPE = {
     LOGIN_WELCOME_BACK: "loginWelcomeBack",
 
     SIGNUP_WELCOME: "signupWelcome",
+
+    RECEIVED_FRIEND_REQUEST: "receivedFriendRequest",
+    ACCEPTED_FRIEND_REQUEST: "acceptedFriendRequest",
 } as const;

@@ -22,10 +22,32 @@ const SignupWelcomeNotificationSchema = z
     .object({ type: z.literal(NOTIFICATION_TYPE.SIGNUP_WELCOME) })
     .merge(NotificationBaseSchema);
 
+const ReceivedFriendRequestNotificationSchema = z
+    .object({
+        type: z.literal(NOTIFICATION_TYPE.RECEIVED_FRIEND_REQUEST),
+        metadata: z.object({
+            userId: z.string(),
+            profilePicURL: z.string(),
+        }),
+    })
+    .merge(NotificationBaseSchema);
+
+const AcceptedFriendRequestNotificationSchema = z
+    .object({
+        type: z.literal(NOTIFICATION_TYPE.ACCEPTED_FRIEND_REQUEST),
+        metadata: z.object({
+            userId: z.string(),
+            profilePicURL: z.string(),
+        }),
+    })
+    .merge(NotificationBaseSchema);
+
 export const NotificationSchema = z.union([
     DefaultNotificationSchema,
     LoginWelcomeBackNotificationSchema,
     SignupWelcomeNotificationSchema,
+    ReceivedFriendRequestNotificationSchema,
+    AcceptedFriendRequestNotificationSchema,
 ]);
 
 const GetNotificationsSchema = z.object({

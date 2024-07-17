@@ -2,21 +2,7 @@ import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import { Notification } from "../../services/notification";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-
-/** @example 'Jul 23, 2024 at 09:45 PM' */
-function formatDate(date: Date): string {
-    let time = date.toLocaleTimeString();
-
-    if (time.includes(":")) {
-        const [hours, minutes] = time.split(":");
-        let hoursInt = parseInt(hours, 10);
-        const ampm = hoursInt >= 12 ? "PM" : "AM";
-        hoursInt = hoursInt % 12 || 12;
-        time = `${hoursInt}:${minutes} ${ampm}`;
-    }
-
-    return `${date.toDateString()} at ${time}`;
-}
+import { formatNotificationDate } from "../../utils/datetime";
 
 export function DefaultNotificationCard(props: {
     notification: Extract<
@@ -49,7 +35,7 @@ export function DefaultNotificationCard(props: {
                 </Text>
 
                 <Text color="gray.300" fontSize="13px">
-                    {formatDate(notification.createdAt)}
+                    {formatNotificationDate(notification.createdAt)}
                 </Text>
             </VStack>
         </HStack>
