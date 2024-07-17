@@ -15,7 +15,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInbox } from "@fortawesome/free-solid-svg-icons";
 
 export function FriendRequestsReceivedAndSent() {
-    const { sentRequestsQuery, receivedRequestsQuery } = useFriendManager();
+    const {
+        sentRequestsQuery,
+        receivedRequestsQuery,
+        acceptRequest,
+        rejectRequest,
+    } = useFriendManager();
 
     return (
         <HStack
@@ -86,8 +91,25 @@ export function FriendRequestsReceivedAndSent() {
                             </Text>
 
                             <HStack mt="0.5rem">
-                                <Button variant="success">Accept</Button>
-                                <Button variant="error">Reject</Button>
+                                <Button
+                                    variant="success"
+                                    isLoading={acceptRequest.isPending}
+                                    onClick={() => {
+                                        acceptRequest.mutation(request.id);
+                                    }}
+                                >
+                                    Accept
+                                </Button>
+
+                                <Button
+                                    variant="error"
+                                    isLoading={rejectRequest.isPending}
+                                    onClick={() => {
+                                        rejectRequest.mutation(request.id);
+                                    }}
+                                >
+                                    Reject
+                                </Button>
                             </HStack>
                         </VStack>
                     );

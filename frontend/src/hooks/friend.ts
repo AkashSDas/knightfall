@@ -86,15 +86,37 @@ export function useFriendManager() {
             infoToast(msg);
 
             if (msg.toLowerCase().includes("updated")) {
-                await queryClient.invalidateQueries({
-                    queryKey: [
-                        isAuthenticated,
-                        user?.id,
-                        "friends",
-                        FRIEND_REQUEST_STATUS.ACCEPTED,
-                        "from",
-                    ],
-                });
+                await Promise.all([
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            isAuthenticated,
+                            user?.id,
+                            "friends",
+                            FRIEND_REQUEST_STATUS.ACCEPTED,
+                            "from",
+                        ],
+                    }),
+
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            isAuthenticated,
+                            user?.id,
+                            "friends",
+                            FRIEND_REQUEST_STATUS.PENDING,
+                            "to",
+                        ],
+                    }),
+
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            isAuthenticated,
+                            user?.id,
+                            "friends",
+                            FRIEND_REQUEST_STATUS.REJECTED,
+                            "to",
+                        ],
+                    }),
+                ]);
             }
         },
     });
@@ -109,15 +131,27 @@ export function useFriendManager() {
             infoToast(msg);
 
             if (msg.toLowerCase().includes("updated")) {
-                await queryClient.invalidateQueries({
-                    queryKey: [
-                        isAuthenticated,
-                        user?.id,
-                        "friends",
-                        FRIEND_REQUEST_STATUS.REJECTED,
-                        "to", // request where logged in user is sent request
-                    ],
-                });
+                await Promise.all([
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            isAuthenticated,
+                            user?.id,
+                            "friends",
+                            FRIEND_REQUEST_STATUS.REJECTED,
+                            "to", // request where logged in user is sent request
+                        ],
+                    }),
+
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            isAuthenticated,
+                            user?.id,
+                            "friends",
+                            FRIEND_REQUEST_STATUS.PENDING,
+                            "to",
+                        ],
+                    }),
+                ]);
             }
         },
     });
