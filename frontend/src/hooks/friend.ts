@@ -14,8 +14,16 @@ function useGetFriends(
         queryKey: [isAuthenticated, user?.id, "friends", status, type],
         enabled: isAuthenticated,
         queryFn: async () => {
-            const friends = await friendService.getFriendRequests(status, type);
-            return friends;
+            const [ok, err] = await friendService.getFriendRequests(
+                status,
+                type
+            );
+
+            if (err || !ok) {
+                return [] as unknown as NonNullable<typeof ok>["friends"];
+            }
+
+            return ok.friends;
         },
         staleTime: 1000 * 60 * 10, // 10mins
     });

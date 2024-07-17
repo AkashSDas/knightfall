@@ -12,10 +12,15 @@ const FriendUserSchema = z.object({
 });
 
 const GetFriendRequestsSchema = z.object({
-    fromUser: FriendUserSchema,
-    toUser: FriendUserSchema,
-    status: z.nativeEnum(FRIEND_REQUEST_STATUS),
-    createdAt: z.string().transform((v) => new Date(v)),
+    friends: z.array(
+        z.object({
+            id: z.string(),
+            fromUser: FriendUserSchema,
+            toUser: FriendUserSchema,
+            status: z.nativeEnum(FRIEND_REQUEST_STATUS),
+            createdAt: z.string().transform((v) => new Date(v)),
+        })
+    ),
 });
 
 class FriendService {

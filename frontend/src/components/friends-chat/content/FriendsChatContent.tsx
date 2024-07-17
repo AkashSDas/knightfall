@@ -1,6 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useAppSelector } from "../../../hooks/store";
 import { FriendsMobileList } from "./FriendsMobileList";
+import { FriendRequestsReceivedAndSent } from "./FriendRequests";
 
 export function FriendsChatContent() {
     const content = useAppSelector((state) => state.friendsChat.mainContent);
@@ -25,11 +26,7 @@ export function FriendsChatContent() {
                 </Box>
             );
         case "friendRequests":
-            return (
-                <Box>
-                    <Text>Friend Requests</Text>
-                </Box>
-            );
+            return <FriendRequestsReceivedAndSent />;
         default:
             return <FriendsMobileList />;
     }
