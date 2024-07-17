@@ -51,10 +51,12 @@ export function ReceivedFriendRequestNotificationCard(props: {
                     {formatNotificationDate(notification.createdAt)}
                 </Text>
 
-                <HStack mt="0.5rem">
-                    <Button variant="success">Accept</Button>
-                    <Button variant="error">Reject</Button>
-                </HStack>
+                {notification.type === "receivedFriendRequest" ? (
+                    <HStack mt="0.5rem">
+                        <Button variant="success">Accept</Button>
+                        <Button variant="error">Reject</Button>
+                    </HStack>
+                ) : null}
             </VStack>
         </HStack>
     );
