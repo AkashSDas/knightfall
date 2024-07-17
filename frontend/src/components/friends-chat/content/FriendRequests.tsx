@@ -18,10 +18,16 @@ export function FriendRequestsReceivedAndSent() {
     const { sentRequestsQuery, receivedRequestsQuery } = useFriendManager();
 
     return (
-        <HStack w="100%" p="1rem" gap="1rem" alignItems="start">
+        <HStack
+            w="100%"
+            p="1rem"
+            gap="1rem"
+            alignItems="start"
+            flexDirection={{ base: "column", md: "row" }}
+        >
             <VStack
                 alignItems="start"
-                w="50%"
+                w={{ base: "100%", md: "50%" }}
                 bgColor="gray.700"
                 borderRadius="10px"
                 border="2px solid"
@@ -90,7 +96,7 @@ export function FriendRequestsReceivedAndSent() {
 
             <VStack
                 alignItems="start"
-                w="50%"
+                w={{ base: "100%", md: "50%" }}
                 bgColor="gray.700"
                 borderRadius="10px"
                 border="2px solid"
