@@ -35,7 +35,7 @@ import { useFriendManager } from "../../hooks/friend";
 export function UserPublicProfilePage() {
     const params = useParams();
     const { pushToLogin, isAuthenticated } = useUser();
-    const { sendRequest } = useFriendManager();
+    const { sendRequest, friends } = useFriendManager();
 
     const { isLoading, data } = useQuery({
         enabled: typeof params.playerId === "string",
@@ -124,20 +124,37 @@ export function UserPublicProfilePage() {
                                     {data?.username}
                                 </Text>
 
-                                <Button
-                                    variant="primary"
-                                    leftIcon={
-                                        <FontAwesomeIcon
-                                            icon={faPaperPlane}
-                                            size="sm"
-                                        />
-                                    }
-                                    minW="fit-content"
-                                    isLoading={sendRequest.isPending}
-                                    onClick={handleAddFriendClick}
-                                >
-                                    Add Friend
-                                </Button>
+                                {friends.find(
+                                    (f) => f.friend.id === data?.id
+                                ) ? (
+                                    <Button
+                                        variant="primary"
+                                        leftIcon={
+                                            <FontAwesomeIcon
+                                                icon={faPaperPlane}
+                                                size="sm"
+                                            />
+                                        }
+                                        minW="fit-content"
+                                    >
+                                        Chat
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="primary"
+                                        leftIcon={
+                                            <FontAwesomeIcon
+                                                icon={faPaperPlane}
+                                                size="sm"
+                                            />
+                                        }
+                                        minW="fit-content"
+                                        isLoading={sendRequest.isPending}
+                                        onClick={handleAddFriendClick}
+                                    >
+                                        Add Friend
+                                    </Button>
+                                )}
                             </HStack>
 
                             <Divider borderColor="gray.600" />

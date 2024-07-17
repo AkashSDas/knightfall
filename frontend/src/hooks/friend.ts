@@ -3,6 +3,7 @@ import { friendService } from "../services/friend";
 import { useAppToast } from "./ui";
 import { useUser } from "./auth";
 import { FRIEND_REQUEST_STATUS } from "../utils/friend";
+import { useMemo } from "react";
 
 function useGetFriends(
     status: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
@@ -41,6 +42,23 @@ export function useFriendManager() {
     const acceptedFriendsQuery = useGetFriends(
         FRIEND_REQUEST_STATUS.ACCEPTED,
         "from"
+    );
+
+    const friends = useMemo(
+        function transformAcceptedFriends() {
+            return (
+                acceptedFriendsQuery.data?.map((friend) => {
+                    return {
+                        ...friend,
+                        friend:
+                            user!.id === friend.toUser.id
+                                ? friend.fromUser
+                                : friend.toUser,
+                    };
+                }) ?? []
+            );
+        },
+        [acceptedFriendsQuery.data]
     );
 
     const receivedRequestsQuery = useGetFriends(
@@ -137,6 +155,16 @@ export function useFriendManager() {
                             isAuthenticated,
                             user?.id,
                             "friends",
+                            FRIEND_REQUEST_STATUS.ACCEPTED,
+                            "from",
+                        ],
+                    }),
+
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            isAuthenticated,
+                            user?.id,
+                            "friends",
                             FRIEND_REQUEST_STATUS.REJECTED,
                             "to", // request where logged in user is sent request
                         ],
@@ -169,7 +197,7 @@ export function useFriendManager() {
             mutation: rejectFriendRequestMutation.mutateAsync,
             isPending: rejectFriendRequestMutation.isPending,
         },
-        acceptedFriendsQuery,
+        friends,
         receivedRequestsQuery,
         sentRequestsQuery,
         rejectedRequestsQuery,

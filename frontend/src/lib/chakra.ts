@@ -205,14 +205,19 @@ export const theme = extendTheme({
                     borderBottomColor: "green.700",
                     transition:
                         "background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    _disabled: {
+                        bgColor: "gray.400",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "gray.500",
+                    },
                     _hover: {
                         bgColor: "green.600",
                         borderBottom: "6px solid",
                         borderBottomColor: "green.700",
                         _disabled: {
-                            bgColor: "green.600",
+                            bgColor: "gray.400",
                             borderBottom: "6px solid",
-                            borderBottomColor: "green.700",
+                            borderBottomColor: "gray.500",
                         },
                     },
                     _active: {
@@ -233,10 +238,15 @@ export const theme = extendTheme({
                         borderBottom: "6px solid",
                         borderBottomColor: "red.700",
                         _disabled: {
-                            bgColor: "red.600",
+                            bgColor: "gray.400",
                             borderBottom: "6px solid",
-                            borderBottomColor: "red.700",
+                            borderBottomColor: "gray.500",
                         },
+                    },
+                    _disabled: {
+                        bgColor: "gray.400",
+                        borderBottom: "6px solid",
+                        borderBottomColor: "gray.500",
                     },
                     _active: {
                         bgColor: "red.600",

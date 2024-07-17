@@ -13,7 +13,11 @@ export function ReceivedFriendRequestNotificationCard(props: {
     >;
 }) {
     const { notification } = props;
-    const { acceptRequest, rejectRequest } = useFriendManager();
+    const { acceptRequest, rejectRequest, friends } = useFriendManager();
+
+    const isFriend =
+        friends.find((f) => f.friend.id === notification.metadata.userId) !==
+        undefined;
 
     return (
         <HStack
@@ -58,13 +62,18 @@ export function ReceivedFriendRequestNotificationCard(props: {
                         <Button
                             variant="success"
                             isLoading={acceptRequest.isPending}
+                            isDisabled={
+                                isFriend ||
+                                rejectRequest.isPending ||
+                                acceptRequest.isPending
+                            }
                             onClick={() => {
                                 acceptRequest.mutation(
                                     notification.metadata.friendRequestId
                                 );
                             }}
                         >
-                            Accept
+                            {isFriend ? "Accepted" : "Accept"}
                         </Button>
 
                         <Button
