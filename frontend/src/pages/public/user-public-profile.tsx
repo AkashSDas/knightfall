@@ -30,10 +30,12 @@ import {
     getRankImageSrc,
     getWinPointsSrc,
 } from "../../utils/achievements";
+import { useFriendManager } from "../../hooks/friend";
 
 export function UserPublicProfilePage() {
     const params = useParams();
     const { pushToLogin, isAuthenticated } = useUser();
+    const { sendRequest } = useFriendManager();
 
     const { isLoading, data } = useQuery({
         enabled: typeof params.playerId === "string",
@@ -41,6 +43,14 @@ export function UserPublicProfilePage() {
         queryFn: () => userService.getPlayerProfile(params.playerId!),
         staleTime: 1000 * 60 * 5, // 5mins
     });
+
+    async function handleAddFriendClick() {
+        if (!isAuthenticated) {
+            pushToLogin();
+        } else if (data?.id) {
+            await sendRequest.mutation({ userId: data.id });
+        }
+    }
 
     return (
         <BaseLayout>
@@ -123,11 +133,8 @@ export function UserPublicProfilePage() {
                                         />
                                     }
                                     minW="fit-content"
-                                    onClick={() => {
-                                        if (!isAuthenticated) {
-                                            pushToLogin();
-                                        }
-                                    }}
+                                    isLoading={sendRequest.isPending}
+                                    onClick={handleAddFriendClick}
                                 >
                                     Add Friend
                                 </Button>
