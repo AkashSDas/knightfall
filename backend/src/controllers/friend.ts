@@ -29,35 +29,42 @@ export async function sendFriendRequest(
             .status(400)
             .json({ message: "Friend request already sent." });
     } else if (toExists) {
-        await Friend.updateOne(
+        const friend = await Friend.findOneAndUpdate(
             { fromUser: toUserId, toUser: user._id },
             { status: FRIEND_REQUEST_STATUS.ACCEPTED },
         );
 
-        new Notifiy(new Types.ObjectId(toUserId))
-            .createNotification({
-                type: "acceptedFriendRequest",
-                title: `${user.username} has accepted your friend request`,
-                metadata: {
-                    userId: user._id.toString(),
-                    profilePicURL: user.profilePic.URL,
-                },
-            })
-            .then((instance) => instance.sendNotification())
-            .catch((e) => logger.error(`[👋 FAILED notification]: ${e}`));
+        if (friend) {
+            new Notifiy(new Types.ObjectId(toUserId))
+                .createNotification({
+                    type: "acceptedFriendRequest",
+                    title: `${user.username} has accepted your friend request`,
+                    metadata: {
+                        friendRequestId: friend._id.toString(),
+                        userId: user._id.toString(),
+                        profilePicURL: user.profilePic.URL,
+                    },
+                })
+                .then((instance) => instance.sendNotification())
+                .catch((e) => logger.error(`[👋 FAILED notification]: ${e}`));
 
-        return res.status(200).json({
-            message: "You had a friend request. It has been accepted.",
-            acceptedPending: true,
-        });
+            return res.status(200).json({
+                message: "You had a friend request. It has been accepted.",
+                acceptedPending: true,
+            });
+        }
     } else {
-        await Friend.create({ fromUser: user._id, toUser: toUserId });
+        const friend = await Friend.create({
+            fromUser: user._id,
+            toUser: toUserId,
+        });
 
         new Notifiy(new Types.ObjectId(toUserId))
             .createNotification({
                 type: "receivedFriendRequest",
                 title: `${user.username} sent you a friend request`,
                 metadata: {
+                    friendRequestId: friend._id.toString(),
                     userId: user._id.toString(),
                     profilePicURL: user.profilePic.URL,
                 },
@@ -122,6 +129,21 @@ export async function updateFriendRequestStatus(
 
     if (!friend) {
         throw new BaseApiError(400, "Friend request does not exists.");
+    }
+
+    if (friend.status === FRIEND_REQUEST_STATUS.ACCEPTED) {
+        new Notifiy(new Types.ObjectId(friend.fromUser as unknown as string))
+            .createNotification({
+                type: "acceptedFriendRequest",
+                title: `${(req.user as UserDocument).username} has accepted your friend request`,
+                metadata: {
+                    friendRequestId: friend._id.toString(),
+                    userId: (req.user as UserDocument)._id.toString(),
+                    profilePicURL: (req.user as UserDocument).profilePic.URL,
+                },
+            })
+            .then((instance) => instance.sendNotification())
+            .catch((e) => logger.error(`[👋 FAILED notification]: ${e}`));
     }
 
     return res.status(200).json({ message: "Friend request updated." });

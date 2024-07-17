@@ -35,6 +35,7 @@ type ReceivedFriendRequestNotification = {
     type: typeof NOTIFICATION_TYPE.RECEIVED_FRIEND_REQUEST;
     title: string;
     metadata: {
+        friendRequestId: string;
         userId: string;
         profilePicURL: string;
     };
@@ -44,6 +45,7 @@ type AcceptedFriendRequestNotification = {
     type: typeof NOTIFICATION_TYPE.ACCEPTED_FRIEND_REQUEST;
     title: string;
     metadata: {
+        friendRequestId: string;
         userId: string;
         profilePicURL: string;
     };
