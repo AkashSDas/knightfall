@@ -3,6 +3,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Notification } from "../../services/notification";
 import { formatNotificationDate } from "../../utils/datetime";
+import { Link } from "react-router-dom";
 
 export function ReceivedFriendRequestNotificationCard(props: {
     notification: Extract<
@@ -32,6 +33,8 @@ export function ReceivedFriendRequestNotificationCard(props: {
             <VStack my="3px" w="100%" alignItems="start" gap="4px">
                 <HStack alignItems="start">
                     <Avatar
+                        as={Link}
+                        to={`/player/${notification.metadata.userId}`}
                         src={notification.metadata.profilePicURL}
                         h="24px"
                         w="24px"
