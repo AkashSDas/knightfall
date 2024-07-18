@@ -24,6 +24,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FriendsList } from "./FriendsList";
+import { SearchFriends } from "./SearchFriends";
 
 export function FriendsChatContent() {
     const dispatch = useAppDispatch();
@@ -140,11 +141,7 @@ function Content() {
                 </Box>
             );
         case "search":
-            return (
-                <Box>
-                    <Text>Search</Text>
-                </Box>
-            );
+            return <SearchFriends />;
         case "friendRequests":
             return <FriendRequestsReceivedAndSent />;
         case "blocked":
