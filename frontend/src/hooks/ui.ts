@@ -36,7 +36,7 @@ export function useAppToast() {
 
     const showInfoToast = useCallback(
         function (message: string) {
-            successToast({
+            infoToast({
                 title: "Info",
                 description: message,
                 status: "info",

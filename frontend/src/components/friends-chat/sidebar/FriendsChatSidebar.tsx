@@ -4,8 +4,6 @@ import {
     IconButton,
     Button,
     useBreakpointValue,
-    Divider,
-    Heading,
 } from "@chakra-ui/react";
 import {
     faAngleDoubleLeft,
