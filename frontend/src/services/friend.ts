@@ -102,6 +102,26 @@ class FriendService {
             return "Friend request status updated";
         }
     }
+
+    async searchFriendsByUsernameOrUserId(queryText: string) {
+        return await api.fetch<
+            z.infer<typeof GetFriendRequestsSchema>,
+            "SEARCH_FRIENDS"
+        >(
+            "SEARCH_FRIENDS",
+            {
+                method: HTTP_METHOD.GET,
+                params: { queryText },
+                isProtected: true,
+            },
+            (data, status) =>
+                status === 200 &&
+                typeof data === "object" &&
+                data !== null &&
+                "friends" in data,
+            GetFriendRequestsSchema
+        );
+    }
 }
 
 export const friendService = new FriendService();

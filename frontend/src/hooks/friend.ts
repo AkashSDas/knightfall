@@ -3,7 +3,7 @@ import { friendService } from "../services/friend";
 import { useAppToast } from "./ui";
 import { useUser } from "./auth";
 import { FRIEND_REQUEST_STATUS } from "../utils/friend";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 function useGetFriends(
     status: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
@@ -202,5 +202,52 @@ export function useFriendManager() {
         sentRequestsQuery,
         rejectedRequestsQuery,
         blockedRequestsQuery,
+    };
+}
+
+export function useSearchFriends() {
+    const { user, isAuthenticated } = useUser();
+    const [text, setText] = useState("");
+
+    const query = useQuery({
+        queryKey: [isAuthenticated, user?.id, "searchFriends", text],
+        enabled: isAuthenticated && text.length > 2,
+        queryFn: async () => {
+            const [ok, err] =
+                await friendService.searchFriendsByUsernameOrUserId(text);
+
+            if (err || !ok) {
+                return [] as unknown as NonNullable<typeof ok>["friends"];
+            }
+
+            return ok.friends;
+        },
+        staleTime: 1000 * 30, // 30secs
+    });
+
+    const friends = useMemo(
+        function transformAcceptedFriends() {
+            return (
+                query.data?.map((friend) => {
+                    return {
+                        ...friend,
+                        friend:
+                            user!.id === friend.toUser.id
+                                ? friend.fromUser
+                                : friend.toUser,
+                    };
+                }) ?? []
+            );
+        },
+        [query.data]
+    );
+
+    console.log({ query });
+
+    return {
+        friends,
+        isLoading: query.isLoading,
+        searchText: text,
+        changeSearchText: setText,
     };
 }
