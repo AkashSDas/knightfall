@@ -58,7 +58,6 @@ export function useNotificationRoom() {
     useEffect(
         function handleNotificationSocket() {
             if (socket && isConnected && isAuthenticated && user) {
-                console.log("join room");
                 socket.emit("joinNotification", { userId: user.id });
             }
 
@@ -105,7 +104,6 @@ export function useListenToNotifications() {
 
             function receiveNotification(data: unknown) {
                 const output = NotificationSchema.safeParse(data);
-                console.log({ output });
 
                 if (output.success) {
                     const key = ["notifications", user?.id];

@@ -34,4 +34,20 @@ io.on("connection", function connectToWebSocket(socket) {
         socket.leave(roomName);
         logger.info(`[🔔 notification] LEAVE: ${roomName}`);
     });
+
+    // ================================
+    // Direct Message
+    // ================================
+
+    socket.on("joinDirectMessage", function joinDirectMessage({ friendId }) {
+        const roomName = `dm_${friendId}`;
+        socket.join(roomName);
+        logger.info(`[📨 dm] JOIN: ${roomName}`);
+    });
+
+    socket.on("leaveDirectMessage", function leaveDirectMessage({ friendId }) {
+        const roomName = `dm_${friendId}`;
+        socket.leave(roomName);
+        logger.info(`[📨 dm] LEAVE: ${roomName}`);
+    });
 });
