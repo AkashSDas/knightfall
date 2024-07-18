@@ -163,24 +163,71 @@ export async function searchFriendByUsernameOrUserIdCtrl(
     const { queryText } = req.query;
 
     if (Types.ObjectId.isValid(queryText)) {
-        const [friends, totalCount] = await Promise.all([
-            User.find({ _id: new Types.ObjectId(queryText) })
-                .populate("toUser")
-                .populate("fromUser"),
-            User.countDocuments({ _id: new Types.ObjectId(queryText) }),
-        ]);
+        const friends = await Friend.find({
+            $or: [
+                { toUser: new Types.ObjectId(queryText) },
+                { fromUesr: new Types.ObjectId(queryText) },
+            ],
+            status: FRIEND_REQUEST_STATUS.ACCEPTED,
+        });
 
-        return res.status(200).json({ friends, totalCount });
+        return res.status(200).json({ friends });
     } else {
-        const [players, totalCount] = await Promise.all([
-            User.find({ username: { $regex: queryText, $options: "i" } })
-                .populate("toUser")
-                .populate("fromUser"),
-            User.countDocuments({
-                username: { $regex: queryText, $options: "i" },
-            }),
+        const friends = await Friend.aggregate([
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "fromUser",
+                    foreignField: "_id",
+                    as: "fromUser",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "toUser",
+                    foreignField: "_id",
+                    as: "toUser",
+                },
+            },
+            {
+                $match: {
+                    $or: [
+                        {
+                            "fromUser.username": {
+                                $regex: queryText,
+                                $options: "i",
+                            },
+                        },
+                        {
+                            "toUser.username": {
+                                $regex: queryText,
+                                $options: "i",
+                            },
+                        },
+                    ],
+                    status: FRIEND_REQUEST_STATUS.ACCEPTED,
+                },
+            },
+            {
+                $project: {
+                    fromUser: { $arrayElemAt: ["$fromUser", 0] },
+                    toUser: { $arrayElemAt: ["$toUser", 0] },
+                    id: "$_id",
+                    status: "$status",
+                    createdAt: "$createdAt",
+                },
+            },
+            // add id field as _id in fromUser and toUser
+            {
+                $addFields: {
+                    "fromUser.id": "$fromUser._id",
+                    "toUser.id": "$toUser._id",
+                },
+            },
+            { $sort: { createdAt: -1 } },
         ]);
 
-        return res.status(200).json({ players, totalCount });
+        return res.status(200).json({ friends });
     }
 }
