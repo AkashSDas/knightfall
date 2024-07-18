@@ -1,6 +1,8 @@
 import {
     Button,
+    Divider,
     HStack,
+    Heading,
     IconButton,
     Tooltip,
     VStack,
@@ -11,6 +13,7 @@ import {
     faInbox,
     faBan,
     IconDefinition,
+    faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppDispatch } from "../../../hooks/store";
@@ -18,6 +21,7 @@ import {
     FriendsChatState,
     friendsChatActions,
 } from "../../../store/friends-chat/slice";
+import { FriendsList } from "./FriendsList";
 
 export function FriendsMobileList() {
     const dispatch = useAppDispatch();
@@ -33,6 +37,12 @@ export function FriendsMobileList() {
 
             {!isMd ? (
                 <HStack alignItems="start" w="100%" my="2rem" gap="12px">
+                    <Item
+                        icon={faArrowLeft}
+                        label="Back"
+                        onClick={() => openContent({ type: "friendRequests" })}
+                    />
+
                     <Item
                         icon={faSearch}
                         label="Search"
@@ -52,6 +62,21 @@ export function FriendsMobileList() {
                     />
                 </HStack>
             ) : null}
+
+            <VStack alignItems="start" w="100%" gap="1rem">
+                <Heading
+                    as="h3"
+                    letterSpacing="1px"
+                    fontSize="24px"
+                    fontFamily="cubano"
+                >
+                    Friends
+                </Heading>
+
+                <Divider borderColor="gray.500" />
+
+                <FriendsList />
+            </VStack>
         </VStack>
     );
 }
@@ -61,7 +86,7 @@ function Item(props: {
     onClick: () => void;
     label: string;
 }) {
-    const isMd = useBreakpointValue({ base: false, sm: true }, { ssr: false });
+    const isMd = useBreakpointValue({ base: false, md: true }, { ssr: false });
 
     if (isMd) {
         return (

@@ -4,6 +4,8 @@ import {
     IconButton,
     Button,
     useBreakpointValue,
+    Divider,
+    Heading,
 } from "@chakra-ui/react";
 import {
     faAngleDoubleLeft,
@@ -21,6 +23,7 @@ import {
     friendsChatSelectors,
 } from "../../../store/friends-chat/slice";
 import { useEffect } from "react";
+import { FriendsList } from "../content/FriendsList";
 
 export function Sidebar() {
     const controls = useAnimation();
@@ -157,7 +160,7 @@ export function Sidebar() {
                                     style={{ marginRight: "8px" }}
                                 />
                             }
-                            fontSize="14px"
+                            fontSize="16px"
                             w="100%"
                             _active={{ bgColor: "gray.600" }}
                             justifyContent="start"
@@ -180,7 +183,7 @@ export function Sidebar() {
                                     style={{ marginRight: "8px" }}
                                 />
                             }
-                            fontSize="14px"
+                            fontSize="16px"
                             w="100%"
                             _active={{ bgColor: "gray.600" }}
                             justifyContent="start"
@@ -208,7 +211,7 @@ export function Sidebar() {
                                     style={{ marginRight: "8px" }}
                                 />
                             }
-                            fontSize="14px"
+                            fontSize="16px"
                             w="100%"
                             _active={{ bgColor: "gray.600" }}
                             justifyContent="start"
@@ -220,6 +223,8 @@ export function Sidebar() {
                         </Button>
                     </Tooltip>
                 </VStack>
+
+                <FriendsList />
             </VStack>
         </AnimatePresence>
     );
