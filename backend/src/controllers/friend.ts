@@ -150,3 +150,37 @@ export async function updateFriendRequestStatus(
 
     return res.status(200).json({ message: "Friend request updated." });
 }
+
+export async function searchFriendByUsernameOrUserIdCtrl(
+    req: Request<
+        unknown,
+        unknown,
+        unknown,
+        schemas.SearchFriendByUsernameOrUserId["query"]
+    >,
+    res: Response,
+) {
+    const { queryText } = req.query;
+
+    if (Types.ObjectId.isValid(queryText)) {
+        const [friends, totalCount] = await Promise.all([
+            User.find({ _id: new Types.ObjectId(queryText) })
+                .populate("toUser")
+                .populate("fromUser"),
+            User.countDocuments({ _id: new Types.ObjectId(queryText) }),
+        ]);
+
+        return res.status(200).json({ friends, totalCount });
+    } else {
+        const [players, totalCount] = await Promise.all([
+            User.find({ username: { $regex: queryText, $options: "i" } })
+                .populate("toUser")
+                .populate("fromUser"),
+            User.countDocuments({
+                username: { $regex: queryText, $options: "i" },
+            }),
+        ]);
+
+        return res.status(200).json({ players, totalCount });
+    }
+}

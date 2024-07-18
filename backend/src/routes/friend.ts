@@ -31,3 +31,11 @@ router.patch(
     handleMiddlewareError(ctrls.updateFriendRequestStatus),
     sendErrorResponse,
 );
+
+router.get(
+    "/search",
+    validateResource(schemas.searchFriendByUsernameOrUserIdSchema),
+    handleMiddlewareError(middlewares.verifyAuth),
+    handleMiddlewareError(ctrls.searchFriendByUsernameOrUserIdCtrl),
+    sendErrorResponse,
+);

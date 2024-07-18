@@ -46,6 +46,15 @@ export const updateFriendRequestStatus = z.object({
     }),
 });
 
+export const searchFriendByUsernameOrUserIdSchema = z.object({
+    query: z.object({
+        queryText: z
+            .string({ required_error: "Required" })
+            .min(2, "Too short")
+            .max(256, "Too long"),
+    }),
+});
+
 // ====================================
 // Types
 // ====================================
@@ -54,4 +63,7 @@ export type SendFriendRequest = z.infer<typeof sendFriendRequest>;
 export type GetLoggedInUserFriends = z.infer<typeof getLoggedInUserFriends>;
 export type UpdateFriendRequestStatus = z.infer<
     typeof updateFriendRequestStatus
+>;
+export type SearchFriendByUsernameOrUserId = z.infer<
+    typeof searchFriendByUsernameOrUserIdSchema
 >;
