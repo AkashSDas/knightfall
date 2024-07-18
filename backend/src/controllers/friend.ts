@@ -53,6 +53,8 @@ export async function sendFriendRequest(
                 acceptedPending: true,
             });
         }
+
+        throw new BaseApiError(400, "No friend request found.");
     } else {
         const friend = await Friend.create({
             fromUser: user._id,
