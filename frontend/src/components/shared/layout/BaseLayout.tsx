@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Spacer } from "@chakra-ui/react";
 import { PropsWithChildren, useMemo } from "react";
 import { Navbar } from "../navbar";
 import ChessBg from "../../../assets/images/chess-board-bg.png";
@@ -23,6 +23,7 @@ export function BaseLayout(props: PropsWithChildren<unknown>) {
         <Box pos="relative">
             <Box zIndex={1} pos="relative">
                 <Navbar />
+                <Spacer h={{ base: "56px", md: "72px" }} />
                 {props.children}
             </Box>
 

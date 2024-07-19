@@ -44,6 +44,8 @@ export function Navbar() {
             borderBottom="2px solid"
             borderBottomColor="gray.600"
             zIndex={1}
+            pos="fixed"
+            w="100%"
         >
             <Tooltip
                 label={

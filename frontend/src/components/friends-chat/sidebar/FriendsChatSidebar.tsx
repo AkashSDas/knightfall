@@ -67,7 +67,7 @@ export function Sidebar() {
                 borderRight="2px solid"
                 borderRightColor="gray.600"
                 h="calc(100vh - 72px)"
-                pos="absolute"
+                pos="fixed"
                 top={"72px"}
                 left={0}
                 as={motion.div}
