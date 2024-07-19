@@ -7,7 +7,7 @@ export type FriendsChatState = {
         | { type: "search" }
         | { type: "blocked" }
         | { type: "friendRequests" }
-        | { type: "chat"; userId: string }
+        | { type: "chat"; friendId: string }
         | { type: "friends" };
 };
 

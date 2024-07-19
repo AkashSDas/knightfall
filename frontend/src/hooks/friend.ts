@@ -287,11 +287,13 @@ export function useDirectMessageRoom(friendId: string | undefined) {
 export function useListenToDirectMessages(friendId: string | undefined) {
     const { socket, isConnected } = useContext(SocketContext);
     const { isAuthenticated, user } = useUser();
+    const [hasConnected, setHasConnected] = useState(false);
 
     useEffect(
         function listenToDMs() {
             if (socket && isConnected && isAuthenticated && user && friendId) {
                 socket.on("directMessage", receivedMessage);
+                setHasConnected(true);
             }
 
             window.addEventListener("beforeunload", handleUnload);
@@ -310,6 +312,7 @@ export function useListenToDirectMessages(friendId: string | undefined) {
                     friendId
                 ) {
                     socket.off("directMessage", receivedMessage);
+                    setHasConnected(false);
                 }
             }
 
@@ -319,4 +322,6 @@ export function useListenToDirectMessages(friendId: string | undefined) {
         },
         [socket, isConnected, isAuthenticated, user?.id]
     );
+
+    return { hasConnected };
 }
