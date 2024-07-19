@@ -58,7 +58,7 @@ export function FriendsList() {
                                     dispatch(
                                         friendsChatActions.setMainContent({
                                             type: "chat",
-                                            userId: friend.friend.id,
+                                            friendId: friend.id,
                                         })
                                     );
                                 }}

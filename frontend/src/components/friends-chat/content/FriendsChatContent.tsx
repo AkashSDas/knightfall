@@ -1,9 +1,7 @@
 import {
-    Box,
     Button,
     HStack,
     IconButton,
-    Text,
     Tooltip,
     VStack,
     useBreakpointValue,
@@ -25,10 +23,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FriendsList } from "./FriendsList";
 import { SearchFriends } from "./SearchFriends";
+import { ChatRoom } from "../direct-message/ChatRoom";
 
 export function FriendsChatContent() {
     const dispatch = useAppDispatch();
     const isMd = useBreakpointValue({ base: false, md: true }, { ssr: false });
+
+    const { type } = useAppSelector((state) => state.friendsChat.mainContent);
 
     function openContent(payload: FriendsChatState["mainContent"]) {
         dispatch(friendsChatActions.setMainContent(payload));
@@ -42,10 +43,13 @@ export function FriendsChatContent() {
                 <HStack
                     alignItems="start"
                     w="100%"
-                    mt="2rem"
-                    mb="1rem"
+                    pt="2rem"
+                    pb="1rem"
                     gap="12px"
                     px="1rem"
+                    pos={type === "chat" ? "fixed" : "unset"}
+                    zIndex={10}
+                    bgColor="gray.800"
                 >
                     <Item
                         icon={faArrowLeft}
@@ -135,11 +139,7 @@ function Content() {
 
     switch (content.type) {
         case "chat":
-            return (
-                <Box>
-                    <Text>Chat {content.userId}</Text>
-                </Box>
-            );
+            return <ChatRoom />;
         case "search":
             return <SearchFriends />;
         case "friendRequests":
