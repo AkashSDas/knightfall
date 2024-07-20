@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     HStack,
     IconButton,
@@ -147,6 +148,10 @@ function Content() {
         case "blocked":
             return <FriendRequestsRejected />;
         default:
-            return isSidebarOpen ? null : <FriendsList />;
+            return isSidebarOpen ? null : (
+                <Box px="1rem" py="2rem" w="100%">
+                    <FriendsList />
+                </Box>
+            );
     }
 }

@@ -415,7 +415,14 @@ export function useListenToDirectMessages(friendId: string | undefined) {
             }
 
             function receivedMessage(data: unknown) {
-                console.log({ data });
+                if (
+                    typeof data === "object" &&
+                    data !== null &&
+                    "senderUserId" in data &&
+                    data.senderUserId !== user?.id
+                ) {
+                    console.log({ data });
+                }
             }
         },
         [socket, isConnected, isAuthenticated, user?.id]

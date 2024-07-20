@@ -41,7 +41,7 @@ export function FriendsList() {
                 {friends.map((friend) => {
                     return (
                         <Tooltip
-                            label={friend.friend.username}
+                            label={isSidebarOpen ? friend.friend.username : ""}
                             openDelay={300}
                             key={friend.id}
                             placement="right"

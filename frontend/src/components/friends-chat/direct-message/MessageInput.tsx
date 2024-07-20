@@ -3,24 +3,40 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { MutableRefObject, useEffect, useState } from "react";
+import { MutableRefObject, useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SocketContext } from "../../../lib/websocket";
+import { useUser } from "../../../hooks/auth";
+import { useFriendManager } from "../../../hooks/friend";
 
 const schema = z.object({
     text: z.string({}).min(1, "Too short").max(256, "Too long"),
 });
 
 export function MessageInput(props: {
+    friendId: string;
+    isConnected: boolean;
     containerRef: MutableRefObject<HTMLDivElement | null>;
 }) {
+    const { user } = useUser();
     const form = useForm<z.infer<typeof schema>>({
         defaultValues: { text: "" },
         resolver: zodResolver(schema),
     });
+    const { friends } = useFriendManager();
 
-    const submit = form.handleSubmit(() => {
-        // TODO
+    const { socket } = useContext(SocketContext);
+
+    const submit = form.handleSubmit(({ text }) => {
+        socket?.emit("directMessage", {
+            room: `dm_${props.friendId}`,
+            text,
+            senderUserId: user?.id,
+            friendId: props.friendId,
+        });
+
+        form.reset();
     });
 
     const [childWidth, setChildWidth] = useState(700);
@@ -61,7 +77,7 @@ export function MessageInput(props: {
                     variant="contained"
                     {...form.register("text")}
                     autoComplete="off"
-                    placeholder="Message"
+                    placeholder={`Send message to ${friends.find((f) => f.id === props.friendId)?.friend.username}`}
                 />
             </FormControl>
 
@@ -77,6 +93,7 @@ export function MessageInput(props: {
                 borderBottomWidth="6px"
                 _hover={{ borderBottomWidth: "6px" }}
                 _active={{ borderBottomWidth: "2px" }}
+                disabled={!props.isConnected}
             >
                 <FontAwesomeIcon icon={faPaperPlane} size="lg" />
             </IconButton>

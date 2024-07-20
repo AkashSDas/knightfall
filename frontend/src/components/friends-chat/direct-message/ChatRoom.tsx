@@ -28,7 +28,7 @@ export function ChatRoom() {
     );
 
     useDirectMessageRoom(friendId);
-    useListenToDirectMessages(friendId);
+    const { hasConnected } = useListenToDirectMessages(friendId);
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -59,16 +59,14 @@ export function ChatRoom() {
                 mb="calc(72px + 1rem)"
                 flexGrow={1}
             >
-                {Array.from({ length: 30 }, (_, i) => (
-                    <Text key={i}>
-                        Good morning {i} {friend?.friend.username}
-                    </Text>
-                ))}
-
                 <div ref={messagesEndRef} />
             </VStack>
 
-            <MessageInput containerRef={containerRef} />
+            <MessageInput
+                friendId={friendId}
+                containerRef={containerRef}
+                isConnected={hasConnected}
+            />
         </VStack>
     );
 }
