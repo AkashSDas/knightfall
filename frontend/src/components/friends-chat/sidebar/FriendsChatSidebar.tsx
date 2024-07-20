@@ -38,14 +38,14 @@ export function Sidebar() {
     useEffect(
         function () {
             if (isMd) {
-                openContent({ type: "friends" });
+                // openContent({ type: "friends" });
                 controls.start({
                     translateX: "0px",
                     transition: { ease: "easeInOut" },
                 });
                 dispatch(friendsChatActions.setSidebarOpen(true));
             } else {
-                openContent({ type: "friends" });
+                // openContent({ type: "friends" });
                 controls.start({
                     translateX: "-240px",
                     transition: { ease: "easeInOut" },

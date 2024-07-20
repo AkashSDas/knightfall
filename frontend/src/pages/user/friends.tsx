@@ -2,10 +2,16 @@ import { VStack, useBreakpointValue, useTheme } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sidebar } from "../../components/friends-chat/sidebar/FriendsChatSidebar";
-import { friendsChatSelectors } from "../../store/friends-chat/slice";
-import { useAppSelector } from "../../hooks/store";
+import {
+    friendsChatActions,
+    friendsChatSelectors,
+} from "../../store/friends-chat/slice";
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
 import { FriendsChatContent } from "../../components/friends-chat/content/FriendsChatContent";
 import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useFriendManager } from "../../hooks/friend";
 
 export function FriendsPage() {
     return (
@@ -21,6 +27,30 @@ function FriendsPageContent() {
     );
     const isMd = useBreakpointValue({ base: false, md: true }, { ssr: false });
     const theme = useTheme();
+    const [params, setParams] = useSearchParams();
+    const { friends } = useFriendManager();
+    const dispatch = useAppDispatch();
+
+    useEffect(
+        function openChatWindow() {
+            const friendId = params.get("friend");
+            if (friendId) {
+                const friend = friends.find((f) => f.id === friendId);
+                if (friend) {
+                    dispatch(
+                        friendsChatActions.setMainContent({
+                            type: "chat",
+                            friendId: friend.id,
+                        })
+                    );
+
+                    params.delete("friend");
+                    setParams(params);
+                }
+            }
+        },
+        [params, friends]
+    );
 
     return (
         <BaseLayout>

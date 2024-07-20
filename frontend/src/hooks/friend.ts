@@ -3,7 +3,7 @@ import { friendService } from "../services/friend";
 import { useAppToast } from "./ui";
 import { useUser } from "./auth";
 import { FRIEND_REQUEST_STATUS } from "../utils/friend";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { SocketContext } from "../lib/websocket";
 
 function useGetFriends(
@@ -185,6 +185,83 @@ export function useFriendManager() {
         },
     });
 
+    const getStatusForFriendRequest = useCallback(
+        function (friendUserId: string) {
+            if (!isAuthenticated) {
+                return undefined;
+            } else {
+                // Check if the user's request has been rejected
+                if (rejectedRequestsQuery.data) {
+                    const request = rejectedRequestsQuery.data.find(
+                        (request) => request.toUser.id === friendUserId
+                    );
+                    if (request)
+                        return {
+                            status: FRIEND_REQUEST_STATUS.REJECTED,
+                            type: "rejected" as const,
+                        };
+                }
+
+                // Check if the user has blocked friendUserId
+                if (blockedRequestsQuery.data) {
+                    const request = blockedRequestsQuery.data.find(
+                        (request) => request.fromUser.id === friendUserId
+                    );
+                    if (request)
+                        return {
+                            status: FRIEND_REQUEST_STATUS.REJECTED,
+                            type: "blocked" as const,
+                        };
+                }
+
+                // Check if the fromUserId has sent a request
+                if (receivedRequestsQuery.data) {
+                    const request = receivedRequestsQuery.data.find(
+                        (request) => request.fromUser.id === friendUserId
+                    );
+                    if (request)
+                        return {
+                            status: FRIEND_REQUEST_STATUS.PENDING,
+                            type: "received" as const,
+                        };
+                }
+
+                // Check if the user has sent a request
+                if (sentRequestsQuery.data) {
+                    const request = sentRequestsQuery.data.find(
+                        (request) => request.toUser.id === friendUserId
+                    );
+                    if (request)
+                        return {
+                            status: FRIEND_REQUEST_STATUS.PENDING,
+                            type: "sent" as const,
+                        };
+                }
+
+                // Check if the user has accepted a request
+                if (friends) {
+                    const friend = friends.find(
+                        (f) => f.friend.id === friendUserId
+                    );
+                    if (friend)
+                        return {
+                            status: FRIEND_REQUEST_STATUS.ACCEPTED,
+                            type: "accepted" as const,
+                        };
+                }
+            }
+        },
+        [
+            isAuthenticated,
+            friends,
+            sentRequestsQuery.data,
+            rejectedRequestsQuery.data,
+            acceptedFriendsQuery.data,
+            receivedRequestsQuery,
+            blockedRequestsQuery,
+        ]
+    );
+
     return {
         sendRequest: {
             mutation: sendRequestMutation.mutateAsync,
@@ -203,6 +280,7 @@ export function useFriendManager() {
         sentRequestsQuery,
         rejectedRequestsQuery,
         blockedRequestsQuery,
+        getStatusForFriendRequest,
     };
 }
 

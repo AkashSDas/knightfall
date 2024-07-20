@@ -3,10 +3,11 @@ import { useAppSelector } from "../../../hooks/store";
 import { FriendsChatState } from "../../../store/friends-chat/slice";
 import {
     useDirectMessageRoom,
+    useFriendManager,
     useListenToDirectMessages,
 } from "../../../hooks/friend";
 import { MessageInput } from "./MessageInput";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export function ChatRoom() {
     const { friendId } = useAppSelector(
@@ -19,6 +20,12 @@ export function ChatRoom() {
 
     const containerRef = useRef<HTMLDivElement | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    const { friends } = useFriendManager();
+    const friend = useMemo(
+        () => friends.find((friend) => friend.id === friendId),
+        [friends, friendId]
+    );
 
     useDirectMessageRoom(friendId);
     useListenToDirectMessages(friendId);
@@ -53,7 +60,9 @@ export function ChatRoom() {
                 flexGrow={1}
             >
                 {Array.from({ length: 30 }, (_, i) => (
-                    <Text key={i}>Good morning {i}</Text>
+                    <Text key={i}>
+                        Good morning {i} {friend?.friend.username}
+                    </Text>
                 ))}
 
                 <div ref={messagesEndRef} />

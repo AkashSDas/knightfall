@@ -17,14 +17,20 @@ import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { object, string, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { faSearch, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+    faCircle,
+    faCommentDots,
+    faSearch,
+    faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import { useSearchPlayers } from "../../hooks/search";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getWinPointsSrc } from "../../utils/achievements";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useFriendManager } from "../../hooks/friend";
 
 const schema = object({ queryText: string({}).optional() });
 export type SearchInputs = z.infer<typeof schema>;
@@ -35,6 +41,9 @@ export function SearchPlayersPage() {
         resolver: zodResolver(schema),
     });
     const [searchText, setSearchText] = useState("");
+    const { getStatusForFriendRequest, sendRequest, friends } =
+        useFriendManager();
+    const navigate = useNavigate();
 
     const {
         fetchMore,
@@ -151,6 +160,11 @@ export function SearchPlayersPage() {
                         }
                     >
                         {players.map((player) => {
+                            const friend = friends.find(
+                                (f) => f.friend.id === player.id
+                            );
+                            const info = getStatusForFriendRequest(player.id);
+
                             return (
                                 <HStack
                                     as={Link}
@@ -165,9 +179,9 @@ export function SearchPlayersPage() {
                                     border="1.5px solid"
                                     borderColor="gray.600"
                                     cursor="pointer"
-                                    role="grid"
                                     mb="12px"
                                     transition="all 0.2s ease-in-out"
+                                    role="group"
                                 >
                                     <Avatar
                                         src={player.profilePic.URL}
@@ -190,23 +204,95 @@ export function SearchPlayersPage() {
                                         </Text>
                                     </Tooltip>
 
-                                    <Tooltip
-                                        label="Make friend"
-                                        openDelay={500}
-                                    >
-                                        <IconButton
-                                            aria-label="Make friend"
-                                            variant="ghost"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                            }}
+                                    {info === undefined ? (
+                                        <Tooltip
+                                            label="Make friend"
+                                            openDelay={500}
                                         >
-                                            <FontAwesomeIcon
-                                                icon={faUserPlus}
-                                                size="1x"
-                                            />
-                                        </IconButton>
-                                    </Tooltip>
+                                            <IconButton
+                                                as={motion.button}
+                                                aria-label="Make friend"
+                                                variant="ghost"
+                                                isLoading={
+                                                    sendRequest.isPending
+                                                }
+                                                onClick={async (e) => {
+                                                    e.preventDefault();
+                                                    await sendRequest.mutation({
+                                                        userId: player.id,
+                                                    });
+                                                }}
+                                                opacity={0}
+                                                transition="all 300ms ease-in-out"
+                                                _groupHover={{ opacity: 1 }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faUserPlus}
+                                                    size="1x"
+                                                />
+                                            </IconButton>
+                                        </Tooltip>
+                                    ) : null}
+
+                                    {info !== undefined &&
+                                    info.type === "accepted" ? (
+                                        <Tooltip label="Chat" openDelay={500}>
+                                            <IconButton
+                                                as={motion.button}
+                                                aria-label="Make friend"
+                                                variant="ghost"
+                                                onClick={async (e) => {
+                                                    e.preventDefault();
+                                                    navigate(
+                                                        `/friends?friend=${friend!.id}`
+                                                    );
+                                                }}
+                                                opacity={0}
+                                                transition="all 300ms ease-in-out"
+                                                _groupHover={{ opacity: 1 }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faCommentDots}
+                                                    size="1x"
+                                                />
+                                            </IconButton>
+                                        </Tooltip>
+                                    ) : null}
+
+                                    {info !== undefined &&
+                                    info.type !== "accepted" ? (
+                                        <Tooltip
+                                            label="Friend request status"
+                                            openDelay={500}
+                                        >
+                                            <HStack
+                                                minW="fit-content"
+                                                opacity={0}
+                                                transition="all 300ms ease-in-out"
+                                                _groupHover={{ opacity: 1 }}
+                                                border="1.5px solid"
+                                                borderColor="red.600"
+                                                px="4px"
+                                                py="4px"
+                                                fontSize="11px"
+                                                borderRadius="6px"
+                                                color="red.600"
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faCircle}
+                                                    bounce
+                                                />
+
+                                                <Text fontWeight="800">
+                                                    {info.status[0].toUpperCase() +
+                                                        info.status.slice(
+                                                            1
+                                                        )}{" "}
+                                                    friend request
+                                                </Text>
+                                            </HStack>
+                                        </Tooltip>
+                                    ) : null}
 
                                     <Image
                                         src={getWinPointsSrc(player.winPoints)}
