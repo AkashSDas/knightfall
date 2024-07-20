@@ -12,13 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { GetUserPublicProfile, userService } from "../../services/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     fa0,
     fa4,
+    faCircle,
     faPaperPlane,
     faTrophy,
 } from "@fortawesome/free-solid-svg-icons";
@@ -31,11 +32,10 @@ import {
     getWinPointsSrc,
 } from "../../utils/achievements";
 import { useFriendManager } from "../../hooks/friend";
+import { motion } from "framer-motion";
 
 export function UserPublicProfilePage() {
     const params = useParams();
-    const { pushToLogin, isAuthenticated } = useUser();
-    const { sendRequest, friends } = useFriendManager();
 
     const { isLoading, data } = useQuery({
         enabled: typeof params.playerId === "string",
@@ -43,14 +43,6 @@ export function UserPublicProfilePage() {
         queryFn: () => userService.getPlayerProfile(params.playerId!),
         staleTime: 1000 * 60 * 5, // 5mins
     });
-
-    async function handleAddFriendClick() {
-        if (!isAuthenticated) {
-            pushToLogin();
-        } else if (data?.id) {
-            await sendRequest.mutation({ userId: data.id });
-        }
-    }
 
     return (
         <BaseLayout>
@@ -124,37 +116,7 @@ export function UserPublicProfilePage() {
                                     {data?.username}
                                 </Text>
 
-                                {friends.find(
-                                    (f) => f.friend.id === data?.id
-                                ) ? (
-                                    <Button
-                                        variant="primary"
-                                        leftIcon={
-                                            <FontAwesomeIcon
-                                                icon={faPaperPlane}
-                                                size="sm"
-                                            />
-                                        }
-                                        minW="fit-content"
-                                    >
-                                        Chat
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="primary"
-                                        leftIcon={
-                                            <FontAwesomeIcon
-                                                icon={faPaperPlane}
-                                                size="sm"
-                                            />
-                                        }
-                                        minW="fit-content"
-                                        isLoading={sendRequest.isPending}
-                                        onClick={handleAddFriendClick}
-                                    >
-                                        Add Friend
-                                    </Button>
-                                )}
+                                <ActionButton friendUserId={data?.id} />
                             </HStack>
 
                             <Divider borderColor="gray.600" />
@@ -171,6 +133,77 @@ export function UserPublicProfilePage() {
                 <ChessBoardBackground h="140px" />
             </Center>
         </BaseLayout>
+    );
+}
+
+function ActionButton(props: { friendUserId: string | undefined }) {
+    const { friendUserId } = props;
+    const { getStatusForFriendRequest, sendRequest, friends } =
+        useFriendManager();
+    const { isAuthenticated, pushToLogin } = useUser();
+
+    const navigate = useNavigate();
+    const friend = friends.find((f) => f.friend.id === friendUserId);
+
+    const info = getStatusForFriendRequest(friendUserId ?? "");
+
+    async function handleAddFriendClick() {
+        if (!isAuthenticated) {
+            pushToLogin();
+        } else if (friendUserId) {
+            await sendRequest.mutation({ userId: friendUserId });
+        }
+    }
+
+    if (info === undefined) {
+        return (
+            <Button
+                variant="primary"
+                leftIcon={<FontAwesomeIcon icon={faPaperPlane} size="sm" />}
+                minW="fit-content"
+                isLoading={sendRequest.isPending}
+                onClick={handleAddFriendClick}
+            >
+                Add Friend
+            </Button>
+        );
+    }
+
+    if (info !== undefined && info.type === "accepted") {
+        return (
+            <Button
+                variant="primary"
+                leftIcon={<FontAwesomeIcon icon={faPaperPlane} size="sm" />}
+                minW="fit-content"
+                onClick={() => {
+                    navigate(`/friends?friend=${friend!.id}`);
+                }}
+            >
+                Chat
+            </Button>
+        );
+    }
+
+    return (
+        <HStack
+            minW="fit-content"
+            transition="all 300ms ease-in-out"
+            border="1.5px solid"
+            borderColor="red.600"
+            px="12px"
+            py="8px"
+            fontSize="13px"
+            borderRadius="6px"
+            color="red.600"
+            bgColor="gray.700"
+        >
+            <FontAwesomeIcon icon={faCircle} fade />
+
+            <Text fontWeight="800">
+                {info.status[0].toUpperCase() + info.status.slice(1)} friend
+                request
+            </Text>
+        </HStack>
     );
 }
 
@@ -220,6 +253,21 @@ function AchievementsBoard(
         [imgs]
     );
 
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.03,
+            },
+        },
+    };
+
+    const item = {
+        hidden: { opacity: 0 },
+        show: { opacity: 1 },
+    };
+
     return (
         <VStack alignItems="start" gap="12px" p={{ base: "10px", md: "1rem" }}>
             <Heading
@@ -235,19 +283,33 @@ function AchievementsBoard(
                 </Text>
             </Heading>
 
-            <Wrap px="24px" py="1rem" borderRadius="10px" bgColor="gray.700">
+            <Wrap
+                px="24px"
+                py="1rem"
+                borderRadius="10px"
+                bgColor="gray.700"
+                border="2px solid"
+                borderColor="gray.500"
+                as={motion.div}
+                variants={container}
+                initial="hidden"
+                animate="show"
+            >
                 {allImgs.map((img) => {
                     return (
-                        <Image
-                            src={img.src}
-                            alt="Achievement"
-                            key={img.src}
-                            h="80px"
-                            w="80px"
-                            objectFit="cover"
-                            filter={!img.isAchievement ? "grayscale(100%)" : ""}
-                            opacity={!img.isAchievement ? 0.5 : 1}
-                        />
+                        <motion.div key={img.src} variants={item}>
+                            <Image
+                                src={img.src}
+                                alt="Achievement"
+                                h="80px"
+                                w="80px"
+                                objectFit="cover"
+                                filter={
+                                    !img.isAchievement ? "grayscale(100%)" : ""
+                                }
+                                opacity={!img.isAchievement ? 0.3 : 1}
+                            />
+                        </motion.div>
                     );
                 })}
             </Wrap>
