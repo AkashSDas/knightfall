@@ -60,6 +60,7 @@ export function MessageInput(props: {
                 <Input
                     variant="contained"
                     {...form.register("text")}
+                    autoComplete="off"
                     placeholder="Message"
                 />
             </FormControl>

@@ -4,7 +4,7 @@ import { Navbar } from "../navbar";
 import ChessBg from "../../../assets/images/chess-board-bg.png";
 import { useLocation } from "react-router-dom";
 
-const pathnames: string[] = ["/", "/friends"];
+const pathnames: string[] = ["/"];
 
 export function BaseLayout(props: PropsWithChildren<unknown>) {
     const location = useLocation();

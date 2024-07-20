@@ -299,7 +299,27 @@ export function useSearchFriends() {
                 return [] as unknown as NonNullable<typeof ok>["friends"];
             }
 
-            return ok.friends;
+            // Since in backend query text is searched in fromUesr and toUser,
+            // and which ever includes query text, its returned. Therefore this
+            // additional filtering is done here, to remove logged in user.
+            //
+            // A friend request has other user and the logged in user. Just removing
+            // the result which matched logged in user and not the friend.
+            //
+            // This additional filtering can be removed by adding aggregation pipeline for
+            // a search, but its not yet implemented.
+            return ok.friends.filter((f) => {
+                console.log({ text, f });
+                if (f.fromUser.id === user?.id) {
+                    return f.toUser.username
+                        ?.toLowerCase()
+                        .includes(text.toLowerCase());
+                } else {
+                    return f.fromUser.username
+                        ?.toLowerCase()
+                        .includes(text.toLowerCase());
+                }
+            });
         },
         staleTime: 1000 * 30, // 30secs
     });
