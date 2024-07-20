@@ -2,6 +2,7 @@ import {
     Button,
     Center,
     Divider,
+    HStack,
     Heading,
     Spinner,
     Text,
@@ -21,6 +22,7 @@ import { NotificationCard } from "../../components/notification/NotificationCard
 import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
 import { textShadowStyle } from "../../lib/chakra";
 import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export function NotificationsPage() {
     return (
@@ -31,7 +33,14 @@ export function NotificationsPage() {
 }
 
 function NotificationContent() {
-    const { notifications, isLoading } = useNotifications({ limit: 5 });
+    const {
+        notifications,
+        isLoading,
+        hasMore,
+        isFetchingMore,
+        totalCount,
+        fetchMore,
+    } = useNotifications({ limit: 10 });
     const hasUnseenMessage = notifications.some((n) => n.seen === false);
     const queryClient = useQueryClient();
     const { user } = useUser();
@@ -48,6 +57,8 @@ function NotificationContent() {
     useNotificationRoom();
     useListenToNotifications();
 
+    console.log({ totalCount, n: notifications.length, hasMore });
+
     return (
         <BaseLayout>
             <Center
@@ -57,6 +68,7 @@ function NotificationContent() {
                 overflowX="hidden"
                 overflowY="hidden"
                 as="main"
+                className="notification-page"
             >
                 <VStack
                     w="100%"
@@ -121,12 +133,49 @@ function NotificationContent() {
                         </Center>
                     ) : null}
 
-                    {notifications.map((notification) => (
-                        <NotificationCard
-                            key={notification.id}
-                            notification={notification}
-                        />
-                    ))}
+                    <InfiniteScroll
+                        dataLength={totalCount}
+                        next={fetchMore}
+                        hasMore={hasMore}
+                        style={{ width: "100%" }}
+                        loader={
+                            isFetchingMore ? (
+                                <HStack
+                                    w="100%"
+                                    justifyContent="center"
+                                    mb="2rem"
+                                    mt="1rem"
+                                >
+                                    <Spinner />
+                                </HStack>
+                            ) : null
+                        }
+                        endMessage={
+                            <HStack
+                                w="100%"
+                                justifyContent="center"
+                                mb="2rem"
+                                mt="1rem"
+                            >
+                                <Text
+                                    textAlign="center"
+                                    color="gray.300"
+                                    fontWeight="500"
+                                >
+                                    {notifications.length === 0
+                                        ? "No results found"
+                                        : "Yay! You have seen it all"}
+                                </Text>
+                            </HStack>
+                        }
+                    >
+                        {notifications.map((notification) => (
+                            <NotificationCard
+                                key={notification.id}
+                                notification={notification}
+                            />
+                        ))}
+                    </InfiniteScroll>
                 </VStack>
 
                 <ChessBoardBackground h="140px" />

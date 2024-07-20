@@ -43,7 +43,7 @@ export function Navbar() {
             bgColor="gray.700"
             borderBottom="2px solid"
             borderBottomColor="gray.600"
-            zIndex={1}
+            zIndex={100}
             pos="fixed"
             w="100%"
         >

@@ -3,3 +3,7 @@
 .search-players-page .infinite-scroll-component__outerdiv {
     width: 100%;
 }
+
+.notification-page .infinite-scroll-component__outerdiv {
+    width: 100%;
+}

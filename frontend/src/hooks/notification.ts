@@ -13,30 +13,33 @@ type UseNotificationsReturn = {
     isLoading: boolean;
     fetchMore: () => void;
     hasMore: boolean;
+    totalCount: number;
+    isFetchingMore: boolean;
 };
 
 export function useNotifications({ limit = 5 }): UseNotificationsReturn {
     const { user, isAuthenticated } = useUser();
-    const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-        // eslint-disable-next-line @tanstack/query/exhaustive-deps
-        queryKey: ["notifications", user?.id],
-        enabled: isAuthenticated,
-        queryFn: ({ pageParam }) => {
-            return notificationService.getMany(limit, pageParam);
-        },
-        initialPageParam: 0,
-        getNextPageParam: (lastPage) => {
-            const lastPageLength = lastPage.notifications?.length;
-            if (lastPageLength) {
-                if (lastPageLength < limit) {
-                    return undefined;
-                } else {
-                    return lastPage.nextPageOffset ?? 0;
+    const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } =
+        useInfiniteQuery({
+            // eslint-disable-next-line @tanstack/query/exhaustive-deps
+            queryKey: ["notifications", user?.id, limit],
+            enabled: isAuthenticated,
+            queryFn: ({ pageParam }) => {
+                return notificationService.getMany(limit, pageParam);
+            },
+            initialPageParam: 0,
+            getNextPageParam: (lastPage) => {
+                const lastPageLength = lastPage.notifications?.length;
+                if (lastPageLength) {
+                    if (lastPageLength < limit) {
+                        return undefined;
+                    } else {
+                        return lastPage.nextPageOffset ?? 0;
+                    }
                 }
-            }
-        },
-        staleTime: 1000 * 30, // 30secs
-    });
+            },
+            staleTime: 1000 * 30, // 30secs
+        });
 
     const notifications: Notification[] =
         data?.pages.reduce((acc, cur) => {
@@ -48,6 +51,8 @@ export function useNotifications({ limit = 5 }): UseNotificationsReturn {
         isLoading,
         fetchMore: fetchNextPage,
         hasMore: hasNextPage,
+        isFetchingMore: isFetchingNextPage,
+        totalCount: data?.pages[0].totalCount ?? 0,
     };
 }
 
