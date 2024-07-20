@@ -97,6 +97,7 @@ export function AchievementsBoard(
                 as={motion.div}
                 variants={container}
                 initial="hidden"
+                sx={{ "& ul": { justifyContent: "space-evenly" } }}
                 animate="show"
             >
                 {allImgs.map((img) => {

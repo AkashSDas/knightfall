@@ -32,7 +32,7 @@ export function ActionButton(props: { friendUserId: string | undefined }) {
             <Button
                 variant="primary"
                 leftIcon={<FontAwesomeIcon icon={faPaperPlane} size="sm" />}
-                minW="fit-content"
+                minW={{ base: "100%", sm: "fit-content" }}
                 isLoading={sendRequest.isPending}
                 onClick={handleAddFriendClick}
             >
@@ -46,7 +46,7 @@ export function ActionButton(props: { friendUserId: string | undefined }) {
             <Button
                 variant="primary"
                 leftIcon={<FontAwesomeIcon icon={faPaperPlane} size="sm" />}
-                minW="fit-content"
+                minW={{ base: "100%", sm: "fit-content" }}
                 onClick={() => {
                     navigate(`/friends?friend=${friend!.id}`);
                 }}

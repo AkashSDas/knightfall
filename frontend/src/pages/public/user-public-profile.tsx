@@ -75,14 +75,18 @@ export function UserPublicProfilePage() {
                         </Center>
                     ) : (
                         <>
-                            <HStack w="100%" gap={{ base: "12px", md: "1rem" }}>
+                            <HStack
+                                w="100%"
+                                gap={{ base: "12px", md: "1rem" }}
+                                flexDirection={{ base: "column", sm: "row" }}
+                            >
                                 <Image
                                     src={data?.profilePic.URL}
                                     alt="Profile pic"
-                                    h="108px"
-                                    w="108px"
-                                    minW="108px"
-                                    minH="108px"
+                                    h={{ base: "200px", sm: "108px" }}
+                                    w={{ base: "200px", sm: "108px" }}
+                                    minW={{ base: "200px", sm: "108px" }}
+                                    minH={{ base: "200px", sm: "108px" }}
                                     objectFit="cover"
                                     borderRadius="10px"
                                     border="2px solid"
