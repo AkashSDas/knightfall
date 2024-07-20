@@ -105,3 +105,4 @@ export class DirectMessageDocument {
 
 /** User Typegoose Model */
 export const DirectMessage = getModelForClass(DirectMessageDocument);
+export const Message = getModelForClass(MessageSubDocument);
