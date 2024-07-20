@@ -5,8 +5,17 @@ import { Sidebar } from "../../components/friends-chat/sidebar/FriendsChatSideba
 import { friendsChatSelectors } from "../../store/friends-chat/slice";
 import { useAppSelector } from "../../hooks/store";
 import { FriendsChatContent } from "../../components/friends-chat/content/FriendsChatContent";
+import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
 
 export function FriendsPage() {
+    return (
+        <AuthProtectedBaseLayout>
+            <FriendsPageContent />
+        </AuthProtectedBaseLayout>
+    );
+}
+
+function FriendsPageContent() {
     const { isSidebarOpen } = useAppSelector(
         friendsChatSelectors.selectSidebar
     );
