@@ -11,8 +11,7 @@ type FriendChatMessageBlock = {
     messages: {
         messageId: string;
         text: string;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        reactions: any[];
+        reactions: unknown[];
         createdAt: string;
         updatedAt: string;
     }[];

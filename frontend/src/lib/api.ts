@@ -31,6 +31,9 @@ const endpoints = {
     GET_FRIEND_REQUESTS: "/api/friend/request",
     UPDATE_FRIEND_REQUEST_STATUS: "/api/friend/request",
     SEARCH_FRIENDS: "/api/friend/search",
+
+    // Direct messages
+    GET_DIRECT_MESSAGES: "/api/direct-message",
 } as const;
 
 export const HTTP_METHOD = {
