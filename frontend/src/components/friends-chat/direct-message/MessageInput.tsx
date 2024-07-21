@@ -15,6 +15,7 @@ const schema = z.object({
 });
 
 export function MessageInput(props: {
+    emptyChat: boolean;
     friendId: string;
     isConnected: boolean;
     containerRef: MutableRefObject<HTMLDivElement | null>;
@@ -55,6 +56,9 @@ export function MessageInput(props: {
         return () => window.removeEventListener("resize", updateChildWidth);
     }, []);
 
+    const username = friends.find((f) => f.id === props.friendId)?.friend
+        .username;
+
     return (
         <HStack
             as="form"
@@ -77,7 +81,11 @@ export function MessageInput(props: {
                     variant="contained"
                     {...form.register("text")}
                     autoComplete="off"
-                    placeholder={`Send message to ${friends.find((f) => f.id === props.friendId)?.friend.username}`}
+                    placeholder={
+                        props.emptyChat
+                            ? `Start conversation with ${username}`
+                            : `Send message to ${username}`
+                    }
                 />
             </FormControl>
 

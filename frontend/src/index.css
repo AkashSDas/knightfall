@@ -7,3 +7,7 @@
 .notification-page .infinite-scroll-component__outerdiv {
     width: 100%;
 }
+
+.chat-room .infinite-scroll-component__outerdiv {
+    width: 100%;
+}
