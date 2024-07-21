@@ -25,7 +25,7 @@ export type FriendsChatState = {
         | { type: "friendRequests" }
         | { type: "chat"; friendId: string }
         | { type: "friends" };
-    friendChats: Record<string, FriendChatMessageBlock[]>;
+    friendChats: Record<string, FriendChatMessageBlock[]>; // key is friendId
 };
 
 const initialState: FriendsChatState = {
@@ -46,6 +46,61 @@ export const friendsChatSlice = createSlice({
             action: { payload: FriendsChatState["mainContent"] }
         ) {
             state.mainContent = action.payload;
+        },
+        pushMessage(
+            state,
+            action: {
+                payload: {
+                    directMessageId: string;
+                    friendId: string;
+                    messageId: string;
+                    senderUserId: string;
+                    text: string;
+                };
+            }
+        ) {
+            // If there's no last group or the last group is not from the same user
+            // or the last message was more than 1 minute ago, in that case create
+            // a new group else add the message to the last group
+
+            const { friendId, senderUserId } = action.payload;
+            const msg = {
+                messageId: action.payload.messageId,
+                text: action.payload.text,
+                reactions: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+
+            const chat = state.friendChats[friendId];
+
+            if (chat) {
+                const lastGroup = chat[chat.length - 1];
+
+                if (
+                    !lastGroup ||
+                    lastGroup.userId !== senderUserId ||
+                    new Date().getTime() -
+                        new Date(
+                            lastGroup.messages[
+                                lastGroup.messages.length - 1
+                            ].createdAt
+                        ).getTime() >
+                        60 * 1000
+                ) {
+                    // add it in the start
+                    state.friendChats[friendId].unshift({
+                        groupId: uuidv4(),
+                        userId: senderUserId,
+                        friendId: friendId,
+                        directMessageId: action.payload.directMessageId,
+                        messages: [msg],
+                    });
+                } else {
+                    lastGroup.messages.unshift(msg);
+                    chat[chat.length - 1] = lastGroup;
+                }
+            }
         },
         initialPopulateFriendChat(
             state,

@@ -46,6 +46,7 @@ export function useListenToDirectMessages(friendId: string | undefined) {
     const { socket, isConnected } = useContext(SocketContext);
     const { isAuthenticated, user } = useUser();
     const [hasConnected, setHasConnected] = useState(false);
+    const dispatch = useAppDispatch();
 
     useEffect(
         function listenToDMs() {
@@ -78,10 +79,22 @@ export function useListenToDirectMessages(friendId: string | undefined) {
                 if (
                     typeof data === "object" &&
                     data !== null &&
-                    "senderUserId" in data &&
-                    data.senderUserId !== user?.id
+                    "senderUserId" in data
+
+                    // Adding both the messages
+                    // data.senderUserId !== user?.id
                 ) {
-                    console.log({ data });
+                    dispatch(
+                        friendsChatActions.pushMessage(
+                            data as unknown as {
+                                directMessageId: string;
+                                friendId: string;
+                                messageId: string;
+                                senderUserId: string;
+                                text: string;
+                            }
+                        )
+                    );
                 }
             }
         },
