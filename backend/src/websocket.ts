@@ -61,7 +61,10 @@ async function saveMessage(payload: {
 
     /** Friend document id and not user's friend's userId */
     friendId: string;
-}) {
+}): Promise<{
+    directMessageId: string;
+    messageId: string;
+}> {
     const savedDM = friendsDirectMessages[payload.friendId];
     logger.info(
         `[📮 DMs save box] ${payload.friendId}: ${savedDM?.dbModelInstance.messages.length}`,
@@ -84,6 +87,12 @@ async function saveMessage(payload: {
                 saveStatus: "pending",
                 lastEdited: new Date(),
             };
+
+            return {
+                directMessageId: newDM.id,
+                // @ts-ignore
+                messageId: newDM.messages[0]._id,
+            };
         } else {
             savedDM.dbModelInstance.messages.push(
                 new Message({ text: payload.text, user: payload.senderUserId }),
@@ -93,6 +102,15 @@ async function saveMessage(payload: {
                 dbModelInstance: savedDM.dbModelInstance,
                 saveStatus: "pending",
                 lastEdited: new Date(),
+            };
+
+            return {
+                directMessageId: savedDM.dbModelInstance.id,
+                messageId:
+                    savedDM.dbModelInstance.messages[
+                        savedDM.dbModelInstance.messages.length - 1
+                        // @ts-ignore
+                    ]._id,
             };
         }
     } else {
@@ -113,6 +131,12 @@ async function saveMessage(payload: {
                 saveStatus: "pending",
                 lastEdited: new Date(),
             };
+
+            return {
+                directMessageId: newDM.id,
+                // @ts-ignore
+                messageId: newDM.messages[0]._id,
+            };
         } else {
             dm.messages.push(
                 new Message({ text: payload.text, user: payload.senderUserId }),
@@ -122,6 +146,12 @@ async function saveMessage(payload: {
                 dbModelInstance: dm,
                 saveStatus: "pending",
                 lastEdited: new Date(),
+            };
+
+            return {
+                directMessageId: dm.id,
+                // @ts-ignore
+                messageId: dm.messages[dm.messages.length - 1]._id,
             };
         }
     }
@@ -169,8 +199,21 @@ io.on("connection", function connectToWebSocket(socket) {
     socket.on(
         "directMessage",
         function directMessage({ text, room, senderUserId, friendId }) {
-            saveMessage({ senderUserId, friendId, text });
-            io.to(room).emit("directMessage", { text, senderUserId, friendId });
+            (async () => {
+                const { directMessageId, messageId } = await saveMessage({
+                    senderUserId,
+                    friendId,
+                    text,
+                });
+
+                io.to(room).emit("directMessage", {
+                    text,
+                    senderUserId,
+                    friendId,
+                    directMessageId,
+                    messageId,
+                });
+            })();
         },
     );
 });
