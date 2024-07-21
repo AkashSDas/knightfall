@@ -3,8 +3,7 @@ import { friendService } from "../services/friend";
 import { useAppToast } from "./ui";
 import { useUser } from "./auth";
 import { FRIEND_REQUEST_STATUS } from "../utils/friend";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { SocketContext } from "../lib/websocket";
+import { useCallback, useMemo, useState } from "react";
 
 function useGetFriends(
     status: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
@@ -347,86 +346,4 @@ export function useSearchFriends() {
         searchText: text,
         changeSearchText: setText,
     };
-}
-
-export function useDirectMessageRoom(friendId: string | undefined) {
-    const { socket, isConnected } = useContext(SocketContext);
-    const { isAuthenticated, user } = useUser();
-
-    useEffect(
-        function handleDirectMessageSocket() {
-            if (socket && isConnected && isAuthenticated && user && friendId) {
-                socket.emit("joinDirectMessage", { friendId });
-
-                window.addEventListener("beforeunload", handleUnload);
-
-                return function cleanUpDirectMessageSocket() {
-                    handleUnload();
-                    window.removeEventListener("beforeunload", handleUnload);
-                };
-            }
-
-            function handleUnload() {
-                if (
-                    socket &&
-                    isConnected &&
-                    isAuthenticated &&
-                    user &&
-                    friendId
-                ) {
-                    socket.emit("leaveDirectMessage", { friendId });
-                }
-            }
-        },
-        [socket, isConnected, isAuthenticated, user?.id, friendId]
-    );
-}
-
-export function useListenToDirectMessages(friendId: string | undefined) {
-    const { socket, isConnected } = useContext(SocketContext);
-    const { isAuthenticated, user } = useUser();
-    const [hasConnected, setHasConnected] = useState(false);
-
-    useEffect(
-        function listenToDMs() {
-            if (socket && isConnected && isAuthenticated && user && friendId) {
-                socket.on("directMessage", receivedMessage);
-                setHasConnected(true);
-            }
-
-            window.addEventListener("beforeunload", handleUnload);
-
-            return function cleanUpDirectMessageSocket() {
-                handleUnload();
-                window.removeEventListener("beforeunload", handleUnload);
-            };
-
-            function handleUnload() {
-                if (
-                    socket &&
-                    isConnected &&
-                    isAuthenticated &&
-                    user &&
-                    friendId
-                ) {
-                    socket.off("directMessage", receivedMessage);
-                    setHasConnected(false);
-                }
-            }
-
-            function receivedMessage(data: unknown) {
-                if (
-                    typeof data === "object" &&
-                    data !== null &&
-                    "senderUserId" in data &&
-                    data.senderUserId !== user?.id
-                ) {
-                    console.log({ data });
-                }
-            }
-        },
-        [socket, isConnected, isAuthenticated, user?.id]
-    );
-
-    return { hasConnected };
 }
