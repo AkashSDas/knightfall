@@ -12,6 +12,7 @@ import { UserPublicProfilePage } from "../pages/public/user-public-profile";
 import { GlobalChatPage } from "../pages/public/global-chat";
 import { SearchPlayersPage } from "../pages/public/search-players";
 import { LobbyPage } from "../pages/match/lobby";
+import { MatchRoomPage } from "../pages/match/match-room";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -57,5 +58,9 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
         path: "/lobby",
         Component: LobbyPage,
+    },
+    {
+        path: "/match/:matchId",
+        Component: MatchRoomPage,
     },
 ];
