@@ -14,7 +14,7 @@ import {
 } from "@typegoose/typegoose/lib/types";
 import { schedule } from "node-cron";
 import { User } from "./models/user";
-import { MATCH_STATUS, Match } from "./models/match";
+import { CHESS_COLOR, MATCH_STATUS, Match } from "./models/match";
 
 export const httpServer = createServer(app);
 
@@ -287,9 +287,18 @@ io.on("connection", function connectToWebSocket(socket) {
                     ]);
 
                     try {
+                        const color =
+                            Math.random() < 0.5
+                                ? CHESS_COLOR.BLACK
+                                : CHESS_COLOR.WHITE;
                         const match = await Match.create({
                             player1: player1.id,
                             player2: player2.id,
+                            player1Color: color,
+                            player2Color:
+                                color === CHESS_COLOR.WHITE
+                                    ? CHESS_COLOR.BLACK
+                                    : CHESS_COLOR.WHITE,
                         });
 
                         io.to(`search_player_for_game_${player1.id}`).emit(

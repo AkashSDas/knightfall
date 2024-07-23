@@ -15,6 +15,11 @@ export const MATCH_STATUS = {
     CANCELLED: "cancelled",
 } as const;
 
+export const CHESS_COLOR = {
+    WHITE: "white",
+    BLACK: "black",
+} as const;
+
 @modelOptions({
     schemaOptions: {
         timestamps: true,
@@ -33,6 +38,12 @@ export class MatchDocument {
 
     @prop({ ref: () => UserDocument, required: true })
     player2: Ref<UserDocument>;
+
+    @prop({ type: String, enum: Object.values(CHESS_COLOR), required: true })
+    player1Color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+
+    @prop({ type: String, enum: Object.values(CHESS_COLOR), required: true })
+    player2Color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
 
     @prop({
         type: String,
