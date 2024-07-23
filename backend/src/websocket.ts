@@ -13,6 +13,7 @@ import {
     IObjectWithTypegooseFunction,
 } from "@typegoose/typegoose/lib/types";
 import { schedule } from "node-cron";
+import { User } from "./models/user";
 
 export const httpServer = createServer(app);
 
@@ -157,6 +158,12 @@ async function saveMessage(payload: {
     }
 }
 
+const playersInLobby: {
+    userId: string;
+    addedAt: Date;
+    winPoints: number;
+}[] = [];
+
 io.on("connection", function connectToWebSocket(socket) {
     logger.info(`[🟢 socket] CONNECTED: ${socket.id}`);
 
@@ -214,6 +221,96 @@ io.on("connection", function connectToWebSocket(socket) {
                     messageId,
                 });
             })();
+        },
+    );
+
+    // ==========================================
+    // Search for player to play game with
+    // ==========================================
+
+    socket.on("joinSearchPlayerForGame", function ({ userId }) {
+        const roomName = `search_player_for_game_${userId}`;
+        socket.join(roomName);
+        logger.info(`[⚽ search_player_for_game] JOIN: ${roomName}`);
+    });
+
+    socket.on("leaveSearchPlayerForGame", function ({ userId }) {
+        const roomName = `search_player_for_game_${userId}`;
+        socket.leave(roomName);
+
+        playersInLobby.splice(
+            playersInLobby.findIndex((p) => p.userId === userId),
+            1,
+        );
+
+        logger.info(`[⚽ search_player_for_game] LEAVE: ${roomName}`);
+    });
+
+    socket.on(
+        "searchPlayerForGame",
+        function searchPlayerForGame(payload: {
+            userId: string;
+            addedAt: Date;
+            winPoints: number;
+            winPointsOffset: number;
+        }) {
+            // Search for a player in the lobby, if exists then create a match
+            // and return it, else push the player in the lobby. For matching
+            // similar ranked players search winPoints (+50 or -50 i.e. winPointsOffset)
+
+            const matchingPlayer = playersInLobby.find((p) => {
+                if (
+                    Math.abs(p.winPoints - payload.winPoints) <=
+                    payload.winPointsOffset
+                ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if (!matchingPlayer) {
+                const exists = playersInLobby.find(
+                    (p) => p.userId === payload.userId,
+                );
+
+                if (!exists) {
+                    playersInLobby.push(payload);
+                }
+            } else {
+                (async () => {
+                    const [player1, player2] = await Promise.all([
+                        User.findById(matchingPlayer.userId),
+                        User.findById(payload.userId),
+                    ]);
+
+                    // Create a new match here
+
+                    io.to(`search_player_for_game_${player1.id}`).emit(
+                        "foundPlayerForMatch",
+                        {
+                            opponentUser: {
+                                id: player2.id,
+                                username: player2.username,
+                                profilePic: player2.profilePic,
+                            },
+                            // ...additional match info
+                        },
+                    );
+
+                    io.to(`search_player_for_game_${player2.id}`).emit(
+                        "foundPlayerForMatch",
+                        {
+                            opponentUser: {
+                                id: player1.id,
+                                username: player1.username,
+                                profilePic: player1.profilePic,
+                            },
+                            // ...additional match info
+                        },
+                    );
+                })();
+            }
         },
     );
 });
