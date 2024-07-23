@@ -14,6 +14,7 @@ import {
 } from "@typegoose/typegoose/lib/types";
 import { schedule } from "node-cron";
 import { User } from "./models/user";
+import { MATCH_STATUS, Match } from "./models/match";
 
 export const httpServer = createServer(app);
 
@@ -284,35 +285,59 @@ io.on("connection", function connectToWebSocket(socket) {
                         User.findById(payload.userId),
                     ]);
 
-                    // Create a new match here
+                    try {
+                        const match = await Match.create({
+                            player1: player1.id,
+                            player2: player2.id,
+                        });
 
-                    io.to(`search_player_for_game_${player1.id}`).emit(
-                        "foundPlayerForMatch",
-                        {
-                            opponentUser: {
-                                id: player2.id,
-                                username: player2.username,
-                                profilePic: player2.profilePic,
+                        io.to(`search_player_for_game_${player1.id}`).emit(
+                            "foundPlayerForMatch",
+                            {
+                                opponentUser: {
+                                    id: player2.id,
+                                    username: player2.username,
+                                    profilePic: player2.profilePic,
+                                    winPoints: player2.winPoints,
+                                },
+                                matchId: match.id,
                             },
-                            // ...additional match info
-                        },
-                    );
+                        );
 
-                    io.to(`search_player_for_game_${player2.id}`).emit(
-                        "foundPlayerForMatch",
-                        {
-                            opponentUser: {
-                                id: player1.id,
-                                username: player1.username,
-                                profilePic: player1.profilePic,
+                        io.to(`search_player_for_game_${player2.id}`).emit(
+                            "foundPlayerForMatch",
+                            {
+                                opponentUser: {
+                                    id: player1.id,
+                                    username: player1.username,
+                                    profilePic: player1.profilePic,
+                                    winPoints: player1.winPoints,
+                                },
+                                matchId: match.id,
                             },
-                            // ...additional match info
-                        },
-                    );
+                        );
+                    } catch (e) {}
                 })();
             }
         },
     );
+});
+
+schedule("0 */2 * * *", function cancelIncompleteMatches() {
+    Match.updateMany(
+        {
+            $or: [
+                { status: MATCH_STATUS.IN_PROGRESS },
+                { status: MATCH_STATUS.PENDING },
+            ],
+            createdAt: {
+                $lt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes
+            },
+        },
+        { $set: { status: MATCH_STATUS.CANCELLED } },
+    )
+        .then(() => logger.info("Matches cancelled"))
+        .catch((e) => logger.error(e));
 });
 
 schedule("* * * * *", function saveDMs() {
