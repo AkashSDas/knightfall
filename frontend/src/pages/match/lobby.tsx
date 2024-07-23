@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChessBishop, faCircle } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useSearchMatch, useSearchMatchRoom } from "../../hooks/match";
+import { useNavigate } from "react-router-dom";
 
 // Keep this height outside of the component because when you hover over the button
 // there's state change for `bounchChessIcon` which starts the chess board animation
@@ -29,9 +30,10 @@ export function LobbyPage() {
     const { isAuthenticated, pushToLogin, isLoading } = useUser();
     const controls = useAnimation();
     const [bounchChessIcon, setBounceChessIcon] = useState(false);
+    const navigate = useNavigate();
 
     useSearchMatchRoom();
-    useSearchMatch();
+    const { cancelSearch } = useSearchMatch();
 
     function handleMouseDown() {
         controls.start({
@@ -157,7 +159,10 @@ export function LobbyPage() {
                         h="60px"
                         w={{ base: "100%", sm: "200px" }}
                         fontSize="20px"
-                        onClick={() => {}}
+                        onClick={() => {
+                            cancelSearch();
+                            navigate("/");
+                        }}
                         onHoverStart={() => setBounceChessIcon(true)}
                         onHoverEnd={() => setBounceChessIcon(false)}
                         onMouseDown={handleMouseDown}

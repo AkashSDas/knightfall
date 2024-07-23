@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import { SocketContext } from "../lib/websocket";
 import { useUser } from "./auth";
 import { z } from "zod";
@@ -58,6 +58,17 @@ export function useSearchMatch() {
 
     /** Search players whose winPoints are +10 or -10 of the current user */
     const winPointsDiff = useRef(10);
+
+    const cancelSearch = useCallback(
+        function () {
+            if (socket) {
+                socket.emit("leaveSearchPlayerForGame", {
+                    userId: user?.id,
+                });
+            }
+        },
+        [socket, user]
+    );
 
     useEffect(
         function searchMatch() {
@@ -121,6 +132,8 @@ export function useSearchMatch() {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    return { cancelSearch };
 }
 
 export function useGetMatch() {
