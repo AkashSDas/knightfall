@@ -2,7 +2,11 @@ import { useContext, useEffect, useRef } from "react";
 import { SocketContext } from "../lib/websocket";
 import { useUser } from "./auth";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { matchService } from "../services/match";
+import { useToast } from "@chakra-ui/react";
+import { useAppToast } from "./ui";
 
 export function useSearchMatchRoom() {
     const { socket, isConnected } = useContext(SocketContext);
@@ -117,4 +121,29 @@ export function useSearchMatch() {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+}
+
+export function useGetMatch() {
+    const params = useParams();
+    const { isAuthenticated } = useUser();
+    const navigate = useNavigate();
+    const { errorToast } = useAppToast();
+
+    const { isLoading, data } = useQuery({
+        queryKey: [params.matchId, isAuthenticated],
+        enabled: isAuthenticated && !!params.matchId,
+        queryFn: async () => {
+            const [ok, err] = await matchService.getById(params.matchId!);
+
+            if (err || !ok) {
+                errorToast(err?.message ?? "Failed to get match");
+                navigate("/");
+                return null;
+            } else {
+                return ok;
+            }
+        },
+    });
+
+    return { isLoading, match: data };
 }

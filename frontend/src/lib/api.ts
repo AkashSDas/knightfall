@@ -34,6 +34,11 @@ const endpoints = {
 
     // Direct messages
     GET_DIRECT_MESSAGES: "/api/direct-message",
+
+    // Match
+    GET_MATCH({ matchId }: { matchId: string }) {
+        return `/api/match/${matchId}`;
+    },
 } as const;
 
 export const HTTP_METHOD = {
