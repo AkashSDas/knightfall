@@ -13,6 +13,7 @@ import { motion, useAnimation } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChessQueen } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Keep this height outside of the component because when you hover over the button
 // there's state change for `bounchChessIcon` which starts the chess board animation
@@ -28,6 +29,7 @@ export function HomePage() {
     const { isAuthenticated, pushToLogin } = useUser();
     const controls = useAnimation();
     const [bounchChessIcon, setBounceChessIcon] = useState(false);
+    const navigate = useNavigate();
 
     function handleMouseDown() {
         controls.start({
@@ -134,6 +136,8 @@ export function HomePage() {
                         onClick={() => {
                             if (!isAuthenticated) {
                                 pushToLogin();
+                            } else {
+                                navigate("/lobby");
                             }
                         }}
                         onHoverStart={() => setBounceChessIcon(true)}

@@ -11,6 +11,7 @@ import { FriendsPage } from "../pages/user/friends";
 import { UserPublicProfilePage } from "../pages/public/user-public-profile";
 import { GlobalChatPage } from "../pages/public/global-chat";
 import { SearchPlayersPage } from "../pages/public/search-players";
+import { LobbyPage } from "../pages/public/lobby";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
@@ -52,5 +53,9 @@ export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {
         path: "/search",
         Component: SearchPlayersPage,
+    },
+    {
+        path: "/lobby",
+        Component: LobbyPage,
     },
 ];
