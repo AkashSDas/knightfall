@@ -14,7 +14,7 @@ export async function sendFriendRequest(
     const user = req.user as UserDocument;
     const { toUserId } = req.body;
 
-    const exists = User.exists({ _id: toUserId });
+    const exists = await User.exists({ _id: toUserId });
     if (!exists) {
         throw new BaseApiError(400, "User with 'body.userId' does not exists.");
     }

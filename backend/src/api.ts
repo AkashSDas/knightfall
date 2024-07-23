@@ -14,6 +14,7 @@ import { router as userRouter } from "./routes/user";
 import { router as notificationRouter } from "./routes/notification";
 import { router as friendRouter } from "./routes/friend";
 import { router as directMessageRouter } from "./routes/direct-message";
+import { router as matchRouter } from "./routes/match";
 
 if (process.env.NODE_ENV !== "production") config();
 
@@ -55,6 +56,7 @@ app.use("/api/user", userRouter);
 app.use("/api/notification", notificationRouter);
 app.use("/api/friend", friendRouter);
 app.use("/api/direct-message", directMessageRouter);
+app.use("/api/match", matchRouter);
 
 app.get("/api/test", function testRoute(req, res) {
     res.status(200).json({ message: "Knightfall is online." });
