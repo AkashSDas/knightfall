@@ -5,7 +5,6 @@ import { z } from "zod";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { matchService } from "../services/match";
-import { useToast } from "@chakra-ui/react";
 import { useAppToast } from "./ui";
 
 export function useSearchMatchRoom() {

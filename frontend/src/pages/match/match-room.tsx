@@ -12,7 +12,7 @@ export function MatchRoomPage() {
 }
 
 function MatchRoomContent() {
-    const { isLoading, match } = useGetMatch();
+    const { isLoading } = useGetMatch();
 
     return (
         <BaseLayout>
