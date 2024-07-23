@@ -34,7 +34,11 @@ export class MatchDocument {
     @prop({ ref: () => UserDocument, required: true })
     player2: Ref<UserDocument>;
 
-    @prop({ enum: Object.values(MATCH_STATUS), default: MATCH_STATUS.PENDING })
+    @prop({
+        type: String,
+        enum: Object.values(MATCH_STATUS),
+        default: MATCH_STATUS.PENDING,
+    })
     status: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
 
     // =================================

@@ -262,7 +262,8 @@ io.on("connection", function connectToWebSocket(socket) {
             const matchingPlayer = playersInLobby.find((p) => {
                 if (
                     Math.abs(p.winPoints - payload.winPoints) <=
-                    payload.winPointsOffset
+                        payload.winPointsOffset &&
+                    p.userId !== payload.userId
                 ) {
                     return true;
                 } else {
