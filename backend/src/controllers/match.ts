@@ -4,7 +4,7 @@ import { Match } from "../models/match";
 import { BaseApiError } from "../utils/errors";
 
 export async function getMatchCtrl(
-    req: Request<schemas.GetMatchSchema["param"]>,
+    req: Request<schemas.GetMatchSchema["params"]>,
     res: Response,
 ) {
     const match = await Match.findById(req.params.matchId)

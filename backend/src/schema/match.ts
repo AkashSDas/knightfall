@@ -6,7 +6,7 @@ import { z } from "zod";
 // ====================================
 
 export const getMatchSchema = z.object({
-    param: z.object({
+    params: z.object({
         matchId: z.string().refine((val) => Types.ObjectId.isValid(val), {
             message: "Invalid 'matchId'",
         }),
