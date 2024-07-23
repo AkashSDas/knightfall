@@ -11,7 +11,7 @@ import { FriendsPage } from "../pages/user/friends";
 import { UserPublicProfilePage } from "../pages/public/user-public-profile";
 import { GlobalChatPage } from "../pages/public/global-chat";
 import { SearchPlayersPage } from "../pages/public/search-players";
-import { LobbyPage } from "../pages/public/lobby";
+import { LobbyPage } from "../pages/match/lobby";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {

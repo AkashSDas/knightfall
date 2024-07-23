@@ -11,13 +11,9 @@ import { useUser } from "../../hooks/auth";
 import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
 import { motion, useAnimation } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faChessBishop,
-    faChessQueen,
-    faCircle,
-    faSquare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChessBishop, faCircle } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
+import { useSearchMatch, useSearchMatchRoom } from "../../hooks/match";
 
 // Keep this height outside of the component because when you hover over the button
 // there's state change for `bounchChessIcon` which starts the chess board animation
@@ -33,6 +29,9 @@ export function LobbyPage() {
     const { isAuthenticated, pushToLogin, isLoading } = useUser();
     const controls = useAnimation();
     const [bounchChessIcon, setBounceChessIcon] = useState(false);
+
+    useSearchMatchRoom();
+    useSearchMatch();
 
     function handleMouseDown() {
         controls.start({
@@ -64,6 +63,7 @@ export function LobbyPage() {
                 pushToLogin();
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [isLoading, isAuthenticated]
     );
 
