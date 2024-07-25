@@ -7,10 +7,12 @@ import { UnknownAction, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import type * as _Redux from "@reduxjs/toolkit";
 
 import { friendsChatSlice } from "./friends-chat/slice";
+import { matchSlice } from "./match/slice";
 
 export const store = configureStore({
     reducer: {
         friendsChat: friendsChatSlice.reducer,
+        match: matchSlice.reducer,
     },
 });
 
