@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { HTTP_METHOD, api } from "../lib/api";
+import { CHESS_PIECE_COLOR } from "../utils/chess";
 
 export const MATCH_STATUS = {
     PENDING: "pending",
@@ -25,6 +26,8 @@ const GetMatchSchema = z.object({
             winPoints: z.number().min(0),
             achievements: z.array(z.string()),
         }),
+        player1Color: z.nativeEnum(CHESS_PIECE_COLOR),
+        player2Color: z.nativeEnum(CHESS_PIECE_COLOR),
         createdAt: z.string().transform((v) => new Date(v)),
         updatedAt: z.string().transform((v) => new Date(v)),
         id: z.string(),

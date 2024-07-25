@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { SocketContext } from "../lib/websocket";
 import { useUser } from "./auth";
 import { z } from "zod";
@@ -137,7 +137,7 @@ export function useSearchMatch() {
 
 export function useGetMatch() {
     const params = useParams();
-    const { isAuthenticated } = useUser();
+    const { isAuthenticated, user } = useUser();
     const navigate = useNavigate();
     const { errorToast } = useAppToast();
 
@@ -157,5 +157,43 @@ export function useGetMatch() {
         },
     });
 
-    return { isLoading, match: data };
+    const players = useMemo(
+        function () {
+            if (data && user) {
+                if (data.match.player1.id === user.id) {
+                    return {
+                        opponent: {
+                            user: data.match.player2,
+                            color: data.match.player2Color,
+                        },
+                        me: {
+                            user: data.match.player1,
+                            color: data.match.player1Color,
+                        },
+                    };
+                } else {
+                    return {
+                        opponent: {
+                            user: data.match.player1,
+                            color: data.match.player1Color,
+                        },
+                        me: {
+                            user: data.match.player2,
+                            color: data.match.player2Color,
+                        },
+                    };
+                }
+            } else {
+                return null;
+            }
+        },
+        [user?.id, data]
+    );
+
+    return {
+        isLoading,
+        players,
+        matchId: data?.match.id,
+        matchStatus: data?.match.status,
+    };
 }
