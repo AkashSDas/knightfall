@@ -49,14 +49,14 @@ export function Timer(props: { timeInMs: number; onTimeOut: () => void }) {
                 <Text
                     fontFamily="cubano"
                     as={motion.span}
-                    key={char + index} // Ensure unique key
-                    initial={{ y: 20, opacity: 0 }}
+                    key={char + index}
+                    initial={{ y: 10, opacity: 0 }}
                     animate={{
                         y: 0,
                         opacity: 1,
                         transition: { duration: 0.2 },
                     }}
-                    exit={{ y: -20, opacity: 0, transition: { duration: 0.2 } }}
+                    exit={{ y: -10, opacity: 0, transition: { duration: 0.2 } }}
                 >
                     {char}
                 </Text>
