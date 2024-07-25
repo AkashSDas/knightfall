@@ -46,6 +46,9 @@ import Wood_Queen_Black from "../assets/pieces/wood-queen-black.png";
 import Wood_Queen_White from "../assets/pieces/wood-queen-white.png";
 import Wood_Rook_Black from "../assets/pieces/wood-rook-black.png";
 import Wood_Rook_White from "../assets/pieces/wood-rook-white.png";
+import { ChessBlock, MatchState } from "../store/match/slice";
+
+import { v4 as uuid } from "uuid";
 
 export const CHESS_PIECES = {
     BISHOP: "bishop",
@@ -218,4 +221,426 @@ export function getImageForChessPiece(
         black: GameRoom_Pawn_Black,
         white: GameRoom_Pawn_White,
     };
+}
+
+export function getInitialChessBoard(): ChessBlock[][] {
+    const board: ChessBlock[][] = [];
+
+    // Create a board with colors
+    for (let i = 0; i < 8; i++) {
+        board.push([]);
+        for (let j = 0; j < 8; j++) {
+            const color =
+                (i + j) % 2 == 0
+                    ? CHESS_PIECE_COLOR.BLACK
+                    : CHESS_PIECE_COLOR.WHITE;
+
+            board[i].push({
+                id: uuid(),
+                piece: null,
+                selected: false,
+                color: color,
+                showPath: false,
+                showExplosion: false,
+            });
+        }
+    }
+
+    // Add chess pieces
+    board[0][0].piece = {
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][1].piece = {
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][2].piece = {
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][3].piece = {
+        type: CHESS_PIECES.QUEEN,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][4].piece = {
+        type: CHESS_PIECES.KING,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][5].piece = {
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][6].piece = {
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+    board[0][7].piece = {
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.BLACK,
+    };
+
+    board[7][0].piece = {
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][1].piece = {
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][2].piece = {
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][3].piece = {
+        type: CHESS_PIECES.QUEEN,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][4].piece = {
+        type: CHESS_PIECES.KING,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][5].piece = {
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][6].piece = {
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+    board[7][7].piece = {
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.WHITE,
+    };
+
+    // Add pawns
+    for (let i = 0; i < 8; i++) {
+        board[1][i].piece = {
+            type: CHESS_PIECES.PAWN,
+            color: CHESS_PIECE_COLOR.BLACK,
+        };
+        board[6][i].piece = {
+            type: CHESS_PIECES.PAWN,
+            color: CHESS_PIECE_COLOR.WHITE,
+        };
+    }
+
+    return board;
+}
+
+// ================================================
+// Chess Moves
+// ================================================
+
+function getPawnMoves(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+) {
+    const moves = [];
+    const direction = color === CHESS_PIECE_COLOR.WHITE ? -1 : 1;
+    const startRow = color === CHESS_PIECE_COLOR.WHITE ? 6 : 1;
+
+    // Single step move
+    if (board[row + direction] && !board[row + direction][col].piece) {
+        moves.push({ row: row + direction, col });
+
+        // Double step move
+        if (row === startRow && !board[row + 2 * direction][col].piece) {
+            moves.push({ row: row + 2 * direction, col });
+        }
+    }
+
+    // Capture moves
+    if (
+        board[row + direction] &&
+        board[row + direction][col - 1] &&
+        board[row + direction][col - 1].piece &&
+        board[row + direction][col - 1].piece!.color !== color
+    ) {
+        moves.push({ row: row + direction, col: col - 1 });
+    }
+    if (
+        board[row + direction] &&
+        board[row + direction][col + 1] &&
+        board[row + direction][col + 1].piece &&
+        board[row + direction][col + 1].piece!.color !== color
+    ) {
+        moves.push({ row: row + direction, col: col + 1 });
+    }
+
+    return moves;
+}
+
+function getKnightMoves(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+) {
+    const moves = [];
+    const knightMoves = [
+        { row: 2, col: 1 },
+        { row: 2, col: -1 },
+        { row: -2, col: 1 },
+        { row: -2, col: -1 },
+        { row: 1, col: 2 },
+        { row: 1, col: -2 },
+        { row: -1, col: 2 },
+        { row: -1, col: -2 },
+    ];
+
+    for (const { row: dRow, col: dCol } of knightMoves) {
+        const r = row + dRow;
+        const c = col + dCol;
+
+        if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (!board[r][c].piece || board[r][c].piece?.color !== color) {
+                moves.push({ row: r, col: c });
+            }
+        }
+    }
+
+    return moves;
+}
+
+function getRookMoves(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+) {
+    const moves = [];
+
+    // Horizontal and vertical moves
+    const directions = [
+        { row: 1, col: 0 },
+        { row: -1, col: 0 },
+        { row: 0, col: 1 },
+        { row: 0, col: -1 },
+    ];
+
+    for (const { row: dRow, col: dCol } of directions) {
+        let r = row + dRow;
+        let c = col + dCol;
+
+        while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (board[r][c].piece) {
+                if (board[r][c].piece!.color !== color) {
+                    moves.push({ row: r, col: c });
+                }
+                break;
+            }
+            moves.push({ row: r, col: c });
+            r += dRow;
+            c += dCol;
+        }
+    }
+
+    return moves;
+}
+
+function getBishopMoves(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+) {
+    const moves = [];
+    const directions = [
+        { row: 1, col: 1 },
+        { row: 1, col: -1 },
+        { row: -1, col: 1 },
+        { row: -1, col: -1 },
+    ];
+
+    for (const { row: dRow, col: dCol } of directions) {
+        let r = row + dRow;
+        let c = col + dCol;
+
+        while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (board[r][c].piece) {
+                if (board[r][c].piece!.color !== color) {
+                    moves.push({ row: r, col: c });
+                }
+                break;
+            }
+            moves.push({ row: r, col: c });
+            r += dRow;
+            c += dCol;
+        }
+    }
+
+    return moves;
+}
+
+function getQueenMoves(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+) {
+    return [
+        ...getRookMoves(board, row, col, color),
+        ...getBishopMoves(board, row, col, color),
+    ];
+}
+
+function getKingMoves(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+) {
+    const moves = [];
+    const kingMoves = [
+        { row: 1, col: 0 },
+        { row: -1, col: 0 },
+        { row: 0, col: 1 },
+        { row: 0, col: -1 },
+        { row: 1, col: 1 },
+        { row: 1, col: -1 },
+        { row: -1, col: 1 },
+        { row: -1, col: -1 },
+    ];
+
+    for (const { row: dRow, col: dCol } of kingMoves) {
+        const r = row + dRow;
+        const c = col + dCol;
+
+        if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (!board[r][c].piece || board[r][c].piece?.color !== color) {
+                moves.push({ row: r, col: c });
+            }
+        }
+    }
+
+    return moves;
+}
+
+export function getValidMovesForPiece(
+    board: ChessBlock[][],
+    row: number,
+    col: number,
+    turn: MatchState["currentTurn"],
+    checkForDangerMove: boolean = false
+) {
+    let moves: { row: number; col: number }[] = [];
+
+    switch (board[row][col].piece?.type) {
+        case CHESS_PIECES.PAWN:
+            moves = getPawnMoves(board, row, col, turn);
+            break;
+        case CHESS_PIECES.KNIGHT:
+            moves = getKnightMoves(board, row, col, turn);
+            break;
+        case CHESS_PIECES.ROOK:
+            moves = getRookMoves(board, row, col, turn);
+            break;
+        case CHESS_PIECES.BISHOP:
+            moves = getBishopMoves(board, row, col, turn);
+            break;
+        case CHESS_PIECES.QUEEN:
+            moves = getQueenMoves(board, row, col, turn);
+            break;
+        case CHESS_PIECES.KING:
+            moves = getKingMoves(board, row, col, turn);
+            break;
+        default:
+            break;
+    }
+
+    // Check each move for danger
+    const result = moves.map((move) => ({
+        ...move,
+        danger: checkForDangerMove
+            ? isMoveDangerous(
+                  JSON.parse(JSON.stringify(board)),
+                  row,
+                  col,
+                  move.row,
+                  move.col,
+                  turn
+              )
+            : false,
+    }));
+
+    return result;
+}
+
+function isMoveDangerous(
+    board: ChessBlock[][],
+    startRow: number,
+    startCol: number,
+    endRow: number,
+    endCol: number,
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+): boolean {
+    const newBoard = board.map((row) =>
+        row.map((block) => ({
+            ...block,
+            piece: block.piece ? { ...block.piece } : null,
+        }))
+    );
+    const piece = newBoard[startRow][startCol].piece;
+
+    if (!piece) return false;
+
+    // Simulate the move
+    newBoard[endRow][endCol].piece = piece;
+    newBoard[startRow][startCol].piece = null;
+
+    // Find the king's position
+    let kingRow: number | null = null;
+    let kingCol: number | null = null;
+
+    outer: for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            if (
+                newBoard[r][c].piece &&
+                newBoard[r][c].piece!.type === CHESS_PIECES.KING &&
+                newBoard[r][c].piece!.color === color
+            ) {
+                kingRow = r;
+                kingCol = c;
+                break outer;
+            }
+        }
+    }
+
+    if (kingRow === null || kingCol === null) {
+        throw new Error("King not found on the board");
+    }
+
+    // Check if any opponent piece can attack the king
+    const opponentColor =
+        color === CHESS_PIECE_COLOR.WHITE
+            ? CHESS_PIECE_COLOR.BLACK
+            : CHESS_PIECE_COLOR.WHITE;
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            if (
+                newBoard[r][c].piece &&
+                newBoard[r][c].piece!.color === opponentColor
+            ) {
+                const opponentMoves = getValidMovesForPiece(
+                    newBoard,
+                    r,
+                    c,
+                    opponentColor,
+                    false
+                ).filter((move) => !move.danger);
+                if (
+                    opponentMoves.some(
+                        (move) => move.row === kingRow && move.col === kingCol
+                    )
+                ) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
