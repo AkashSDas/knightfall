@@ -14,7 +14,14 @@ import {
 } from "@typegoose/typegoose/lib/types";
 import { schedule } from "node-cron";
 import { User } from "./models/user";
-import { CHESS_COLOR, MATCH_STATUS, Match } from "./models/match";
+import {
+    CHESS_COLOR,
+    CHESS_PIECES,
+    ChessBoardBlock,
+    MATCH_STATUS,
+    Match,
+    MatchMove,
+} from "./models/match";
 
 export const httpServer = createServer(app);
 
@@ -329,6 +336,56 @@ io.on("connection", function connectToWebSocket(socket) {
                     } catch (e) {}
                 })();
             }
+        },
+    );
+
+    // ==========================================
+    // Match room
+    // ==========================================
+
+    socket.on("joinMatchRoom", function joinMatchRoom({ matchId }) {
+        const roomName = `match_${matchId}`;
+        socket.join(roomName);
+        logger.info(`[🏓 match] JOIN: ${roomName}`);
+    });
+
+    socket.on("leaveMatchRoom", function leaveMatchRoom({ matchId }) {
+        const roomName = `match_${matchId}`;
+        socket.leave(roomName);
+        logger.info(`[🏓 match] LEAVE: ${roomName}`);
+    });
+
+    socket.on(
+        "matchChessMove",
+        function matchChessMove(payload: {
+            matchId: string;
+            move: {
+                turn: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+                board: {
+                    color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+                    piece: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES];
+                }[][];
+            };
+        }) {
+            const roomName = `match_${payload.matchId}`;
+            const move = new MatchMove({
+                turn: payload.move.turn,
+                board: payload.move.board.map((row) => {
+                    return row.map((cell) => {
+                        return new ChessBoardBlock({
+                            color: cell.color,
+                            piece: cell.piece,
+                        });
+                    });
+                }),
+            });
+
+            Match.updateOne(
+                { _id: payload.matchId },
+                { $push: { moves: move } },
+            );
+
+            io.to(roomName).emit("matchChessMove", payload);
         },
     );
 });
