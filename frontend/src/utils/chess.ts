@@ -50,6 +50,17 @@ import { ChessBlock, MatchState } from "../store/match/slice";
 
 import { v4 as uuid } from "uuid";
 
+export const MATCH_STATUS = {
+    PENDING: "pending",
+    IN_PROGRESS: "inProgress",
+    FINISHED: "finished",
+    CANCELLED: "cancelled",
+    TIMEOUT: "timeout",
+    CHECKMATE: "checkmate",
+    STALEMATE: "stalemate",
+    DRAW: "draw",
+} as const;
+
 export const CHESS_PIECES = {
     BISHOP: "bishop",
     KING: "king",
@@ -242,6 +253,7 @@ export function getInitialChessBoard(): ChessBlock[][] {
                 color: color,
                 showPath: false,
                 showExplosion: false,
+                showKingDangerPath: false,
             });
         }
     }
@@ -644,3 +656,126 @@ function isMoveDangerous(
 
     return false;
 }
+
+export function isKingInDanger(
+    board: ChessBlock[][],
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+): boolean {
+    // Find the king's position
+    let kingRow: number | null = null;
+    let kingCol: number | null = null;
+
+    outer: for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            if (
+                board[r][c].piece &&
+                board[r][c].piece!.type === CHESS_PIECES.KING &&
+                board[r][c].piece!.color === color
+            ) {
+                kingRow = r;
+                kingCol = c;
+                break outer;
+            }
+        }
+    }
+
+    if (kingRow === null || kingCol === null) return false; // No king found (should not happen in a valid game)
+
+    // Check if any opponent piece can attack the king
+    const opponentColor =
+        color === CHESS_PIECE_COLOR.WHITE
+            ? CHESS_PIECE_COLOR.BLACK
+            : CHESS_PIECE_COLOR.WHITE;
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            if (
+                board[r][c].piece &&
+                board[r][c].piece!.color === opponentColor
+            ) {
+                const moves = getValidMovesForPiece(
+                    board,
+                    r,
+                    c,
+                    opponentColor,
+                    false
+                );
+                if (
+                    moves.some(
+                        (move) => move.row === kingRow && move.col === kingCol
+                    )
+                ) {
+                    return true; // King is in danger
+                }
+            }
+        }
+    }
+
+    return false; // King is not in danger
+}
+
+export function checkGameOver(
+    board: ChessBlock[][],
+    currentTurn: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+): {
+    isGameOver: boolean;
+    result: MatchState["status"];
+    winner: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR] | null;
+} {
+    // Check ifH the current player's king is in check
+    const isKingInCheck = isKingInDanger(board, currentTurn);
+
+    // Get all valid moves for the current player
+    let hasValidMoves = false;
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            if (
+                board[row][col].piece &&
+                board[row][col].piece!.color === currentTurn
+            ) {
+                const moves = getValidMovesForPiece(
+                    board,
+                    row,
+                    col,
+                    currentTurn,
+                    true
+                );
+                if (moves.some((move) => !move.danger)) {
+                    hasValidMoves = true;
+                    break;
+                }
+            }
+        }
+        if (hasValidMoves) break;
+    }
+
+    if (isKingInCheck && !hasValidMoves) {
+        // Checkmate
+        const winner =
+            currentTurn === CHESS_PIECE_COLOR.WHITE
+                ? CHESS_PIECE_COLOR.BLACK
+                : CHESS_PIECE_COLOR.WHITE;
+
+        return { isGameOver: true, result: MATCH_STATUS.CHECKMATE, winner };
+    } else if (!isKingInCheck && !hasValidMoves) {
+        // Stalemate
+        return {
+            isGameOver: true,
+            result: MATCH_STATUS.STALEMATE,
+            winner: null,
+        };
+    }
+
+    // Game is still ongoing
+    return {
+        isGameOver: false,
+        result: MATCH_STATUS.IN_PROGRESS,
+        winner: null,
+    };
+}
+
+// 1. change match status and show winner or game over
+// 2. close game
+// 3. get all games history of a player
+// 4. watch a game play
+// 6. add more animations
+// 5. complete the project
