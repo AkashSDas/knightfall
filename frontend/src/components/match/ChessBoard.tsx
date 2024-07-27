@@ -1,7 +1,8 @@
-import { Box, Center, Grid, Image } from "@chakra-ui/react";
+import { Box, Center, Grid, Image, Text } from "@chakra-ui/react";
 import {
     CHESS_BOARD_TYPE,
     CHESS_PIECE_COLOR,
+    MATCH_STATUS,
     getImageForChessPiece,
 } from "../../utils/chess";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
@@ -10,8 +11,9 @@ import {
     matchActions,
     matchSelectors,
 } from "../../store/match/slice";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useGetMatch } from "../../hooks/match";
+import { useEffect, useMemo } from "react";
 
 // const generateRandomRotation = () => ({
 //     rotateX: [0, Math.random() * 50 - 25, 0, Math.random() * 40 - 15, 0],
@@ -58,11 +60,16 @@ export function ChessBoard() {
     const { players } = useGetMatch();
     const turn = useAppSelector(matchSelectors.currentTurn);
     const dispatch = useAppDispatch();
+    const status = useAppSelector(matchSelectors.status);
+    const winner = useAppSelector(matchSelectors.winner);
 
     // If current player's chess piece color is black then we have to rotate the board
     // so that the opponent's chess piece are always on top. By default piece color
     // at bottom is white
     const isBlackPiece = players?.me?.color === CHESS_PIECE_COLOR.BLACK;
+
+    const isPending =
+        status === MATCH_STATUS.IN_PROGRESS || status === MATCH_STATUS.PENDING;
 
     function handleClick(rowIndex: number, colIndex: number) {
         if (players!.me?.color === turn) {
@@ -88,6 +95,51 @@ export function ChessBoard() {
     //     }),
     // };
 
+    const gameOverText = useMemo(
+        function () {
+            if (status === MATCH_STATUS.DRAW) {
+                return "Game is a draw";
+            } else if (status === MATCH_STATUS.CANCELLED) {
+                return "Game cancelled";
+            } else if (
+                status === MATCH_STATUS.CHECKMATE ||
+                status === MATCH_STATUS.FINISHED
+            ) {
+                if (players?.me.color === winner) {
+                    return "You won";
+                } else {
+                    return "You lost";
+                }
+            } else if (
+                status === MATCH_STATUS.IN_PROGRESS ||
+                status === MATCH_STATUS.PENDING
+            ) {
+                return "Gone";
+            } else if (status === MATCH_STATUS.TIMEOUT) {
+                return "Timeout";
+            }
+        },
+        [status, winner]
+    );
+
+    const controls = useAnimation();
+
+    useEffect(
+        function () {
+            if (!isPending) {
+                controls.start({
+                    opacity: 0.2,
+                    filter: "grayscale(0.1)",
+                    transition: {
+                        duration: 0.5,
+                        ease: "easeInOut",
+                    },
+                });
+            }
+        },
+        [isPending]
+    );
+
     return (
         <Box
             display="flex"
@@ -97,7 +149,47 @@ export function ChessBoard() {
             maxW="600px"
             maxH="600px"
             w="100%"
+            pos="relative"
         >
+            <AnimatePresence>
+                {!isPending && (
+                    <Center
+                        pos="absolute"
+                        top="50%"
+                        left="50%"
+                        transform="translate(-50%, -50%)"
+                        w="100%"
+                        zIndex={10}
+                        as={motion.div}
+                        initial={{ opacity: 0, y: "-30%", x: "-50%" }}
+                        animate={{
+                            opacity: 1,
+                            y: "-50%",
+                            x: "-50%",
+                            transition: {
+                                delay: 0.5,
+                                duration: 0.5,
+                                ease: "easeInOut",
+                            },
+                        }}
+                        bgColor="gray.700"
+                        border="2px solid"
+                        borderColor="gray.500"
+                        borderRadius="8px"
+                        boxShadow="dark-lg"
+                    >
+                        <Text
+                            fontFamily="cubano"
+                            fontSize="60px"
+                            color={"gray.100"}
+                            textShadow="dark-lg"
+                        >
+                            {gameOverText}
+                        </Text>
+                    </Center>
+                )}
+            </AnimatePresence>
+
             <Grid
                 templateColumns="repeat(8, 1fr)"
                 templateRows="repeat(8, 1fr)"
@@ -106,6 +198,9 @@ export function ChessBoard() {
                 maxWidth="100%"
                 maxH="600px"
                 transform={isBlackPiece ? "rotate(180deg)" : ""}
+                as={motion.div}
+                initial={{ opacity: 1, filter: "" }}
+                animate={controls}
             >
                 {Array.from({ length: 64 }).map((_, index) => {
                     const item = board[Math.floor(index / 8)][index % 8];
@@ -132,28 +227,42 @@ export function ChessBoard() {
                     return (
                         <Center
                             onClick={() => {
-                                handleClick(Math.floor(index / 8), index % 8);
+                                if (
+                                    status === MATCH_STATUS.PENDING ||
+                                    status === MATCH_STATUS.IN_PROGRESS
+                                ) {
+                                    handleClick(
+                                        Math.floor(index / 8),
+                                        index % 8
+                                    );
+                                }
                             }}
                             as={motion.div}
                             key={index + (highlighted ? "-h" : "-n")}
                             cursor={
-                                (piece &&
-                                    piece.color === turn &&
-                                    players!.me?.color === turn) ||
-                                (highlighted && players!.me?.color === turn)
-                                    ? "pointer"
-                                    : "default"
+                                !isPending
+                                    ? "not-allowed"
+                                    : (piece &&
+                                            piece.color === turn &&
+                                            players!.me?.color === turn) ||
+                                        (highlighted &&
+                                            players!.me?.color === turn)
+                                      ? "pointer"
+                                      : "default"
                             }
                             transform={isBlackPiece ? "rotate(180deg)" : ""}
                             bgColor={
-                                item.showPath
-                                    ? "pink.300"
-                                    : item.selected
-                                      ? "yellow.300"
-                                      : (Math.floor(index / 8) + index) % 2 ===
-                                          0
-                                        ? "#E9EDCC"
-                                        : "#779954"
+                                item.showKingDangerPath
+                                    ? "red.600"
+                                    : item.showPath
+                                      ? "pink.300"
+                                      : item.selected
+                                        ? "yellow.300"
+                                        : (Math.floor(index / 8) + index) %
+                                                2 ===
+                                            0
+                                          ? "#E9EDCC"
+                                          : "#779954"
                             }
                             width="100%"
                             height="100%"
