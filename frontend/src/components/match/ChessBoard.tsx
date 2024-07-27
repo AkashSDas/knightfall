@@ -1,4 +1,4 @@
-import { Box, Center, Grid, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Grid, Image, Text } from "@chakra-ui/react";
 import {
     CHESS_BOARD_TYPE,
     CHESS_PIECE_COLOR,
@@ -61,6 +61,9 @@ export function ChessBoard() {
     const turn = useAppSelector(matchSelectors.currentTurn);
     const dispatch = useAppDispatch();
     const status = useAppSelector(matchSelectors.status);
+    const matchEndedMetadata = useAppSelector(
+        matchSelectors.matchEndedMetadata
+    );
     const winner = useAppSelector(matchSelectors.winner);
 
     // If current player's chess piece color is black then we have to rotate the board
@@ -122,6 +125,23 @@ export function ChessBoard() {
         [status, winner]
     );
 
+    const additionGameOverText = useMemo(
+        function () {
+            if (
+                status === MATCH_STATUS.CANCELLED &&
+                matchEndedMetadata?.byPlayer
+            ) {
+                if (matchEndedMetadata.byPlayer.id === players?.me.user.id) {
+                    return `You have cancelled the game`;
+                } else {
+                    // return `${matchEndedMetadata.byPlayer.username} has cancelled the game`;
+                    return `Opponent has cancelled the game`;
+                }
+            }
+        },
+        [status]
+    );
+
     const controls = useAnimation();
 
     useEffect(
@@ -177,15 +197,30 @@ export function ChessBoard() {
                         borderColor="gray.500"
                         borderRadius="8px"
                         boxShadow="dark-lg"
+                        flexDir="column"
+                        pb="12px"
                     >
                         <Text
                             fontFamily="cubano"
-                            fontSize="60px"
+                            fontSize={{ base: "30px", sm: "60px" }}
                             color={"gray.100"}
                             textShadow="dark-lg"
                         >
                             {gameOverText}
                         </Text>
+
+                        <Text
+                            fontSize="18px"
+                            color="gray.300"
+                            fontWeight="700"
+                            mb="1rem"
+                        >
+                            {additionGameOverText}
+                        </Text>
+
+                        <Button onClick={() => {}} variant="primary" mb="1rem">
+                            Go Home
+                        </Button>
                     </Center>
                 )}
             </AnimatePresence>
@@ -239,9 +274,10 @@ export function ChessBoard() {
                             }}
                             as={motion.div}
                             key={index + (highlighted ? "-h" : "-n")}
+                            pointerEvents={!isPending ? "none" : "auto"}
                             cursor={
                                 !isPending
-                                    ? "not-allowed"
+                                    ? "default"
                                     : (piece &&
                                             piece.color === turn &&
                                             players!.me?.color === turn) ||
