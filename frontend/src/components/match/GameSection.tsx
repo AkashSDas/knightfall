@@ -15,7 +15,11 @@ import {
 import { Timer } from "./Timer";
 import { TurnText } from "./TurnText";
 import { PlayerInfo } from "./PlayerInfo";
-import { useGetMatch } from "../../hooks/match";
+import {
+    useGetMatch,
+    useListenMatchRoom,
+    useMatchRoom,
+} from "../../hooks/match";
 import { useAppSelector } from "../../hooks/store";
 import { matchSelectors } from "../../store/match/slice";
 import { ChessBoard } from "./ChessBoard";
@@ -24,6 +28,9 @@ export function GameSection() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { players } = useGetMatch();
     const time = useAppSelector(matchSelectors.startTimeInMs);
+
+    useMatchRoom();
+    useListenMatchRoom();
 
     return (
         <VStack w="100%" maxW="600px" gap="24px">
