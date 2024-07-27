@@ -15,12 +15,13 @@ import {
 import { schedule } from "node-cron";
 import { User } from "./models/user";
 import {
-    CHESS_COLOR,
+    CHESS_PIECE_COLOR,
     CHESS_PIECES,
-    ChessBoardBlock,
+    ChessPiece,
     MATCH_STATUS,
     Match,
     MatchMove,
+    getInitialChessBoard,
 } from "./models/match";
 
 export const httpServer = createServer(app);
@@ -296,16 +297,27 @@ io.on("connection", function connectToWebSocket(socket) {
                     try {
                         const color =
                             Math.random() < 0.5
-                                ? CHESS_COLOR.BLACK
-                                : CHESS_COLOR.WHITE;
+                                ? CHESS_PIECE_COLOR.BLACK
+                                : CHESS_PIECE_COLOR.WHITE;
                         const match = await Match.create({
                             player1: player1.id,
                             player2: player2.id,
                             player1Color: color,
                             player2Color:
-                                color === CHESS_COLOR.WHITE
-                                    ? CHESS_COLOR.BLACK
-                                    : CHESS_COLOR.WHITE,
+                                color === CHESS_PIECE_COLOR.WHITE
+                                    ? CHESS_PIECE_COLOR.BLACK
+                                    : CHESS_PIECE_COLOR.WHITE,
+                            moves: [
+                                new MatchMove({
+                                    board: getInitialChessBoard(),
+
+                                    // Initializing with black's turn because in FE the latest board's (in this
+                                    // case it will be the first board) the turn is checked and opposite
+                                    // turn is set because the last move was of the other turn. Since
+                                    // we want to start with white's turn, we set it to black
+                                    turn: CHESS_PIECE_COLOR.BLACK,
+                                }),
+                            ],
                         });
 
                         io.to(`search_player_for_game_${player1.id}`).emit(
@@ -333,7 +345,9 @@ io.on("connection", function connectToWebSocket(socket) {
                                 matchId: match.id,
                             },
                         );
-                    } catch (e) {}
+                    } catch (e) {
+                        logger.error(`[❌ searchPlayerForGame] ${e}`);
+                    }
                 })();
             }
         },
@@ -359,22 +373,24 @@ io.on("connection", function connectToWebSocket(socket) {
         "matchChessMove",
         function matchChessMove(payload: {
             matchId: string;
+            playerId: string;
             move: {
-                turn: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+                turn: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
                 board: {
-                    color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
-                    piece: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES];
+                    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
+                    type: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES];
                 }[][];
             };
+            status: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
         }) {
             const roomName = `match_${payload.matchId}`;
             const move = new MatchMove({
                 turn: payload.move.turn,
                 board: payload.move.board.map((row) => {
                     return row.map((cell) => {
-                        return new ChessBoardBlock({
+                        return new ChessPiece({
                             color: cell.color,
-                            piece: cell.piece,
+                            type: cell.type,
                         });
                     });
                 }),
@@ -382,10 +398,23 @@ io.on("connection", function connectToWebSocket(socket) {
 
             Match.updateOne(
                 { _id: payload.matchId },
-                { $push: { moves: move } },
-            );
+                { $push: { moves: move }, status: payload.status },
+            )
+                .then(() => logger.info("Match move saved"))
+                .catch((e) => logger.error(e));
 
-            io.to(roomName).emit("matchChessMove", payload);
+            io.to(roomName).emit("matchChessMove", {
+                matchId: payload.matchId,
+                playerId: payload.playerId,
+                move: {
+                    turn:
+                        move.turn === CHESS_PIECE_COLOR.BLACK
+                            ? CHESS_PIECE_COLOR.WHITE
+                            : CHESS_PIECE_COLOR.BLACK,
+                    board: move.board,
+                },
+                status: payload.status,
+            });
         },
     );
 });
