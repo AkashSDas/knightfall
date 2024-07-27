@@ -14,12 +14,16 @@ export function Timer(props: { timeInMs: number; onTimeOut: () => void }) {
     const [seconds, setSeconds] = useState(Math.floor(props.timeInMs / 1000));
 
     useEffect(() => {
+        setSeconds(Math.floor(props.timeInMs / 1000));
+    }, [props.timeInMs]);
+
+    useEffect(() => {
         const interval = setInterval(() => {
             setSeconds((prev) => Math.max(prev - 1, 0));
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [props.timeInMs]);
 
     useEffect(() => {
         if (seconds === 0) {
