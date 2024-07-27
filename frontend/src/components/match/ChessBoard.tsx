@@ -14,6 +14,7 @@ import {
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useGetMatch } from "../../hooks/match";
 import { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 
 // const generateRandomRotation = () => ({
 //     rotateX: [0, Math.random() * 50 - 25, 0, Math.random() * 40 - 15, 0],
@@ -218,7 +219,7 @@ export function ChessBoard() {
                             {additionGameOverText}
                         </Text>
 
-                        <Button onClick={() => {}} variant="primary" mb="1rem">
+                        <Button as={Link} to="/" variant="primary" mb="1rem">
                             Go Home
                         </Button>
                     </Center>
