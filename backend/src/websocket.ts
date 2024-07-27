@@ -370,6 +370,59 @@ io.on("connection", function connectToWebSocket(socket) {
     });
 
     socket.on(
+        "matchChessStart",
+        function matchChessStarted(payload: { matchId: string }) {
+            Match.findOne({ _id: payload.matchId })
+                .then((match) => {
+                    if (!match.startedAt) {
+                        return Match.updateOne(
+                            { _id: match._id },
+                            {
+                                $set: {
+                                    status: MATCH_STATUS.IN_PROGRESS,
+                                    startedAt: new Date(),
+                                },
+                            },
+                        );
+                    } else {
+                        return undefined;
+                    }
+                })
+                .catch((e) => logger.error(e));
+        },
+    );
+
+    socket.on(
+        "matchChessEnd",
+        function matchChessEnded(payload: {
+            matchId: string;
+            newStatus: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
+            metadata: {
+                reason: string;
+                byPlayer: {
+                    username: string;
+                    id: string;
+                };
+            };
+        }) {
+            const roomName = `match_${payload.matchId}`;
+
+            Match.updateOne(
+                { _id: payload.matchId },
+                { $set: { status: payload.newStatus } },
+            )
+                .then(() =>
+                    logger.info(
+                        `[🏓 match] MATCH STATUS: ${payload.newStatus}`,
+                    ),
+                )
+                .catch((e) => logger.error(e));
+
+            socket.to(roomName).emit("matchChessEnd", payload);
+        },
+    );
+
+    socket.on(
         "matchChessMove",
         function matchChessMove(payload: {
             matchId: string;
@@ -422,11 +475,8 @@ io.on("connection", function connectToWebSocket(socket) {
 schedule("0 */2 * * *", function cancelIncompleteMatches() {
     Match.updateMany(
         {
-            $or: [
-                { status: MATCH_STATUS.IN_PROGRESS },
-                { status: MATCH_STATUS.PENDING },
-            ],
-            createdAt: {
+            $or: [{ status: MATCH_STATUS.IN_PROGRESS }],
+            startedAt: {
                 $lt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes
             },
         },

@@ -116,6 +116,9 @@ export class MatchDocument {
     @prop({ type: String, enum: Object.values(CHESS_PIECE_COLOR) })
     winner?: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
 
+    @prop({ type: Date })
+    startedAt?: Date;
+
     // =================================
     // Virtuals
     // =================================
