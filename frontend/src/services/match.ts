@@ -1,13 +1,6 @@
 import { z } from "zod";
 import { HTTP_METHOD, api } from "../lib/api";
-import { CHESS_PIECE_COLOR } from "../utils/chess";
-
-export const MATCH_STATUS = {
-    PENDING: "pending",
-    IN_PROGRESS: "inProgress",
-    FINISHED: "finished",
-    CANCELLED: "cancelled",
-} as const;
+import { CHESS_PIECES, CHESS_PIECE_COLOR, MATCH_STATUS } from "../utils/chess";
 
 const GetMatchSchema = z.object({
     match: z.object({
@@ -31,6 +24,19 @@ const GetMatchSchema = z.object({
         createdAt: z.string().transform((v) => new Date(v)),
         updatedAt: z.string().transform((v) => new Date(v)),
         id: z.string(),
+        moves: z.array(
+            z.object({
+                turn: z.nativeEnum(CHESS_PIECE_COLOR),
+                board: z.array(
+                    z.array(
+                        z.object({
+                            color: z.nativeEnum(CHESS_PIECE_COLOR).nullable(),
+                            type: z.nativeEnum(CHESS_PIECES).nullable(),
+                        })
+                    )
+                ),
+            })
+        ),
     }),
 });
 
