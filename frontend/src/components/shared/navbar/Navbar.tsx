@@ -1,4 +1,5 @@
 import {
+    Avatar,
     Button,
     Drawer,
     DrawerBody,
@@ -19,9 +20,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
+    faBell,
     faChessKing,
     faCommentDots,
+    faGear,
+    faPeopleGroup,
     faSearch,
+    faTrophy,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "../../../hooks/auth";
@@ -31,7 +36,7 @@ import { UserProfileMenu } from "./UserProfileMenu";
 export function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
-    const { isAuthenticated, logoutMutation } = useUser();
+    const { isAuthenticated, logoutMutation, user } = useUser();
 
     return (
         <HStack
@@ -173,6 +178,135 @@ export function Navbar() {
                         </DrawerHeader>
 
                         <DrawerBody pos="relative" h="100%" p={0}>
+                            {/* Actions */}
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to="/search"
+                                variant="darkContained"
+                                leftIcon={
+                                    <FontAwesomeIcon
+                                        icon={faSearch}
+                                        size="1x"
+                                    />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="12px"
+                                mb="12px"
+                            >
+                                Search Players
+                            </Button>
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to="/global-chat"
+                                variant="darkContained"
+                                leftIcon={
+                                    <FontAwesomeIcon
+                                        icon={faCommentDots}
+                                        size="1x"
+                                    />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="12px"
+                                mb="12px"
+                            >
+                                Global Chat
+                            </Button>
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to="/notifications"
+                                variant="darkContained"
+                                leftIcon={
+                                    <FontAwesomeIcon icon={faBell} size="1x" />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="12px"
+                                mb="12px"
+                            >
+                                Notifications
+                            </Button>
+
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to="/history"
+                                variant="darkContained"
+                                leftIcon={
+                                    <FontAwesomeIcon
+                                        icon={faTrophy}
+                                        size="1x"
+                                    />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="12px"
+                                mb="12px"
+                            >
+                                History
+                            </Button>
+
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to="/friends"
+                                variant="darkContained"
+                                leftIcon={
+                                    <FontAwesomeIcon
+                                        icon={faPeopleGroup}
+                                        size="1x"
+                                    />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="12px"
+                                mb="12px"
+                            >
+                                Friends
+                            </Button>
+
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to="/settings"
+                                variant="darkContained"
+                                leftIcon={
+                                    <FontAwesomeIcon icon={faGear} size="1x" />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="12px"
+                                mb="12px"
+                            >
+                                Settings
+                            </Button>
+
+                            <Button
+                                as={Link}
+                                mx="1rem"
+                                to={`/player/${user?.id}`}
+                                variant="darkContained"
+                                leftIcon={
+                                    <Avatar
+                                        border="1.5px solid black"
+                                        src={user?.profilePic.URL}
+                                        h="26px"
+                                        w="26px"
+                                        objectFit="cover"
+                                    />
+                                }
+                                w="calc(100% - 2rem)"
+                                justifyContent="start"
+                                gap="4px"
+                                mb="12px"
+                            >
+                                @{user?.username} (profile)
+                            </Button>
+
                             {/* Footer */}
                             <HStack
                                 gap="1.5rem"

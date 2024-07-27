@@ -216,6 +216,10 @@ export function SearchPlayersPage() {
                                                 isLoading={
                                                     sendRequest.isPending
                                                 }
+                                                display={{
+                                                    base: "none",
+                                                    md: "flex",
+                                                }}
                                                 onClick={async (e) => {
                                                     e.preventDefault();
                                                     await sendRequest.mutation({
@@ -247,6 +251,10 @@ export function SearchPlayersPage() {
                                                         `/friends?friend=${friend!.id}`
                                                     );
                                                 }}
+                                                display={{
+                                                    base: "none",
+                                                    md: "flex",
+                                                }}
                                                 opacity={0}
                                                 transition="all 300ms ease-in-out"
                                                 _groupHover={{ opacity: 1 }}
@@ -277,6 +285,10 @@ export function SearchPlayersPage() {
                                                 fontSize="11px"
                                                 borderRadius="6px"
                                                 color="red.600"
+                                                display={{
+                                                    base: "none",
+                                                    md: "flex",
+                                                }}
                                             >
                                                 <FontAwesomeIcon
                                                     icon={faCircle}
