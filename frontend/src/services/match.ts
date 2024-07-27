@@ -24,6 +24,10 @@ const GetMatchSchema = z.object({
         createdAt: z.string().transform((v) => new Date(v)),
         updatedAt: z.string().transform((v) => new Date(v)),
         id: z.string(),
+        startedAt: z
+            .string()
+            .transform((v) => new Date(v))
+            .optional(),
         moves: z.array(
             z.object({
                 turn: z.nativeEnum(CHESS_PIECE_COLOR),

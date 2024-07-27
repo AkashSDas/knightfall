@@ -30,6 +30,10 @@ export type MatchState = {
     startTimeInMs: number;
     winner: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR] | null;
     status: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
+    matchEndedMetadata?: {
+        reason: string;
+        byPlayer?: { username: string; id: string } | undefined;
+    };
 };
 
 const initialState: MatchState = {
@@ -49,6 +53,18 @@ export const matchSlice = createSlice({
     name: "match",
     initialState,
     reducers: {
+        changeTime: (state, action: PayloadAction<number>) => {
+            state.startTimeInMs = action.payload;
+        },
+        changeMatchEndedMetadata: (
+            state,
+            action: PayloadAction<{
+                reason: string;
+                byPlayer?: { username: string; id: string } | undefined;
+            }>
+        ) => {
+            state.matchEndedMetadata = action.payload;
+        },
         changeMatchStatus: (
             state,
             action: PayloadAction<
@@ -246,4 +262,5 @@ export const matchSelectors = {
     startTimeInMs: (state: RootState) => state.match.startTimeInMs,
     status: (state: RootState) => state.match.status,
     winner: (state: RootState) => state.match.winner,
+    matchEndedMetadata: (state: RootState) => state.match.matchEndedMetadata,
 };

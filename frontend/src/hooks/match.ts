@@ -195,6 +195,22 @@ export function useGetMatch() {
 
                 dispatch(matchActions.changeMatchStatus(ok.match.status));
 
+                if (ok.match.startedAt) {
+                    const diff =
+                        new Date().getTime() -
+                        new Date(ok.match.startedAt).getTime();
+
+                    if (diff > 1000 * 60 * 5) {
+                        dispatch(
+                            matchActions.changeMatchStatus(MATCH_STATUS.TIMEOUT)
+                        );
+                    } else {
+                        dispatch(matchActions.changeTime(1000 * 60 * 5 - diff));
+                    }
+                } else {
+                    dispatch(matchActions.changeTime(1000 * 60 * 5));
+                }
+
                 return ok;
             }
         },
@@ -289,6 +305,22 @@ const MatchChessMoveSchema = z
     })
     .strict({ message: "Extra fields not allowed" });
 
+const MatchChessEndSchema = z
+    .object({
+        matchId: z.string(),
+        newStatus: z.nativeEnum(MATCH_STATUS),
+        metadata: z.object({
+            reason: z.string(),
+            byPlayer: z
+                .object({
+                    username: z.string(),
+                    id: z.string(),
+                })
+                .optional(),
+        }),
+    })
+    .strict({ message: "Extra fields not allowed" });
+
 export function useListenMatchRoom() {
     const { socket, isConnected } = useContext(SocketContext);
     const { isAuthenticated, user } = useUser();
@@ -313,7 +345,6 @@ export function useListenMatchRoom() {
 
             function receiveMatchChessMove(data: unknown) {
                 const result = MatchChessMoveSchema.safeParse(data);
-                console.log({ result });
 
                 if (result.success) {
                     const { matchId, playerId, move } = result.data;
@@ -394,5 +425,39 @@ export function useListenMatchRoom() {
             }
         },
         [currentTurn]
+    );
+
+    useEffect(
+        function listenToMatchEnd() {
+            if (socket && isConnected && isAuthenticated && user && matchId) {
+                socket.on("matchChessEnd", matchEnded);
+            }
+
+            return function cleanup() {
+                if (socket && isConnected && isAuthenticated && user) {
+                    socket.off("matchChessEnd", matchEnded);
+                }
+            };
+
+            function matchEnded(data: unknown) {
+                const result = MatchChessEndSchema.safeParse(data);
+
+                if (result.success) {
+                    const { matchId, metadata, newStatus } = result.data;
+
+                    if (matchId === matchId) {
+                        dispatch(matchActions.changeMatchStatus(newStatus));
+
+                        if (metadata) {
+                            dispatch(
+                                matchActions.changeMatchEndedMetadata(metadata)
+                            );
+                        }
+                    }
+                }
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [socket, isConnected, isAuthenticated, user?.id, matchId]
     );
 }
