@@ -2,6 +2,8 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
     CHESS_PIECES,
     CHESS_PIECE_COLOR,
+    MATCH_STATUS,
+    checkGameOver,
     getInitialChessBoard,
     getValidMovesForPiece,
 } from "../../utils/chess";
@@ -19,29 +21,98 @@ export type ChessBlock = {
     selected: boolean;
     showPath: boolean;
     showExplosion: boolean;
+    showKingDangerPath: boolean;
 };
 
 export type MatchState = {
     board: ChessBlock[][];
     currentTurn: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
     startTimeInMs: number;
+    winner: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR] | null;
+    status: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
 };
 
 const initialState: MatchState = {
     board: getInitialChessBoard(),
-    currentTurn: CHESS_PIECE_COLOR.BLACK,
+
+    // Initialize with white's turn
+    currentTurn: CHESS_PIECE_COLOR.WHITE,
+
     startTimeInMs: 1000 * 60 * 5,
+
+    winner: null,
+
+    status: MATCH_STATUS.PENDING,
 };
 
 export const matchSlice = createSlice({
     name: "match",
     initialState,
     reducers: {
-        changeTurn: (state) => {
-            state.currentTurn =
-                state.currentTurn === CHESS_PIECE_COLOR.BLACK
-                    ? CHESS_PIECE_COLOR.WHITE
-                    : CHESS_PIECE_COLOR.BLACK;
+        changeMatchStatus: (
+            state,
+            action: PayloadAction<
+                (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS]
+            >
+        ) => {
+            state.status = action.payload;
+        },
+        changeTurn: (
+            state,
+            action: PayloadAction<
+                | (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+                | undefined
+            >
+        ) => {
+            if (action.payload) {
+                state.currentTurn = action.payload;
+            } else {
+                state.currentTurn =
+                    state.currentTurn === CHESS_PIECE_COLOR.BLACK
+                        ? CHESS_PIECE_COLOR.WHITE
+                        : CHESS_PIECE_COLOR.BLACK;
+            }
+        },
+        changeBoard: (state, action: PayloadAction<ChessBlock[][]>) => {
+            const newBoard = action.payload;
+
+            // Clear previous showKingInDangerPath states
+            newBoard.forEach((row) =>
+                row.forEach((block) => (block.showKingDangerPath = false))
+            );
+
+            // Check for danger paths for the current player's king
+            const currentTurn = state.currentTurn;
+            newBoard.forEach((row, rowIndex) => {
+                row.forEach((block, colIndex) => {
+                    if (block.piece && block.piece.color === currentTurn) {
+                        const moves = getValidMovesForPiece(
+                            newBoard,
+                            rowIndex,
+                            colIndex,
+                            currentTurn,
+                            true
+                        );
+                        moves.forEach((move) => {
+                            if (move.danger) {
+                                newBoard[move.row][
+                                    move.col
+                                ].showKingDangerPath = true;
+                            }
+                        });
+                    }
+                });
+            });
+
+            state.board = newBoard;
+
+            // Check for game over conditions after the move
+            const { result, winner } = checkGameOver(
+                state.board,
+                state.currentTurn
+            );
+            state.status = result;
+            state.winner = winner;
         },
         selectPiece: (
             state,
@@ -147,6 +218,19 @@ export const matchSlice = createSlice({
                         }
 
                         state.board[row][col].piece = null;
+
+                        // Check for game over conditions after the move
+                        const { result, winner } = checkGameOver(
+                            state.board,
+                            state.currentTurn
+                        );
+                        state.status = result;
+                        state.winner = winner;
+
+                        state.currentTurn =
+                            state.currentTurn === CHESS_PIECE_COLOR.WHITE
+                                ? CHESS_PIECE_COLOR.BLACK
+                                : CHESS_PIECE_COLOR.WHITE;
                     }
                 }
             }
@@ -160,4 +244,6 @@ export const matchSelectors = {
     board: (state: RootState) => state.match.board,
     currentTurn: (state: RootState) => state.match.currentTurn,
     startTimeInMs: (state: RootState) => state.match.startTimeInMs,
+    status: (state: RootState) => state.match.status,
+    winner: (state: RootState) => state.match.winner,
 };
