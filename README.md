@@ -1,16 +1,18 @@
 # Knightfall
 
-Play online chess with other player and make friends.
+Play online chess with other players and make friends.
 
 ![Cover image](./docs/cover.png)
 
+[Demo](https://www.youtube.com/watch?v=WcV9uLEdUuM)
+
 ## Features
 
-- Play chess with others in real time (socket rooms)
-- Lobby for finding player with similar ranks
-- Send friend request, block/accept them
-- Chat with friends in real time (use server state and corn job for quick response)
-- Real time notification system
+- Play chess with others in real-time (socket rooms)
+- Lobby for finding players with similar ranks
+- Send friend requests, block/accept them
+- Chat with friends in real-time (use server state and corn job for quick response)
+- Real-time notification system
 - OAuth w/ Google, magic email login, access/refresh token system
 - Search for players (pagination)
 - Fully responsive
