@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { SearchPlayers, userService } from "../services/user";
 
 export function useSearchPlayers({
-    limit = 5,
+    limit = 10,
     searchText,
 }: {
     limit?: number;
