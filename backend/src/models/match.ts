@@ -4,6 +4,7 @@ import {
     getModelForClass,
     modelOptions,
     prop,
+    PropType,
 } from "@typegoose/typegoose";
 import { UserDocument } from "./user";
 import { Types } from "mongoose";
@@ -13,9 +14,13 @@ export const MATCH_STATUS = {
     IN_PROGRESS: "inProgress",
     FINISHED: "finished",
     CANCELLED: "cancelled",
+    TIMEOUT: "timeout",
+    CHECKMATE: "checkmate",
+    STALEMATE: "stalemate",
+    DRAW: "draw",
 } as const;
 
-export const CHESS_COLOR = {
+export const CHESS_PIECE_COLOR = {
     WHITE: "white",
     BLACK: "black",
 } as const;
@@ -33,13 +38,17 @@ export const CHESS_PIECES = {
     schemaOptions: { timestamps: true },
     options: { allowMixed: Severity.ALLOW, customName: "chessBoardBlock" },
 })
-export class ChessBoardBlockDocument {
+export class ChessPieceDocument {
     /** Color of chess piece */
-    @prop({ type: String, enum: Object.values(CHESS_COLOR), required: true })
-    color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+    @prop({
+        type: String,
+        enum: Object.values(CHESS_PIECE_COLOR),
+        default: null,
+    })
+    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR] | null;
 
-    @prop({ type: String, enum: Object.values(CHESS_PIECES), required: true })
-    piece: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES];
+    @prop({ type: String, enum: Object.values(CHESS_PIECES), default: null })
+    type: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES] | null;
 }
 
 @modelOptions({
@@ -47,11 +56,15 @@ export class ChessBoardBlockDocument {
     options: { allowMixed: Severity.ALLOW, customName: "matchMove" },
 })
 export class MatchMoveDocument {
-    @prop({ type: String, enum: Object.values(CHESS_COLOR), required: true })
-    turn: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+    @prop({
+        type: String,
+        enum: Object.values(CHESS_PIECE_COLOR),
+        required: true,
+    })
+    turn: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
 
-    @prop({ type: ChessBoardBlockDocument, required: true, dim: 2 })
-    board: ChessBoardBlockDocument[][];
+    @prop({ type: ChessPieceDocument, required: true, dim: 2 }, PropType.ARRAY)
+    board: ChessPieceDocument[][];
 }
 
 @modelOptions({
@@ -73,11 +86,19 @@ export class MatchDocument {
     @prop({ ref: () => UserDocument, required: true })
     player2: Ref<UserDocument>;
 
-    @prop({ type: String, enum: Object.values(CHESS_COLOR), required: true })
-    player1Color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+    @prop({
+        type: String,
+        enum: Object.values(CHESS_PIECE_COLOR),
+        required: true,
+    })
+    player1Color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
 
-    @prop({ type: String, enum: Object.values(CHESS_COLOR), required: true })
-    player2Color: (typeof CHESS_COLOR)[keyof typeof CHESS_COLOR];
+    @prop({
+        type: String,
+        enum: Object.values(CHESS_PIECE_COLOR),
+        required: true,
+    })
+    player2Color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
 
     @prop({
         type: String,
@@ -86,8 +107,14 @@ export class MatchDocument {
     })
     status: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
 
-    @prop({ type: () => [MatchMoveDocument], required: true })
-    moves: MatchMoveDocument;
+    @prop(
+        { type: () => [MatchMoveDocument], required: true, default: [] },
+        PropType.ARRAY,
+    )
+    moves: MatchMoveDocument[];
+
+    @prop({ type: String, enum: Object.values(CHESS_PIECE_COLOR) })
+    winner?: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
 
     // =================================
     // Virtuals
@@ -103,4 +130,105 @@ export class MatchDocument {
 
 export const Match = getModelForClass(MatchDocument);
 export const MatchMove = getModelForClass(MatchMoveDocument);
-export const ChessBoardBlock = getModelForClass(ChessBoardBlockDocument);
+export const ChessPiece = getModelForClass(ChessPieceDocument);
+
+export function getInitialChessBoard() {
+    // const board: {
+    //     piece: null | {
+    //         type: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES];
+    //         color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
+    //     };
+    //     color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
+    // }[][] = [];
+
+    const board: ChessPieceDocument[][] = [];
+
+    // Create a board with colors
+    for (let i = 0; i < 8; i++) {
+        board.push([]);
+        for (let j = 0; j < 8; j++) {
+            board[i].push({ type: null, color: null });
+        }
+    }
+
+    // Add chess pieces
+    board[0][0] = new ChessPiece({
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][1] = new ChessPiece({
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][2] = new ChessPiece({
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][3] = new ChessPiece({
+        type: CHESS_PIECES.QUEEN,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][4] = new ChessPiece({
+        type: CHESS_PIECES.KING,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][5] = new ChessPiece({
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][6] = new ChessPiece({
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+    board[0][7] = new ChessPiece({
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.BLACK,
+    });
+
+    board[7][0] = new ChessPiece({
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][1] = new ChessPiece({
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][2] = new ChessPiece({
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][3] = new ChessPiece({
+        type: CHESS_PIECES.QUEEN,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][4] = new ChessPiece({
+        type: CHESS_PIECES.KING,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][5] = new ChessPiece({
+        type: CHESS_PIECES.BISHOP,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][6] = new ChessPiece({
+        type: CHESS_PIECES.KNIGHT,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+    board[7][7] = new ChessPiece({
+        type: CHESS_PIECES.ROOK,
+        color: CHESS_PIECE_COLOR.WHITE,
+    });
+
+    // Add pawns
+    for (let i = 0; i < 8; i++) {
+        board[1][i] = new ChessPiece({
+            type: CHESS_PIECES.PAWN,
+            color: CHESS_PIECE_COLOR.BLACK,
+        });
+        board[6][i] = new ChessPiece({
+            type: CHESS_PIECES.PAWN,
+            color: CHESS_PIECE_COLOR.WHITE,
+        });
+    }
+
+    return board;
+}
