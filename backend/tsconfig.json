@@ -13,7 +13,11 @@
         "esModuleInterop": true,
         "typeRoots": ["@types"],
         "experimentalDecorators": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
     },
     "compileOnSave": true,
     "include": ["src", "@types"],

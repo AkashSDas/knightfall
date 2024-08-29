@@ -4,9 +4,9 @@
     "description": "A online multipleplayer chess game",
     "main": "index.js",
     "scripts": {
-        "build": "tsc",
+        "build": "tsc && tsc-alias",
         "start": "node lib/index.js",
-        "dev": "concurrently \"tsc -w\" \"nodemon lib/src/index.js\"",
+        "dev": "concurrently \"tsc -w\" \"tsc-alias -w\" \"nodemon lib/src/index.js\"",
         "test": "jest --watchAll --detectOpenHandles",
         "test:watch": "jest --watchAll",
         "lint": "eslint \"src/**/*.ts\" --fix && prettier --check 'src/**/*.{js,jsx,ts,tsx,css}'",
@@ -69,6 +69,7 @@
         "prettier": "^3.3.2",
         "supertest": "^7.0.0",
         "ts-jest": "^29.1.5",
+        "tsc-alias": "^1.8.10",
         "typescript": "^5.5.2"
     },
     "lint-staged": {
