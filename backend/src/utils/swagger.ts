@@ -1,4 +1,5 @@
 import swaggerJSdoc from "swagger-jsdoc";
+
 import { version } from "../../package.json";
 
 const options: swaggerJSdoc.Options = {

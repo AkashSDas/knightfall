@@ -1,4 +1,5 @@
 import { connect } from "mongoose";
+
 import { logger } from "./logger";
 
 export async function connectToDB() {

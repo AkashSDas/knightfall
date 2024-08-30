@@ -1,12 +1,10 @@
-import { Types } from "mongoose";
-import {
-    Notification as AppNotification,
-    NOTIFICATION_TYPE,
-    Notification,
-    NotificationDocument,
-} from "../models/notification";
-import { io } from "../websocket";
+import type { Types } from "mongoose";
+
+import { Notification, NotificationDocument } from "@/models/notification";
+import { io } from "@/websocket";
+
 import { logger } from "./logger";
+import type { ValueOf } from "./types";
 
 /** Default limit of notificiations to fetch in `getLoggedInUserNotificationsCtrl` */
 export const GET_LOGGED_IN_USER_NOTIFICATIONS_LIMIT = 10;
@@ -14,25 +12,41 @@ export const GET_LOGGED_IN_USER_NOTIFICATIONS_LIMIT = 10;
 /** Default offset of notificiations to fetch in `getLoggedInUserNotificationsCtrl` */
 export const GET_LOGGED_IN_USER_NOTIFICATIONS_OFFSET = 0;
 
+/** Types of notification supported */
+export const NOTIFICATION_TYPES = {
+    /** Will only display title and no additional info */
+    DEFAULT: "default",
+
+    /** This is used for testing purpose. */
+    LOGIN_WELCOME_BACK: "loginWelcomeBack",
+
+    SIGNUP_WELCOME: "signupWelcome",
+
+    RECEIVED_FRIEND_REQUEST: "receivedFriendRequest",
+    ACCEPTED_FRIEND_REQUEST: "acceptedFriendRequest",
+} as const;
+
+export type NotificationType = ValueOf<typeof NOTIFICATION_TYPES>;
+
 type DefaultNotification = {
-    type: typeof NOTIFICATION_TYPE.DEFAULT;
+    type: typeof NOTIFICATION_TYPES.DEFAULT;
     title: string;
     maxAge?: Date;
 };
 
 type LoginWelcomeBackNotification = {
-    type: typeof NOTIFICATION_TYPE.LOGIN_WELCOME_BACK;
+    type: typeof NOTIFICATION_TYPES.LOGIN_WELCOME_BACK;
     title: string;
     maxAge: Date;
 };
 
 type SignupWelcomeNotification = {
-    type: typeof NOTIFICATION_TYPE.SIGNUP_WELCOME;
+    type: typeof NOTIFICATION_TYPES.SIGNUP_WELCOME;
     title: string;
 };
 
 type ReceivedFriendRequestNotification = {
-    type: typeof NOTIFICATION_TYPE.RECEIVED_FRIEND_REQUEST;
+    type: typeof NOTIFICATION_TYPES.RECEIVED_FRIEND_REQUEST;
     title: string;
     metadata: {
         friendRequestId: string;
@@ -42,7 +56,7 @@ type ReceivedFriendRequestNotification = {
 };
 
 type AcceptedFriendRequestNotification = {
-    type: typeof NOTIFICATION_TYPE.ACCEPTED_FRIEND_REQUEST;
+    type: typeof NOTIFICATION_TYPES.ACCEPTED_FRIEND_REQUEST;
     title: string;
     metadata: {
         friendRequestId: string;
@@ -89,9 +103,7 @@ export class Notifiy {
      **/
     sendNotification() {
         if (!this.payload) {
-            throw new Error(
-                "Notification payload is empty. First call 'sendNotification' on the instance",
-            );
+            throw new Error("Notification payload is empty");
         }
 
         const roomName = `notification_${this.userId}`;

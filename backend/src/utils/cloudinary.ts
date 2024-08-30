@@ -8,6 +8,8 @@ export async function connectToCloudinary() {
     });
 }
 
+/** Cloudinary folders in which assets can be uploaded. */
 export const CLOUDINARY_DIR = {
+    /** Save all of users profile pictures in this folder. */
     USER_PROFILE: "knightfall/profile",
 };
