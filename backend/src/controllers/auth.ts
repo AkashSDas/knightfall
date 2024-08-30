@@ -10,6 +10,23 @@ import { BaseApiError } from "@/utils/errors";
 import { logger } from "@/utils/logger";
 import { Notifiy } from "@/utils/notification";
 
+/**
+ * @swagger
+ * /api/auth/signup:
+ *  post:
+ *      tags:
+ *          - Auth
+ *      summary: Create account using username and email.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/EmailSignupSchema"
+ *      responses:
+ *          201:
+ *              description: Account created
+ */
 export async function emailSignupCtrl(
     req: Request<unknown, unknown, schemas.EmailSignup["body"]>,
     res: Response,

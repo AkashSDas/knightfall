@@ -4,6 +4,23 @@ import { z } from "zod";
 // Schemas
 // ====================================
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      EmailSignupSchema:
+ *          type: object
+ *          required:
+ *              - username
+ *              - email
+ *          properties:
+ *              username:
+ *                  type: string
+ *                  default: Rock
+ *              email:
+ *                  type: string
+ *                  default: rock@gmail.com
+ */
 export const emailSignupSchema = z.object({
     body: z.object({
         username: z
