@@ -1,18 +1,18 @@
+import { type Types } from "mongoose";
+
 import {
-    Ref,
-    Severity,
+    FRIEND_REQUEST_STATUS,
+    type FriendRequestStatus,
+} from "@/utils/friend";
+import {
     getModelForClass,
     modelOptions,
     prop,
+    Ref,
+    Severity,
 } from "@typegoose/typegoose";
-import { UserDocument } from "./user";
-import { Types } from "mongoose";
 
-export const FRIEND_REQUEST_STATUS = {
-    PENDING: "pending",
-    ACCEPTED: "accepted",
-    REJECTED: "rejected",
-} as const;
+import { UserDocument } from "./user";
 
 @modelOptions({
     schemaOptions: {
@@ -39,7 +39,7 @@ export class FriendDocument {
         default: FRIEND_REQUEST_STATUS.PENDING,
         required: true,
     })
-    status: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS];
+    status: FriendRequestStatus;
 
     // =================================
     // Virtuals

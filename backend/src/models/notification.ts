@@ -1,26 +1,18 @@
+import { SchemaTypes, type Types } from "mongoose";
+
 import {
-    Ref,
-    Severity,
+    NOTIFICATION_TYPES,
+    type NotificationType,
+} from "@/utils/notification";
+import {
     getModelForClass,
     modelOptions,
     prop,
+    Ref,
+    Severity,
 } from "@typegoose/typegoose";
+
 import { UserDocument } from "./user";
-import { SchemaTypes, Types } from "mongoose";
-
-/** Types of notification supported */
-export const NOTIFICATION_TYPE = {
-    /** Will only display title and no additional info */
-    DEFAULT: "default",
-
-    /** This is used for testing purpose. */
-    LOGIN_WELCOME_BACK: "loginWelcomeBack",
-
-    SIGNUP_WELCOME: "signupWelcome",
-
-    RECEIVED_FRIEND_REQUEST: "receivedFriendRequest",
-    ACCEPTED_FRIEND_REQUEST: "acceptedFriendRequest",
-} as const;
 
 @modelOptions({
     schemaOptions: {
@@ -53,10 +45,10 @@ export class NotificationDocument {
     @prop({
         type: String,
         required: true,
-        default: NOTIFICATION_TYPE.DEFAULT,
-        enum: Object.values(NOTIFICATION_TYPE),
+        default: NOTIFICATION_TYPES.DEFAULT,
+        enum: Object.values(NOTIFICATION_TYPES),
     })
-    type: (typeof NOTIFICATION_TYPE)[keyof typeof NOTIFICATION_TYPE];
+    type: NotificationType;
 
     @prop({ type: SchemaTypes.Mixed, required: true, default: {} })
     metadata: Record<string, unknown>;

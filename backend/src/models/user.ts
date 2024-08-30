@@ -1,40 +1,35 @@
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import { type Types } from "mongoose";
+import isEmail from "validator/lib/isEmail";
+
+import { type Achievement, ACHIEVEMENTS } from "@/utils/achivement";
+import { dateInFuture } from "@/utils/datetime";
+import { BaseApiError } from "@/utils/errors";
 import {
-    PropType,
-    Severity,
     getModelForClass,
     modelOptions,
     post,
     pre,
     prop,
+    PropType,
+    Severity,
 } from "@typegoose/typegoose";
-import isEmail from "validator/lib/isEmail";
-import { dateInFuture } from "../utils/datetime";
+
 import { ImageSubDocument } from "./image";
 import { OAuthProviderSubDocument } from "./oauth-provider";
-import crypto from "crypto";
-import { Types } from "mongoose";
-import jwt from "jsonwebtoken";
-import { BaseApiError } from "../utils/errors";
 
-export const ACHIEVEMENT = {
-    STRATEGIST: "strategist",
-    WARRIOR: "warrior",
-    SPEED: "speed",
-    CASUAL: "casual",
-    SURVIVOR: "survivor",
-} as const;
-
-/** Handle error due to violation of unique fields */
+/** Handle error due to violation of unique fields. */
 function handleDuplicateError(err: unknown, user: any, next: any) {
     if (err instanceof Error) {
         // Duplicate caught by pre hook
         if (err.message === "Duplicate") {
-            return next(new BaseApiError(400, "Username/email already used."));
+            return next(new BaseApiError(400, "Username/email already used"));
         }
 
         // Duplicate constrain of Mongoose failed
         if (err.name === "MongoError" && "code" in err && err.code === 11000) {
-            return next(new BaseApiError(400, "Username/email already used."));
+            return next(new BaseApiError(400, "Username/email already used"));
         }
     }
 
@@ -43,7 +38,8 @@ function handleDuplicateError(err: unknown, user: any, next: any) {
 
 /**
  * @remark Since fields like username could be null, the unique flag
- * is not set on them.
+ * is not set on them and therefore we have to check the uniqueness of username
+ * in pre save hook.
  */
 @pre<UserDocument>("save", async function preMongooseSave(next) {
     // Validate email and username uniqueness
@@ -117,6 +113,7 @@ export class UserDocument {
         type: String,
         validate: [isEmail, "Email is not valid"],
         index: true,
+        required: true,
     })
     email: string;
 
@@ -136,7 +133,7 @@ export class UserDocument {
     })
     magicLinkTokenExpiresAt?: Date;
 
-    @prop({ _id: false, type: () => ImageSubDocument })
+    @prop({ _id: false, type: () => ImageSubDocument, required: true })
     profilePic: ImageSubDocument;
 
     @prop(
@@ -150,7 +147,7 @@ export class UserDocument {
     )
     oauthProviders: OAuthProviderSubDocument[];
 
-    @prop({ type: Number, default: 0, min: 0 })
+    @prop({ type: Number, default: 0, min: 0, required: true })
     winPoints: number;
 
     @prop(
@@ -160,16 +157,19 @@ export class UserDocument {
             default: [],
             validate: {
                 validator: (achievements: string[]) => {
+                    const validAchievements = Object.values(ACHIEVEMENTS);
                     return achievements.every((item) => {
-                        return Object.values(ACHIEVEMENT).includes(item as any);
+                        return validAchievements.includes(item as any);
                     });
                 },
-                message: "Invalid achievements",
+                message: `Invalid achievement(s) provided. Valid achievements are: ${Object.values(
+                    ACHIEVEMENTS,
+                ).join(", ")}`,
             },
         },
         PropType.ARRAY,
     )
-    achievements: (typeof ACHIEVEMENT)[keyof typeof ACHIEVEMENT][];
+    achievements: Achievement[];
 
     // =================================
     // Instance methods
