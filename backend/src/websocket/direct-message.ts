@@ -1,4 +1,5 @@
 import { type Document, Types } from "mongoose";
+import { schedule } from "node-cron";
 import { Socket } from "socket.io";
 import { z } from "zod";
 
@@ -231,7 +232,67 @@ export const directMessageWebSocketHandlers = {
                     directMessageId,
                     messageId,
                 });
-            })();
+            })()
+                .then(() => {
+                    logger.info(`[📨 dm] Message enqueued to save later on`);
+                })
+                .catch((e) => {
+                    logger.error(`[📨 dm] Failed to send message`);
+                    logger.error(e);
+                });
         }
     },
 };
+
+// This cronjob saves direct messages in DB every minute
+schedule("* * * * *", function saveDMs() {
+    try {
+        const promises: Promise<
+            (typeof friendsDirectMessages)[keyof typeof friendsDirectMessages]["dbModelInstance"]
+        >[] = [];
+
+        for (const friendId in friendsDirectMessages) {
+            const savedDM = friendsDirectMessages[friendId];
+            if (
+                savedDM.saveStatus === "pending" ||
+                savedDM.saveStatus === "error"
+            ) {
+                promises.push(savedDM.dbModelInstance.save());
+            }
+        }
+
+        logger.info(
+            `[📮 DMs save DMs]: Saving ${promises.length} DM documents`,
+        );
+
+        (async () => {
+            // Await for all saves to complete
+            await Promise.all(promises);
+
+            // Mark DMs as saved
+            Object.entries(friendsDirectMessages).forEach(
+                ([friendId, savedDM]) => {
+                    if (savedDM.saveStatus === "pending") {
+                        friendsDirectMessages[friendId].saveStatus = "done";
+                    }
+                },
+            );
+
+            // Cleanup remove if the lastUpdated is older than 5 minutes
+            for (const friendId in friendsDirectMessages) {
+                const savedDM = friendsDirectMessages[friendId];
+                if (savedDM.lastEdited < new Date(Date.now() - 5 * 60 * 1000)) {
+                    delete friendsDirectMessages[friendId];
+                }
+            }
+        })();
+    } catch (error) {
+        Object.entries(friendsDirectMessages).forEach(([friendId, savedDM]) => {
+            if (savedDM.saveStatus === "pending") {
+                friendsDirectMessages[friendId].saveStatus = "error";
+            }
+        });
+
+        logger.error(`[📮 DMs save DMs] Failed to save: ${error}`);
+    }
+});

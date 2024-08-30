@@ -30,17 +30,15 @@ export class ChessPieceSubDocument {
         type: String,
         enum: Object.values(CHESS_PIECE_COLORS),
         default: null,
-        required: true,
     })
-    color: ChessColor | null;
+    color?: ChessColor | null;
 
     @prop({
         type: String,
         enum: Object.values(CHESS_PIECES),
         default: null,
-        required: true,
     })
-    type: ChessPieceType | null;
+    type?: ChessPieceType | null;
 }
 
 /**

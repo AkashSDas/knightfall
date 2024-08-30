@@ -11,7 +11,7 @@ import { io } from "@/websocket";
 /** Players who are looking for opponents will be added in this list. */
 const playersInLobby: {
     userId: string;
-    addedAt: Date;
+    addedAt: string;
     winPoints: number;
 }[] = [];
 
@@ -31,7 +31,7 @@ const pushToLobbySchema = z.object({
     userId: z.string().refine((v) => Types.ObjectId.isValid(v), {
         message: "Invalid userId",
     }),
-    addedAt: z.date(),
+    addedAt: z.string(),
     winPoints: z.number().min(0),
     winPointsOffset: z.number(),
 });
@@ -91,11 +91,7 @@ export const lobbyWebSocketHandlers = {
                 const exists = playersInLobby.find((p) => p.userId === userId);
 
                 if (!exists) {
-                    playersInLobby.push({
-                        addedAt,
-                        userId,
-                        winPoints,
-                    });
+                    playersInLobby.push({ addedAt, userId, winPoints });
                 }
             } else {
                 // If opponent found then start a match for them
@@ -165,7 +161,15 @@ export const lobbyWebSocketHandlers = {
                     } catch (e) {
                         logger.error(`[❌ searchPlayerForGame] ${e}`);
                     }
-                })();
+                })()
+                    .then(() => {
+                        console.log(
+                            `Match started between ${userId} and ${matchingPlayer.userId}`,
+                        );
+                    })
+                    .catch((e) => {
+                        logger.error(`[❌ searchPlayerForGame] ${e}`);
+                    });
             }
         }
     },
