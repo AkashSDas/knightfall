@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { z } from "zod";
-import { FRIEND_REQUEST_STATUS } from "../models/friend";
+
+import { FRIEND_REQUEST_STATUS } from "@/utils/friend";
 
 // ====================================
 // Schemas

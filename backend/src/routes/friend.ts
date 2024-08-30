@@ -1,10 +1,11 @@
 import { Router } from "express";
-import * as ctrls from "../controllers/friend";
-import * as schemas from "../schema/friend";
-import * as middlewares from "../middlewares/auth";
-import { handleMiddlewareError } from "../utils/async";
-import { sendErrorResponse } from "../utils/errors";
-import { validateResource } from "../middlewares/zod";
+
+import * as ctrls from "@/controllers/friend";
+import * as middlewares from "@/middlewares/auth";
+import { validateResource } from "@/middlewares/zod";
+import * as schemas from "@/schema/friend";
+import { handleMiddlewareError } from "@/utils/async";
+import { sendErrorResponse } from "@/utils/errors";
 
 export const router = Router();
 

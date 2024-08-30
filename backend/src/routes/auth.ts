@@ -1,13 +1,14 @@
-import { Router } from "express";
-import { validateResource } from "../middlewares/zod";
-import * as schemas from "../schema/auth";
-import * as ctrls from "../controllers/auth";
-import { handleMiddlewareError } from "../utils/async";
-import { sendErrorResponse } from "../utils/errors";
-import passport from "passport";
-import { verifyAuth } from "../middlewares/auth";
-import { OAUTH_REDIRECT_INFO, STRATEGY } from "../utils/auth";
 import { config } from "dotenv";
+import { Router } from "express";
+import passport from "passport";
+
+import * as ctrls from "@/controllers/auth";
+import { verifyAuth } from "@/middlewares/auth";
+import { validateResource } from "@/middlewares/zod";
+import * as schemas from "@/schema/auth";
+import { handleMiddlewareError } from "@/utils/async";
+import { OAUTH_REDIRECT_INFO, STRATEGY } from "@/utils/auth";
+import { sendErrorResponse } from "@/utils/errors";
 
 // This is needed for OAuth success. Not sure why, but removing fails
 // redirect of OAuth signup/login
