@@ -1,11 +1,12 @@
-import { Request, Response } from "express";
-import * as schemas from "../schema/user";
-import { User, UserDocument } from "../models/user";
-import { BaseApiError } from "../utils/errors";
 import { v2 as cloudinary } from "cloudinary";
-import { CLOUDINARY_DIR } from "../utils/cloudinary";
-import { logger } from "../utils/logger";
+import type { Request, Response } from "express";
 import { Types } from "mongoose";
+
+import { User, type UserDocument } from "../models/user";
+import * as schemas from "../schema/user";
+import { CLOUDINARY_DIR } from "../utils/cloudinary";
+import { BaseApiError } from "../utils/errors";
+import { logger } from "../utils/logger";
 
 /** Controller to update user profile */
 export async function updateProfileCtrl(
@@ -17,6 +18,8 @@ export async function updateProfileCtrl(
 
     if (profilePic && !Array.isArray(profilePic)) {
         if (!user.profilePic.id) {
+            // If no early uploaded image of user exist then upload the image sent
+
             cloudinary.uploader
                 .upload(profilePic.tempFilePath, {
                     folder: CLOUDINARY_DIR.USER_PROFILE,
@@ -33,6 +36,8 @@ export async function updateProfileCtrl(
                     logger.error(`Failed to upload profile pic: ${e}`);
                 });
         } else {
+            // If an early uploaded image of user exist then overwrite it
+
             cloudinary.uploader
                 .upload(profilePic.tempFilePath, {
                     public_id: (req.user as UserDocument).profilePic.id,
@@ -47,6 +52,7 @@ export async function updateProfileCtrl(
         }
     }
 
+    // Update other user info
     await User.findByIdAndUpdate(user._id, { $set: req.body });
 
     return res.status(200).json({ message: "Profile updated" });
@@ -161,9 +167,15 @@ export async function searchPlayerByUsernameOrUserId(
     >,
     res: Response,
 ) {
-    const { queryText, limit, offset } = req.query;
+    const { queryText } = req.query;
+    let { limit, offset } = req.query;
+
+    if (limit === undefined) limit = 10;
+    if (offset === undefined) offset = 0;
 
     if (Types.ObjectId.isValid(queryText)) {
+        // Search by userId
+
         const [players, totalCount] = await Promise.all([
             User.aggregate([
                 { $match: { _id: new Types.ObjectId(queryText) } },
@@ -179,6 +191,8 @@ export async function searchPlayerByUsernameOrUserId(
             .json({ players, totalCount, nextPageOffset: offset + limit });
     } else {
         if (queryText === "") {
+            // Get all users
+
             const [players, totalCount] = await Promise.all([
                 User.aggregate([
                     { $sort: { username: 1 } },
@@ -192,6 +206,8 @@ export async function searchPlayerByUsernameOrUserId(
                 .status(200)
                 .json({ players, totalCount, nextPageOffset: offset + limit });
         } else {
+            // Search player by username
+
             const [players, totalCount] = await Promise.all([
                 User.aggregate([
                     {

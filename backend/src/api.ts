@@ -7,20 +7,20 @@ import expressSession from "express-session";
 import morgan from "morgan";
 import passport from "passport";
 import swaggerUI from "swagger-ui-express";
-import { swaggerSpec } from "./utils/swagger";
 
-import { router as authRouter } from "./routes/auth";
-import { router as userRouter } from "./routes/user";
-import { router as notificationRouter } from "./routes/notification";
-import { router as friendRouter } from "./routes/friend";
-import { router as directMessageRouter } from "./routes/direct-message";
-import { router as matchRouter } from "./routes/match";
+import { router as authRouter } from "@/routes/auth";
+import { router as directMessageRouter } from "@/routes/direct-message";
+import { router as friendRouter } from "@/routes/friend";
+import { router as matchRouter } from "@/routes/match";
+import { router as notificationRouter } from "@/routes/notification";
+import { router as userRouter } from "@/routes/user";
+import { swaggerSpec } from "@/utils/swagger";
 
 if (process.env.NODE_ENV !== "production") config();
 
 // OAuth Passport Strategies. Should come after the config() call.
-import "./passport/google-signup";
-import "./passport/google-login";
+import "@/passport/google-login";
+import "@/passport/google-signup";
 
 /** Express app */
 export const app = express();

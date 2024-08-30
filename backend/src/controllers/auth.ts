@@ -1,13 +1,14 @@
-import { Request, Response } from "express";
-import * as schemas from "../schema/auth";
-import { User, UserDocument } from "../models/user";
-import { sendEmail } from "../utils/email";
-import { BaseApiError } from "../utils/errors";
 import { createHash } from "crypto";
-import { REFRESH_TOKEN_COOKIE_KEY, loginCookieConfig } from "../utils/auth";
+import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { Notifiy } from "../utils/notification";
-import { logger } from "../utils/logger";
+
+import { User, type UserDocument } from "@/models/user";
+import * as schemas from "@/schema/auth";
+import { loginCookieConfig, REFRESH_TOKEN_COOKIE_KEY } from "@/utils/auth";
+import { sendEmail } from "@/utils/email";
+import { BaseApiError } from "@/utils/errors";
+import { logger } from "@/utils/logger";
+import { Notifiy } from "@/utils/notification";
 
 export async function emailSignupCtrl(
     req: Request<unknown, unknown, schemas.EmailSignup["body"]>,
@@ -30,8 +31,11 @@ export async function emailSignupCtrl(
         subject: "Magic link login",
         text: `Click on the link to login: ${link}`,
         html: `Click on the link to login: <a href="${link}">${link}</a>`,
-    });
+    })
+        .then(() => logger.info(`[📧 SENT email to ${user.email}]`))
+        .catch((e) => logger.error(`[📧 FAILED email to ${user.email}]: ${e}`));
 
+    // Not awaiting here so that we don't wait for the notification to be sent
     new Notifiy(user._id)
         .createNotification({
             type: "signupWelcome",
@@ -63,8 +67,8 @@ export async function initMagicLinkLoginCtrl(
         text: `Click on the link to login: ${link}`,
         html: `Click on the link to login: <a href="${link}">${link}</a>`,
     })
-        .then(() => logger.info(`Successfully sent email: ${user.email}`))
-        .catch((e) => logger.error(`Failed to send email: ${user.email} ${e}`));
+        .then(() => logger.info(`[📧 SENT email to ${user.email}]`))
+        .catch((e) => logger.error(`[📧 FAILED email to ${user.email}]: ${e}`));
 
     return res.status(200).json({
         message: "Email with login magic link is sent to your email.",
@@ -97,6 +101,7 @@ export async function completeMagicLinkLoginCtrl(
     const refreshToken = user.createRefreshToken();
     res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken, loginCookieConfig);
 
+    // Not awaiting here so that we don't wait for the notification to be sent
     new Notifiy(user._id)
         .createNotification({
             type: "loginWelcomeBack",
@@ -138,7 +143,7 @@ export async function cancelOAuthCtrl(req: Request, res: Response) {
  * - `verifyAuth`
  */
 export async function completeOAuthCtrl(
-    req: Request<{}, {}, schemas.CompleteOAuth["body"]>,
+    req: Request<unknown, unknown, schemas.CompleteOAuth["body"]>,
     res: Response,
 ) {
     const user = await User.findByIdAndUpdate(
@@ -149,6 +154,7 @@ export async function completeOAuthCtrl(
 
     if (!user) throw new BaseApiError(401, "Unauthorized");
 
+    // Not awaiting here so that we don't wait for the notification to be sent
     new Notifiy(user._id)
         .createNotification({
             type: "signupWelcome",

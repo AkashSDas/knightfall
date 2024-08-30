@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
-import * as schemas from "../schema/friend";
-import { FRIEND_REQUEST_STATUS, Friend } from "../models/friend";
-import { User, UserDocument } from "../models/user";
-import { BaseApiError } from "../utils/errors";
 import { Types } from "mongoose";
-import { Notifiy } from "../utils/notification";
-import { logger } from "../utils/logger";
+
+import { Friend } from "@/models/friend";
+import { User, type UserDocument } from "@/models/user";
+import * as schemas from "@/schema/friend";
+import { BaseApiError } from "@/utils/errors";
+import { FRIEND_REQUEST_STATUS } from "@/utils/friend";
+import { logger } from "@/utils/logger";
+import { Notifiy } from "@/utils/notification";
 
 export async function sendFriendRequest(
     req: Request<unknown, unknown, schemas.SendFriendRequest["body"]>,
@@ -29,12 +31,14 @@ export async function sendFriendRequest(
             .status(400)
             .json({ message: "Friend request already sent." });
     } else if (toExists) {
+        // Accept friend request if the other user has already sent a friend request
         const friend = await Friend.findOneAndUpdate(
             { fromUser: toUserId, toUser: user._id },
             { status: FRIEND_REQUEST_STATUS.ACCEPTED },
         );
 
         if (friend) {
+            // Not awaiting here so that we don't wait for the notification to be sent
             new Notifiy(new Types.ObjectId(toUserId))
                 .createNotification({
                     type: "acceptedFriendRequest",
@@ -56,11 +60,13 @@ export async function sendFriendRequest(
 
         throw new BaseApiError(400, "No friend request found.");
     } else {
+        // Create a new friend request
         const friend = await Friend.create({
             fromUser: user._id,
             toUser: toUserId,
         });
 
+        // Not awaiting here so that we don't wait for the notification to be sent
         new Notifiy(new Types.ObjectId(toUserId))
             .createNotification({
                 type: "receivedFriendRequest",
@@ -94,7 +100,13 @@ export async function getLoggedInUserFriends(
     const { requestStatus, type } = req.query;
 
     if (requestStatus === FRIEND_REQUEST_STATUS.ACCEPTED) {
-        const friends = await Friend.find({ status: requestStatus })
+        const friends = await Friend.find({
+            status: requestStatus,
+            $or: [
+                { fromUser: (req.user as UserDocument)._id },
+                { toUser: (req.user as UserDocument)._id },
+            ],
+        })
             .populate("fromUser")
             .populate("toUser");
 
@@ -127,6 +139,7 @@ export async function updateFriendRequestStatus(
     const friend = await Friend.findOneAndUpdate(
         { _id: friendId },
         { status: requestStatus },
+        { new: true },
     );
 
     if (!friend) {
@@ -134,6 +147,7 @@ export async function updateFriendRequestStatus(
     }
 
     if (friend.status === FRIEND_REQUEST_STATUS.ACCEPTED) {
+        // Not awaiting here so that we don't wait for the notification to be sent
         new Notifiy(new Types.ObjectId(friend.fromUser as unknown as string))
             .createNotification({
                 type: "acceptedFriendRequest",

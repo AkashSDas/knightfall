@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import * as schemas from "../schema/match";
-import { Match } from "../models/match";
-import { BaseApiError } from "../utils/errors";
+
+import { Match } from "@/models/match";
+import * as schemas from "@/schema/match";
+import { BaseApiError } from "@/utils/errors";
 
 export async function getMatchCtrl(
     req: Request<schemas.GetMatchSchema["params"]>,

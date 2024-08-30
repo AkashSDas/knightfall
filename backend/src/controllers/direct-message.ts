@@ -1,6 +1,7 @@
-import { DirectMessage } from "../models/direct-message";
-import * as schemas from "../schema/direct-message";
 import { Request, Response } from "express";
+
+import { DirectMessage } from "@/models/direct-message";
+import * as schemas from "@/schema/direct-message";
 
 export async function getDirectMessagesCtrl(
     req: Request<

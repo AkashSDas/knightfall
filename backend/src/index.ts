@@ -1,8 +1,9 @@
 import { config } from "dotenv";
-import { connectToDB } from "./utils/db";
-import { logger } from "./utils/logger";
-import { httpServer } from "./websocket";
-import { connectToCloudinary } from "./utils/cloudinary";
+
+import { connectToCloudinary } from "@/utils/cloudinary";
+import { connectToDB } from "@/utils/db";
+import { logger } from "@/utils/logger";
+import { httpServer } from "@/websocket";
 
 if (process.env.NODE_ENV !== "production") config();
 

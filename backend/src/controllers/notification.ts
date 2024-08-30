@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import * as schemas from "../schema/notification";
-import { UserDocument } from "../models/user";
-import { Notification } from "../models/notification";
+
+import { Notification } from "@/models/notification";
+import { type UserDocument } from "@/models/user";
+import * as schemas from "@/schema/notification";
 import {
     GET_LOGGED_IN_USER_NOTIFICATIONS_LIMIT,
     GET_LOGGED_IN_USER_NOTIFICATIONS_OFFSET,
-} from "../utils/notification";
+} from "@/utils/notification";
 
 /**
  * Get notifications of logged in user from latest to oldest in a paginated fashion
@@ -22,7 +23,7 @@ export async function getLoggedInUserNotificationsCtrl(
     const { limit, offset } = req.query;
     const userId = (req.user as UserDocument)._id;
 
-    const now = new Date();
+    const now = new Date(Date.now());
 
     const filter = {
         user: userId,
