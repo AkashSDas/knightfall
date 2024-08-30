@@ -1,7 +1,12 @@
 import passport from "passport";
-import { Profile, Strategy, VerifyCallback } from "passport-google-oauth20";
-import { User } from "../models/user";
-import { STRATEGY } from "../utils/auth";
+import {
+    type Profile,
+    Strategy,
+    type VerifyCallback,
+} from "passport-google-oauth20";
+
+import { User, type UserDocument } from "@/models/user";
+import { STRATEGY } from "@/utils/auth";
 
 async function verify(
     _accessToken: string,
@@ -38,10 +43,13 @@ passport.serializeUser(function serializeLoginUser(user, done) {
 });
 
 passport.deserializeUser(async function deserializeLoginUser(_id, done) {
+    let user: UserDocument | null = null;
+    let error: unknown = null;
+
     try {
-        var user = await User.findById(_id);
+        user = await User.findById(_id);
     } catch (err) {
-        var error = err;
+        error = err;
     }
 
     done(error, user);

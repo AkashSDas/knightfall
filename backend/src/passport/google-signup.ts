@@ -1,10 +1,14 @@
-import { Request } from "express";
+import { type Request } from "express";
 import passport from "passport";
-import { Profile, Strategy, VerifyCallback } from "passport-google-oauth20";
-import { User } from "../models/user";
-import { OAuthProvider } from "../models/oauth-provider";
-import { BaseApiError } from "../utils/errors";
-import { STRATEGY } from "../utils/auth";
+import {
+    type Profile,
+    Strategy,
+    type VerifyCallback,
+} from "passport-google-oauth20";
+
+import { User, type UserDocument } from "@/models/user";
+import { OAUTH_PROVIDERS, STRATEGY } from "@/utils/auth";
+import { BaseApiError } from "@/utils/errors";
 
 /** Check if the user exists or not. If not then create a new user else login the user. */
 async function verify(
@@ -27,7 +31,7 @@ async function verify(
         const newUser = await User.create({
             email,
             profilePic: { URL: picture },
-            oauthProviders: [{ sid: sub, provider: OAuthProvider.GOOGLE }],
+            oauthProviders: [{ sid: sub, provider: OAUTH_PROVIDERS.GOOGLE }],
         });
 
         return next(null, newUser);
@@ -57,10 +61,13 @@ passport.serializeUser(function serializeSignupUser(user, done) {
 });
 
 passport.deserializeUser(async function deserializeSignupUser(_id, done) {
+    let user: UserDocument | null = null;
+    let error: unknown = null;
+
     try {
-        var user = await User.findById(_id);
+        user = await User.findById(_id);
     } catch (err) {
-        var error = err;
+        error = err;
     }
 
     done(error, user);
