@@ -1,9 +1,6 @@
 import { SchemaTypes, type Types } from "mongoose";
 
-import {
-    NOTIFICATION_TYPES,
-    type NotificationType,
-} from "@/utils/notification";
+import { type NotificationType } from "@/utils/notification";
 import {
     getModelForClass,
     modelOptions,
@@ -13,6 +10,24 @@ import {
 } from "@typegoose/typegoose";
 
 import { UserDocument } from "./user";
+
+/**
+ * Types of notification supported.
+ * It's kept here to avoid circular dependency issue between utils/notification.ts
+ * and models/notification.ts
+ **/
+export const NOTIFICATION_TYPES = {
+    /** Will only display title and no additional info */
+    DEFAULT: "default",
+
+    /** This is used for testing purpose. */
+    LOGIN_WELCOME_BACK: "loginWelcomeBack",
+
+    SIGNUP_WELCOME: "signupWelcome",
+
+    RECEIVED_FRIEND_REQUEST: "receivedFriendRequest",
+    ACCEPTED_FRIEND_REQUEST: "acceptedFriendRequest",
+} as const;
 
 @modelOptions({
     schemaOptions: {

@@ -1,6 +1,10 @@
 import type { Types } from "mongoose";
 
-import { Notification, NotificationDocument } from "@/models/notification";
+import {
+    Notification,
+    NOTIFICATION_TYPES,
+    NotificationDocument,
+} from "@/models/notification";
 import { io } from "@/websocket";
 
 import { logger } from "./logger";
@@ -11,20 +15,6 @@ export const GET_LOGGED_IN_USER_NOTIFICATIONS_LIMIT = 10;
 
 /** Default offset of notificiations to fetch in `getLoggedInUserNotificationsCtrl` */
 export const GET_LOGGED_IN_USER_NOTIFICATIONS_OFFSET = 0;
-
-/** Types of notification supported */
-export const NOTIFICATION_TYPES = {
-    /** Will only display title and no additional info */
-    DEFAULT: "default",
-
-    /** This is used for testing purpose. */
-    LOGIN_WELCOME_BACK: "loginWelcomeBack",
-
-    SIGNUP_WELCOME: "signupWelcome",
-
-    RECEIVED_FRIEND_REQUEST: "receivedFriendRequest",
-    ACCEPTED_FRIEND_REQUEST: "acceptedFriendRequest",
-} as const;
 
 export type NotificationType = ValueOf<typeof NOTIFICATION_TYPES>;
 
