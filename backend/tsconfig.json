@@ -20,6 +20,6 @@
         }
     },
     "compileOnSave": true,
-    "include": ["src", "@types"],
+    "include": ["src", "@types", "jest.config.js"],
     "exclude": ["node_modules"]
 }

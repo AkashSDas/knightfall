@@ -5,5 +5,12 @@ module.exports = {
     testMatch: ["**/**/*.test.ts"],
     verbose: true,
     forceExit: true,
-    // clearMocks: true
+    collectCoverage: true,
+    collectCoverageFrom: ["src/**/*.{js,jsx,ts,tsx}", "!src/**/*.d.ts"],
+    coverageDirectory: "coverage",
+    coverageReporters: ["html", "text", "text-summary", "lcov"],
+    moduleNameMapper: {
+        "^@/(.*)$": "<rootDir>/src/$1",
+    },
+    clearMocks: true,
 };
