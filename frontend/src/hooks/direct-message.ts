@@ -1,13 +1,15 @@
 import { useContext, useEffect, useMemo, useState } from "react";
-import { SocketContext } from "../lib/websocket";
-import { useUser } from "./auth";
+
 import { useInfiniteQuery } from "@tanstack/react-query";
+
+import { SocketContext } from "../lib/websocket";
 import {
     DirectMessage,
     directMessageService,
 } from "../services/direct-message";
-import { useAppDispatch } from "./store";
 import { friendsChatActions } from "../store/friends-chat/slice";
+import { useUser } from "./auth";
+import { useAppDispatch } from "./store";
 
 export function useDirectMessageRoom(friendId: string | undefined) {
     const { socket, isConnected } = useContext(SocketContext);

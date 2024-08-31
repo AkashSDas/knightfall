@@ -1,7 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "..";
-import { DirectMessage } from "../../services/direct-message";
 import { v4 as uuidv4 } from "uuid";
+
+import { createSlice } from "@reduxjs/toolkit";
+
+import { RootState } from "../";
+import { DirectMessage } from "../../services/direct-message";
 
 type FriendChatMessageBlock = {
     groupId: string;
@@ -100,6 +102,16 @@ export const friendsChatSlice = createSlice({
                     lastGroup.messages.unshift(msg);
                     chat[chat.length - 1] = lastGroup;
                 }
+            } else {
+                state.friendChats[friendId] = [
+                    {
+                        groupId: uuidv4(),
+                        userId: senderUserId,
+                        friendId: friendId,
+                        directMessageId: action.payload.directMessageId,
+                        messages: [msg],
+                    },
+                ];
             }
         },
         initialPopulateFriendChat(

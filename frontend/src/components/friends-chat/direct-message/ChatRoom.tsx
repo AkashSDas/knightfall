@@ -1,31 +1,39 @@
 import {
-    Avatar,
-    Box,
-    HStack,
-    IconButton,
-    Spinner,
-    Text,
-    Tooltip,
-    VStack,
-} from "@chakra-ui/react";
-import { useAppSelector } from "../../../hooks/store";
-import { FriendsChatState } from "../../../store/friends-chat/slice";
-import { useFriendManager } from "../../../hooks/friend";
-import { MessageInput } from "./MessageInput";
-import { useEffect, useMemo, useRef, useState } from "react";
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
+import { Link } from 'react-router-dom';
+
 import {
-    useDirectMessageRoom,
-    useListenToDirectMessages,
-    useDirectMessages,
-} from "../../../hooks/direct-message";
-import { useUser } from "../../../hooks/auth";
-import { formatNotificationDate } from "../../../utils/datetime";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  Avatar,
+  Box,
+  HStack,
+  IconButton,
+  Spinner,
+  Text,
+  Tooltip,
+  VStack,
+} from '@chakra-ui/react';
 import {
-    faArrowDownLong,
-    faPaperPlane,
-} from "@fortawesome/free-solid-svg-icons";
+  faArrowDownLong,
+  faPaperPlane,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { useUser } from '../../../hooks/auth';
+import {
+  useDirectMessageRoom,
+  useDirectMessages,
+  useListenToDirectMessages,
+} from '../../../hooks/direct-message';
+import { useFriendManager } from '../../../hooks/friend';
+import { useAppSelector } from '../../../hooks/store';
+import { FriendsChatState } from '../../../store/friends-chat/slice';
+import { formatNotificationDate } from '../../../utils/datetime';
+import { MessageInput } from './MessageInput';
 
 export function ChatRoom() {
     const { friendId } = useAppSelector(
@@ -52,7 +60,7 @@ export function ChatRoom() {
 
     const { fetchMore, hasMore, isFetchingMore, isLoading } = useDirectMessages(
         {
-            limit: 2,
+            limit: 20,
             friendId: friend?.id,
         }
     );
