@@ -7,7 +7,7 @@ import * as schemas from "@/schema/friend";
 import { BaseApiError } from "@/utils/errors";
 import { FRIEND_REQUEST_STATUS } from "@/utils/friend";
 import { logger } from "@/utils/logger";
-import { Notifiy } from "@/utils/notification";
+import { Notify } from "@/utils/notification";
 
 export async function sendFriendRequest(
     req: Request<unknown, unknown, schemas.SendFriendRequest["body"]>,
@@ -39,7 +39,7 @@ export async function sendFriendRequest(
 
         if (friend) {
             // Not awaiting here so that we don't wait for the notification to be sent
-            new Notifiy(new Types.ObjectId(toUserId))
+            new Notify(new Types.ObjectId(toUserId))
                 .createNotification({
                     type: "acceptedFriendRequest",
                     title: `${user.username} has accepted your friend request`,
@@ -67,7 +67,7 @@ export async function sendFriendRequest(
         });
 
         // Not awaiting here so that we don't wait for the notification to be sent
-        new Notifiy(new Types.ObjectId(toUserId))
+        new Notify(new Types.ObjectId(toUserId))
             .createNotification({
                 type: "receivedFriendRequest",
                 title: `${user.username} sent you a friend request`,
@@ -148,7 +148,7 @@ export async function updateFriendRequestStatus(
 
     if (friend.status === FRIEND_REQUEST_STATUS.ACCEPTED) {
         // Not awaiting here so that we don't wait for the notification to be sent
-        new Notifiy(new Types.ObjectId(friend.fromUser as unknown as string))
+        new Notify(new Types.ObjectId(friend.fromUser as unknown as string))
             .createNotification({
                 type: "acceptedFriendRequest",
                 title: `${(req.user as UserDocument).username} has accepted your friend request`,

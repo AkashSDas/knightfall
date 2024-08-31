@@ -8,7 +8,7 @@ import { loginCookieConfig, REFRESH_TOKEN_COOKIE_KEY } from "@/utils/auth";
 import { sendEmail } from "@/utils/email";
 import { BaseApiError } from "@/utils/errors";
 import { logger } from "@/utils/logger";
-import { Notifiy } from "@/utils/notification";
+import { Notify } from "@/utils/notification";
 
 /**
  * @swagger
@@ -53,7 +53,7 @@ export async function emailSignupCtrl(
         .catch((e) => logger.error(`[📧 FAILED email to ${user.email}]: ${e}`));
 
     // Not awaiting here so that we don't wait for the notification to be sent
-    new Notifiy(user._id)
+    new Notify(user._id)
         .createNotification({
             type: "signupWelcome",
             title: "Welcome to Knightfall",
@@ -119,7 +119,7 @@ export async function completeMagicLinkLoginCtrl(
     res.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken, loginCookieConfig);
 
     // Not awaiting here so that we don't wait for the notification to be sent
-    new Notifiy(user._id)
+    new Notify(user._id)
         .createNotification({
             type: "loginWelcomeBack",
             title: "Welcome back",
@@ -172,7 +172,7 @@ export async function completeOAuthCtrl(
     if (!user) throw new BaseApiError(401, "Unauthorized");
 
     // Not awaiting here so that we don't wait for the notification to be sent
-    new Notifiy(user._id)
+    new Notify(user._id)
         .createNotification({
             type: "signupWelcome",
             title: "Welcome to Knightfall",

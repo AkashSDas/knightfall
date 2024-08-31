@@ -66,7 +66,7 @@ type AppNotification =
  * Helper class to create and send notification via WebSockets.
  * Channel name is `notification_${this.userId}`
  **/
-export class Notifiy {
+export class Notify {
     userId: Types.ObjectId;
     payload: NotificationDocument | null;
 
