@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 import * as ctrls from "@/controllers/notification";
+import * as schemas from "@/schema/notification";
 import { verifyAuth } from "@/middlewares/auth";
 import { validateResource } from "@/middlewares/zod";
-import * as schemas from "@/schema/notification";
 import { handleMiddlewareError } from "@/utils/async";
 import { sendErrorResponse } from "@/utils/errors";
 

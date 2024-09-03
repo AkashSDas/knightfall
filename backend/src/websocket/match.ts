@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { ChessPiece, Match, MatchMove } from "@/models/match";
 import { logger } from "@/utils/logger";
-import { CHESS_PIECE_COLORS, CHESS_PIECES, MATCH_STATUS } from "@/utils/match";
+import { CHESS_PIECES, CHESS_PIECE_COLORS, MATCH_STATUS } from "@/utils/match";
 import { io } from "@/websocket";
 
 const joinRoomSchema = z.object({

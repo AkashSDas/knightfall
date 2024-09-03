@@ -1,8 +1,8 @@
 import type { Types } from "mongoose";
 
 import {
-    Notification,
     NOTIFICATION_TYPES,
+    Notification,
     NotificationDocument,
 } from "@/models/notification";
 import { io } from "@/websocket";

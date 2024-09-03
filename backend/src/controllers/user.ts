@@ -2,11 +2,11 @@ import { v2 as cloudinary } from "cloudinary";
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 
-import { User, type UserDocument } from "../models/user";
-import * as schemas from "../schema/user";
-import { CLOUDINARY_DIR } from "../utils/cloudinary";
-import { BaseApiError } from "../utils/errors";
-import { logger } from "../utils/logger";
+import * as schemas from "@/schema/user";
+import { User, type UserDocument } from "@/models/user";
+import { CLOUDINARY_DIR } from "@/utils/cloudinary";
+import { BaseApiError } from "@/utils/errors";
+import { logger } from "@/utils/logger";
 
 /** Controller to update user profile */
 export async function updateProfileCtrl(

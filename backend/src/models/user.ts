@@ -1,20 +1,20 @@
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
-import { type Types } from "mongoose";
-import isEmail from "validator/lib/isEmail";
-
-import { type Achievement, ACHIEVEMENTS } from "@/utils/achivement";
-import { dateInFuture } from "@/utils/datetime";
-import { BaseApiError } from "@/utils/errors";
 import {
+    PropType,
+    Severity,
     getModelForClass,
     modelOptions,
     post,
     pre,
     prop,
-    PropType,
-    Severity,
 } from "@typegoose/typegoose";
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import { type Types } from "mongoose";
+import isEmail from "validator/lib/isEmail";
+
+import { ACHIEVEMENTS, type Achievement } from "@/utils/achivement";
+import { dateInFuture } from "@/utils/datetime";
+import { BaseApiError } from "@/utils/errors";
 
 import { ImageSubDocument } from "./image";
 import { OAuthProviderSubDocument } from "./oauth-provider";

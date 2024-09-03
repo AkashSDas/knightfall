@@ -1,5 +1,11 @@
 {
     "singleQuote": false,
     "trailingComma": "all",
-    "tabWidth": 4
+    "tabWidth": 4,
+    "importOrder": ["^@?\\w", "^@/(.*)$", "^[./]"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+    "importOrderGroupNamespaceSpecifiers": true,
+    "importOrderParserPlugins": ["typescript", "decorators-legacy"],
+    "plugins": ["@trivago/prettier-plugin-sort-imports"]
 }

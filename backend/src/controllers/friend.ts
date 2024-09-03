@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 
+import * as schemas from "@/schema/friend";
 import { Friend } from "@/models/friend";
 import { User, type UserDocument } from "@/models/user";
-import * as schemas from "@/schema/friend";
 import { BaseApiError } from "@/utils/errors";
 import { FRIEND_REQUEST_STATUS } from "@/utils/friend";
 import { logger } from "@/utils/logger";

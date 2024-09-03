@@ -2,8 +2,8 @@ import { Router } from "express";
 
 import * as ctrls from "@/controllers/user";
 import * as middlewares from "@/middlewares/auth";
-import { validateResource } from "@/middlewares/zod";
 import * as schemas from "@/schema/user";
+import { validateResource } from "@/middlewares/zod";
 import { handleMiddlewareError } from "@/utils/async";
 import { sendErrorResponse } from "@/utils/errors";
 

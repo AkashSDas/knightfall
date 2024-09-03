@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
+import * as schemas from "@/schema/notification";
 import { Notification } from "@/models/notification";
 import { type UserDocument } from "@/models/user";
-import * as schemas from "@/schema/notification";
 import {
     GET_LOGGED_IN_USER_NOTIFICATIONS_LIMIT,
     GET_LOGGED_IN_USER_NOTIFICATIONS_OFFSET,

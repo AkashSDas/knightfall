@@ -1,10 +1,3 @@
-import crypto from "crypto";
-import supertest from "supertest";
-
-import { app } from "@/api";
-import { User } from "@/models/user";
-import { REFRESH_TOKEN_COOKIE_KEY } from "@/utils/auth";
-import { sendEmail } from "@/utils/email";
 import {
     afterAll,
     beforeAll,
@@ -14,6 +7,13 @@ import {
     it,
     jest,
 } from "@jest/globals";
+import crypto from "crypto";
+import supertest from "supertest";
+
+import { app } from "@/api";
+import { User } from "@/models/user";
+import { REFRESH_TOKEN_COOKIE_KEY } from "@/utils/auth";
+import { sendEmail } from "@/utils/email";
 
 import { inMemoryMongoDB } from "../db";
 import { userStub } from "../stubs/user";

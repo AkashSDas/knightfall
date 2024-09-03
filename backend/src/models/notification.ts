@@ -1,13 +1,13 @@
-import { SchemaTypes, type Types } from "mongoose";
-
-import { type NotificationType } from "@/utils/notification";
 import {
+    Ref,
+    Severity,
     getModelForClass,
     modelOptions,
     prop,
-    Ref,
-    Severity,
 } from "@typegoose/typegoose";
+import { SchemaTypes, type Types } from "mongoose";
+
+import { type NotificationType } from "@/utils/notification";
 
 import { UserDocument } from "./user";
 

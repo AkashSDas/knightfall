@@ -1,16 +1,16 @@
+import {
+    Ref,
+    Severity,
+    getModelForClass,
+    modelOptions,
+    prop,
+} from "@typegoose/typegoose";
 import { type Types } from "mongoose";
 
 import {
     FRIEND_REQUEST_STATUS,
     type FriendRequestStatus,
 } from "@/utils/friend";
-import {
-    getModelForClass,
-    modelOptions,
-    prop,
-    Ref,
-    Severity,
-} from "@typegoose/typegoose";
 
 import { UserDocument } from "./user";
 

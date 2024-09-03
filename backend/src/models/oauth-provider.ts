@@ -1,5 +1,6 @@
-import { OAUTH_PROVIDERS, type OAuthProvider } from "@/utils/auth";
 import { prop } from "@typegoose/typegoose";
+
+import { OAUTH_PROVIDERS, type OAuthProvider } from "@/utils/auth";
 
 export class OAuthProviderSubDocument {
     @prop({ type: String, required: true })

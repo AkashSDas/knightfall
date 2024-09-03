@@ -2,9 +2,9 @@ import { createHash } from "crypto";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { User, type UserDocument } from "@/models/user";
 import * as schemas from "@/schema/auth";
-import { loginCookieConfig, REFRESH_TOKEN_COOKIE_KEY } from "@/utils/auth";
+import { User, type UserDocument } from "@/models/user";
+import { REFRESH_TOKEN_COOKIE_KEY, loginCookieConfig } from "@/utils/auth";
 import { sendEmail } from "@/utils/email";
 import { BaseApiError } from "@/utils/errors";
 import { logger } from "@/utils/logger";

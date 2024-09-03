@@ -1,17 +1,17 @@
+import {
+    PropType,
+    Ref,
+    Severity,
+    getModelForClass,
+    modelOptions,
+    prop,
+} from "@typegoose/typegoose";
 import { Types } from "mongoose";
 
 import {
     MESSAGE_REACT_TYPE,
     type MessageReactType,
 } from "@/utils/direct-message";
-import {
-    getModelForClass,
-    modelOptions,
-    prop,
-    PropType,
-    Ref,
-    Severity,
-} from "@typegoose/typegoose";
 
 import { FriendDocument } from "./friend";
 import { UserDocument } from "./user";

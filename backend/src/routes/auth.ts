@@ -3,9 +3,9 @@ import { Router } from "express";
 import passport from "passport";
 
 import * as ctrls from "@/controllers/auth";
+import * as schemas from "@/schema/auth";
 import { verifyAuth } from "@/middlewares/auth";
 import { validateResource } from "@/middlewares/zod";
-import * as schemas from "@/schema/auth";
 import { handleMiddlewareError } from "@/utils/async";
 import { OAUTH_REDIRECT_INFO, STRATEGY } from "@/utils/auth";
 import { sendErrorResponse } from "@/utils/errors";

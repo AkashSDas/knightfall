@@ -1,3 +1,8 @@
+import { logger } from "@typegoose/typegoose/lib/logSettings";
+import type {
+    BeAnObject,
+    IObjectWithTypegooseFunction,
+} from "@typegoose/typegoose/lib/types";
 import { type Document, Types } from "mongoose";
 import { schedule } from "node-cron";
 import { Socket } from "socket.io";
@@ -9,11 +14,6 @@ import {
     Message,
 } from "@/models/direct-message";
 import { io } from "@/websocket";
-import { logger } from "@typegoose/typegoose/lib/logSettings";
-import type {
-    BeAnObject,
-    IObjectWithTypegooseFunction,
-} from "@typegoose/typegoose/lib/types";
 
 /**
  * Storing direct messages in memory for some time. This will have saved status and

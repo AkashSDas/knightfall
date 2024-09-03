@@ -1,21 +1,21 @@
+import {
+    PropType,
+    Ref,
+    Severity,
+    getModelForClass,
+    modelOptions,
+    prop,
+} from "@typegoose/typegoose";
 import { type Types } from "mongoose";
 
 import {
-    CHESS_PIECE_COLORS,
     CHESS_PIECES,
+    CHESS_PIECE_COLORS,
     type ChessColor,
     type ChessPiece as ChessPieceType,
     MATCH_STATUS,
     type MatchStatus,
 } from "@/utils/match";
-import {
-    getModelForClass,
-    modelOptions,
-    prop,
-    PropType,
-    Ref,
-    Severity,
-} from "@typegoose/typegoose";
 
 import { UserDocument } from "./user";
 
