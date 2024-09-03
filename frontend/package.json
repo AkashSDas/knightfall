@@ -9,7 +9,7 @@
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && prettier --check '**/*.{js,jsx,ts,tsx,css}'",
         "preview": "vite preview",
         "test": "jest",
-        "test:watch": "jest --watchAll",
+        "test:watch": "jest --watchAll --detectOpenHandles",
         "prepare": "cd .. && husky install ./frontend/.husky",
         "theme": "chakra-cli tokens ./src/lib/chakra.ts",
         "theme:watch": "chakra-cli tokens ./src/lib/chakra.ts --watch",
@@ -58,6 +58,7 @@
         "@testing-library/jest-dom": "^6.4.6",
         "@testing-library/react": "^16.0.0",
         "@testing-library/user-event": "^14.5.2",
+        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@types/uuid": "^10.0.0",
@@ -90,8 +91,12 @@
         },
         "testEnvironment": "jsdom",
         "setupFilesAfterEnv": [
-            "<rootDir>/setupTests.js"
-        ]
+            "<rootDir>/setupTests.ts"
+        ],
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "clearMocks": true
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [

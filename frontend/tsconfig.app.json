@@ -25,7 +25,12 @@
 
         // https://github.com/microsoft/TypeScript/issues/47663#issuecomment-1519138189
         // https://github.com/ionic-team/stencil/issues/2349
-        "declaration": false
+        "declaration": false,
+
+        /* Others */
+        "paths": {
+            "@/*": ["./src/*"]
+        }
     },
     "include": ["src"]
 }
