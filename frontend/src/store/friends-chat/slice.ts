@@ -1,9 +1,9 @@
+import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
-import { createSlice } from "@reduxjs/toolkit";
+import { type DirectMessage } from "@/utils/schemas";
 
 import { RootState } from "../";
-import { DirectMessage } from "../../services/direct-message";
 
 type FriendChatMessageBlock = {
     groupId: string;

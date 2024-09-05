@@ -1,23 +1,28 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
+
 import {
     CHESS_PIECES,
     CHESS_PIECE_COLOR,
+    type ChessPieceColor,
+    type ChessPiece as ChessPieceType,
     MATCH_STATUS,
+    type MatchStatus,
     checkGameOver,
     getInitialChessBoard,
     getValidMovesForPiece,
-} from "../../utils/chess";
-import { RootState } from "..";
+} from "@/utils/chess";
+
+import { type RootState } from "..";
 
 export type ChessPiece = {
-    type: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES];
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
+    type: ChessPieceType;
+    color: ChessPieceColor;
 };
 
 export type ChessBlock = {
     id: string;
     piece: ChessPiece | null;
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
+    color: ChessPieceColor;
     selected: boolean;
     showPath: boolean;
     showExplosion: boolean;
@@ -26,10 +31,16 @@ export type ChessBlock = {
 
 export type MatchState = {
     board: ChessBlock[][];
-    currentTurn: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR];
+    currentTurn: ChessPieceColor;
+
+    /**
+     * This will keep track of start time, even when the user reloads, we start
+     * from time that's remaining rather than starting from start.
+     */
     startTimeInMs: number;
-    winner: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR] | null;
-    status: (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS];
+
+    winner: ChessPieceColor | null;
+    status: MatchStatus;
     matchEndedMetadata?: {
         reason: string;
         byPlayer?: { username: string; id: string } | undefined;
@@ -38,58 +49,45 @@ export type MatchState = {
 
 const initialState: MatchState = {
     board: getInitialChessBoard(),
+    winner: null,
+    status: MATCH_STATUS.PENDING,
+    startTimeInMs: 1000 * 60 * 5,
 
     // Initialize with white's turn
     currentTurn: CHESS_PIECE_COLOR.WHITE,
-
-    startTimeInMs: 1000 * 60 * 5,
-
-    winner: null,
-
-    status: MATCH_STATUS.PENDING,
 };
 
 export const matchSlice = createSlice({
     name: "match",
     initialState,
     reducers: {
-        changeTime: (state, action: PayloadAction<number>) => {
+        setStartTime(state, action: PayloadAction<number>) {
             state.startTimeInMs = action.payload;
         },
-        changeMatchEndedMetadata: (
+        setMatchEndedMetadata(
             state,
             action: PayloadAction<{
                 reason: string;
                 byPlayer?: { username: string; id: string } | undefined;
             }>
-        ) => {
+        ) {
             state.matchEndedMetadata = action.payload;
         },
-        changeMatchStatus: (
-            state,
-            action: PayloadAction<
-                (typeof MATCH_STATUS)[keyof typeof MATCH_STATUS]
-            >
-        ) => {
+        setMatchStatus(state, action: PayloadAction<MatchStatus>) {
             state.status = action.payload;
         },
-        changeTurn: (
-            state,
-            action: PayloadAction<
-                | (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
-                | undefined
-            >
-        ) => {
+        changeTurn(state, action: PayloadAction<ChessPieceColor | undefined>) {
             if (action.payload) {
                 state.currentTurn = action.payload;
             } else {
-                state.currentTurn =
-                    state.currentTurn === CHESS_PIECE_COLOR.BLACK
-                        ? CHESS_PIECE_COLOR.WHITE
-                        : CHESS_PIECE_COLOR.BLACK;
+                if (state.currentTurn === CHESS_PIECE_COLOR.BLACK) {
+                    state.currentTurn = CHESS_PIECE_COLOR.WHITE;
+                } else {
+                    state.currentTurn = CHESS_PIECE_COLOR.BLACK;
+                }
             }
         },
-        changeBoard: (state, action: PayloadAction<ChessBlock[][]>) => {
+        setBoard(state, action: PayloadAction<ChessBlock[][]>) {
             const newBoard = action.payload;
 
             // Clear previous showKingInDangerPath states
@@ -99,8 +97,10 @@ export const matchSlice = createSlice({
 
             // Check for danger paths for the current player's king
             const currentTurn = state.currentTurn;
-            newBoard.forEach((row, rowIndex) => {
-                row.forEach((block, colIndex) => {
+            newBoard.forEach(function (row, rowIndex) {
+                row.forEach(function (block, colIndex) {
+                    // Find valid moves for player (current turn) and highligh
+                    // those blocks that are danger
                     if (block.piece && block.piece.color === currentTurn) {
                         const moves = getValidMovesForPiece(
                             newBoard,
@@ -109,13 +109,16 @@ export const matchSlice = createSlice({
                             currentTurn,
                             true
                         );
-                        moves.forEach((move) => {
-                            if (move.danger) {
-                                newBoard[move.row][
-                                    move.col
-                                ].showKingDangerPath = true;
+
+                        moves.forEach(
+                            function checkMovingToCurrentBlockIsSafe(move) {
+                                if (move.danger) {
+                                    newBoard[move.row][
+                                        move.col
+                                    ].showKingDangerPath = true;
+                                }
                             }
-                        });
+                        );
                     }
                 });
             });
@@ -130,10 +133,10 @@ export const matchSlice = createSlice({
             state.status = result;
             state.winner = winner;
         },
-        selectPiece: (
+        selectPiece(
             state,
             action: PayloadAction<{ rowIndex: number; colIndex: number }>
-        ) => {
+        ) {
             const { rowIndex, colIndex } = action.payload;
             const piece = state.board[rowIndex][colIndex].piece;
 
@@ -141,8 +144,8 @@ export const matchSlice = createSlice({
             if (piece?.color === state.currentTurn) {
                 // In this case user is selecting a new piece
 
-                state.board.forEach((row) => {
-                    row.forEach((block) => {
+                state.board.forEach(function (row) {
+                    row.forEach(function removeHighlights(block) {
                         block.selected = false;
                         block.showPath = false;
                         block.showExplosion = false;
@@ -161,7 +164,7 @@ export const matchSlice = createSlice({
                     true
                 );
 
-                moves.forEach((move) => {
+                moves.forEach(function highlightDangerMove(move) {
                     state.board[move.row][move.col].showPath = move.danger
                         ? false
                         : true;

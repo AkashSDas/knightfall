@@ -1,7 +1,10 @@
-import { PropsWithChildren, useEffect, useState } from "react";
-import { SocketContext, socket } from "../lib/websocket";
+import { type PropsWithChildren, useEffect, useState } from "react";
 
+import { SocketContext, socket } from "@/lib/websocket";
+
+/** Wrap the root of the component tree under which you want to use the websocket. */
 export function SocketProvider(props: PropsWithChildren<unknown>) {
+    /** Status of whether we are connected to the server */
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(function handleWebSocketConnection() {
