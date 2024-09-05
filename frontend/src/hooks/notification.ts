@@ -1,12 +1,11 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "./auth";
-import {
-    Notification,
-    NotificationSchema,
-    notificationService,
-} from "../services/notification";
 import { useContext, useEffect } from "react";
-import { SocketContext } from "../lib/websocket";
+
+import { SocketContext } from "@/lib/websocket";
+import { notificationService } from "@/services/notification";
+import { type Notification, NotificationSchema } from "@/utils/schemas";
+
+import { useUser } from "./auth";
 
 type UseNotificationsReturn = {
     notifications: Notification[];
@@ -25,7 +24,10 @@ export function useNotifications({ limit = 5 }): UseNotificationsReturn {
             queryKey: ["notifications", user?.id, limit],
             enabled: isAuthenticated,
             queryFn: ({ pageParam }) => {
-                return notificationService.getMany(limit, pageParam);
+                return notificationService.getLoggedInUserNotifications(
+                    limit,
+                    pageParam
+                );
             },
             initialPageParam: 0,
             getNextPageParam: (lastPage) => {
@@ -42,7 +44,7 @@ export function useNotifications({ limit = 5 }): UseNotificationsReturn {
         });
 
     const notifications: Notification[] =
-        data?.pages.reduce((acc, cur) => {
+        data?.pages.reduce(function flatNotification(acc, cur) {
             return [...acc, ...cur.notifications];
         }, [] as Notification[]) ?? [];
 

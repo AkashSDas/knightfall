@@ -1,15 +1,22 @@
-import { useContext, useEffect, useMemo, useState } from "react";
-
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { z } from "zod";
 
-import { SocketContext } from "../lib/websocket";
-import {
-    DirectMessage,
-    directMessageService,
-} from "../services/direct-message";
-import { friendsChatActions } from "../store/friends-chat/slice";
+import { SocketContext } from "@/lib/websocket";
+import { directMessageService } from "@/services/direct-message";
+import { friendsChatActions } from "@/store/friends-chat/slice";
+import { type DirectMessage } from "@/utils/schemas";
+
 import { useUser } from "./auth";
 import { useAppDispatch } from "./store";
+
+const ReceivedDMSchema = z.object({
+    directMessageId: z.string(),
+    friendId: z.string(),
+    messageId: z.string(),
+    senderUserId: z.string(),
+    text: z.string(),
+});
 
 export function useDirectMessageRoom(friendId: string | undefined) {
     const { socket, isConnected } = useContext(SocketContext);
@@ -78,25 +85,10 @@ export function useListenToDirectMessages(friendId: string | undefined) {
             }
 
             function receivedMessage(data: unknown) {
-                if (
-                    typeof data === "object" &&
-                    data !== null &&
-                    "senderUserId" in data
+                const parsed = ReceivedDMSchema.safeParse(data);
 
-                    // Adding both the messages
-                    // data.senderUserId !== user?.id
-                ) {
-                    dispatch(
-                        friendsChatActions.pushMessage(
-                            data as unknown as {
-                                directMessageId: string;
-                                friendId: string;
-                                messageId: string;
-                                senderUserId: string;
-                                text: string;
-                            }
-                        )
-                    );
+                if (parsed.success) {
+                    dispatch(friendsChatActions.pushMessage(parsed.data));
                 }
             }
         },
@@ -107,7 +99,8 @@ export function useListenToDirectMessages(friendId: string | undefined) {
 }
 
 export function useDirectMessages(args: { limit?: number; friendId?: string }) {
-    const { limit = 10, friendId } = args;
+    const { limit = 20, friendId } = args;
+    const dispatch = useAppDispatch();
     const { user, isAuthenticated } = useUser();
     const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } =
         useInfiniteQuery({
@@ -115,11 +108,7 @@ export function useDirectMessages(args: { limit?: number; friendId?: string }) {
             queryKey: ["directMessages", user?.id, limit, friendId],
             enabled: isAuthenticated && friendId !== undefined,
             queryFn: ({ pageParam }) => {
-                return directMessageService.getMany(
-                    limit,
-                    pageParam,
-                    friendId!
-                );
+                return directMessageService.getDMs(limit, pageParam, friendId!);
             },
             initialPageParam: 0,
             getNextPageParam: (lastPage) => {
@@ -135,15 +124,16 @@ export function useDirectMessages(args: { limit?: number; friendId?: string }) {
             staleTime: 1000 * 30, // 30secs
         });
 
-    const dispatch = useAppDispatch();
-
-    const directMessages: DirectMessage[] = useMemo(() => {
-        return (
-            data?.pages.reduce((acc, cur) => {
-                return [...acc, ...cur.directMessages];
-            }, [] as DirectMessage[]) ?? []
-        );
-    }, [data]);
+    const directMessages: DirectMessage[] = useMemo(
+        function flatDMs() {
+            return (
+                data?.pages.reduce((acc, cur) => {
+                    return [...acc, ...cur.directMessages];
+                }, [] as DirectMessage[]) ?? []
+            );
+        },
+        [data]
+    );
 
     useEffect(
         function updateReduxFriendChat() {

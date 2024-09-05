@@ -1,20 +1,13 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { SearchPlayers, userService } from "../services/user";
 
-export function useSearchPlayers({
-    limit = 10,
-    searchText,
-}: {
+import { userService } from "@/services/user";
+
+type Config = {
     limit?: number;
     searchText: string;
-}): {
-    hasMore: boolean;
-    isLoading: boolean;
-    players: SearchPlayers["players"];
-    isFetchingMore: boolean;
-    totalCount: number;
-    fetchMore: () => void;
-} {
+};
+
+export function useSearchPlayers({ limit = 10, searchText }: Config) {
     const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } =
         useInfiniteQuery({
             // eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -37,12 +30,12 @@ export function useSearchPlayers({
             staleTime: 1000 * 30, // 30secs
         });
 
-    const players: SearchPlayers["players"] =
+    const players =
         data?.pages.reduce(
-            (acc, cur) => {
+            function flatPlayers(acc, cur) {
                 return [...acc, ...cur.players];
             },
-            [] as SearchPlayers["players"]
+            [] as NonNullable<typeof data>["pages"][number]["players"]
         ) ?? [];
 
     return {

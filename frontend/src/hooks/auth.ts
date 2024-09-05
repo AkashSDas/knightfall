@@ -1,16 +1,19 @@
 import {
-    UseMutationResult,
+    type UseMutationResult,
     useMutation,
     useQuery,
 } from "@tanstack/react-query";
-import { authService } from "../services/auth";
+import { useCallback, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { authService } from "@/services/auth";
+import { userService } from "@/services/user";
 import {
     ACCESS_TOKEN_LOCAL_STORAGE_KEY,
     MAGIC_LINK_LOGIN_PARAM_KEY,
-} from "../utils/auth";
-import { GetLoggedInUserProfile, userService } from "../services/user";
-import { useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+} from "@/utils/auth";
+import { type User } from "@/utils/schemas";
+
 import { useAppToast } from "./ui";
 
 function useAccessToken() {
@@ -49,7 +52,7 @@ function useAccessToken() {
 type UseUserReturn = {
     error: Error | null;
     isLoading: boolean;
-    user: GetLoggedInUserProfile["user"] | null | undefined;
+    user: User | null | undefined;
     isLoggedIn: boolean;
     isSignupCompleted: boolean;
     logoutMutation: UseMutationResult<void, Error, void, unknown>;

@@ -1,27 +1,32 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { friendService } from "../services/friend";
-import { useAppToast } from "./ui";
-import { useUser } from "./auth";
-import { FRIEND_REQUEST_STATUS } from "../utils/friend";
 import { useCallback, useMemo, useState } from "react";
 
-function useGetFriends(
-    status: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
+import { friendService } from "@/services/friend";
+import {
+    FRIEND_REQUEST_STATUS,
+    type FriendRequestStatus,
+} from "@/utils/friend";
+
+import { useUser } from "./auth";
+import { useAppToast } from "./ui";
+
+function useLoggedInUserFriends(
+    status: FriendRequestStatus,
     type: "from" | "to"
 ) {
     const { user, isAuthenticated } = useUser();
-
     const query = useQuery({
         queryKey: [isAuthenticated, user?.id, "friends", status, type],
         enabled: isAuthenticated,
         queryFn: async () => {
-            const [ok, err] = await friendService.getFriendRequests(
-                status,
-                type
-            );
+            const [ok, err] =
+                await friendService.getFriendRequestsForLoggedInUser(
+                    status,
+                    type
+                );
 
             if (err || !ok) {
-                return [] as unknown as NonNullable<typeof ok>["friends"];
+                return [] as NonNullable<typeof ok>["friends"];
             }
 
             return ok.friends;
@@ -39,7 +44,7 @@ export function useFriendManager() {
 
     // "from" here doesn't matter as its going to get friend
     // whose request the user has accepted or vice versa
-    const acceptedFriendsQuery = useGetFriends(
+    const acceptedFriendsQuery = useLoggedInUserFriends(
         FRIEND_REQUEST_STATUS.ACCEPTED,
         "from"
     );
@@ -61,24 +66,24 @@ export function useFriendManager() {
         [acceptedFriendsQuery.data]
     );
 
-    const receivedRequestsQuery = useGetFriends(
+    const receivedRequestsQuery = useLoggedInUserFriends(
         FRIEND_REQUEST_STATUS.PENDING,
         "to"
     );
 
-    const sentRequestsQuery = useGetFriends(
+    const sentRequestsQuery = useLoggedInUserFriends(
         FRIEND_REQUEST_STATUS.PENDING,
         "from"
     );
 
     /** Logged in user's requests that the other users have rejected */
-    const rejectedRequestsQuery = useGetFriends(
+    const rejectedRequestsQuery = useLoggedInUserFriends(
         FRIEND_REQUEST_STATUS.REJECTED,
         "from"
     );
 
     /** Requests that the logged in user has rejected */
-    const blockedRequestsQuery = useGetFriends(
+    const blockedRequestsQuery = useLoggedInUserFriends(
         FRIEND_REQUEST_STATUS.REJECTED,
         "to"
     );
@@ -283,7 +288,7 @@ export function useFriendManager() {
     };
 }
 
-export function useSearchFriends() {
+export function useSearchLoggedInUserFriends() {
     const { user, isAuthenticated } = useUser();
     const [text, setText] = useState("");
 
@@ -295,7 +300,7 @@ export function useSearchFriends() {
                 await friendService.searchFriendsByUsernameOrUserId(text);
 
             if (err || !ok) {
-                return [] as unknown as NonNullable<typeof ok>["friends"];
+                return [] as NonNullable<typeof ok>["friends"];
             }
 
             // Since in backend query text is searched in fromUesr and toUser,
@@ -308,7 +313,6 @@ export function useSearchFriends() {
             // This additional filtering can be removed by adding aggregation pipeline for
             // a search, but its not yet implemented.
             return ok.friends.filter((f) => {
-                console.log({ text, f });
                 if (f.fromUser.id === user?.id) {
                     return f.toUser.username
                         ?.toLowerCase()

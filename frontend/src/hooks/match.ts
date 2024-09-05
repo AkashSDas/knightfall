@@ -1,15 +1,65 @@
-import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { SocketContext } from "../lib/websocket";
-import { useUser } from "./auth";
-import { z } from "zod";
-import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { matchService } from "../services/match";
-import { useAppToast } from "./ui";
-import { CHESS_PIECES, CHESS_PIECE_COLOR, MATCH_STATUS } from "../utils/chess";
-import { useAppDispatch, useAppSelector } from "./store";
-import { matchActions, matchSelectors } from "../store/match/slice";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuid } from "uuid";
+import { z } from "zod";
+
+import { SocketContext } from "@/lib/websocket";
+import { matchService } from "@/services/match";
+import { matchActions, matchSelectors } from "@/store/match/slice";
+import { CHESS_PIECES, CHESS_PIECE_COLOR, MATCH_STATUS } from "@/utils/chess";
+
+import { useUser } from "./auth";
+import { useAppDispatch, useAppSelector } from "./store";
+import { useAppToast } from "./ui";
+
+const FoundPlayerForMatchSchema = z.object({
+    opponentUser: z.object({
+        id: z.string(),
+        username: z.string(),
+        profilePic: z.object({
+            URL: z.string(),
+            id: z.string().optional(),
+        }),
+        winPoints: z.number().min(0),
+    }),
+    matchId: z.string(),
+});
+
+const MatchChessMoveSchema = z
+    .object({
+        matchId: z.string(),
+        playerId: z.string(),
+        move: z.object({
+            turn: z.nativeEnum(CHESS_PIECE_COLOR),
+            board: z.array(
+                z.array(
+                    z.object({
+                        color: z.nativeEnum(CHESS_PIECE_COLOR).nullable(),
+                        type: z.nativeEnum(CHESS_PIECES).nullable(),
+                    })
+                )
+            ),
+        }),
+        status: z.nativeEnum(MATCH_STATUS),
+    })
+    .strict({ message: "Extra fields not allowed" });
+
+const MatchChessEndSchema = z
+    .object({
+        matchId: z.string(),
+        newStatus: z.nativeEnum(MATCH_STATUS),
+        metadata: z.object({
+            reason: z.string(),
+            byPlayer: z
+                .object({
+                    username: z.string(),
+                    id: z.string(),
+                })
+                .optional(),
+        }),
+    })
+    .strict({ message: "Extra fields not allowed" });
 
 export function useSearchMatchRoom() {
     const { socket, isConnected } = useContext(SocketContext);
@@ -41,19 +91,6 @@ export function useSearchMatchRoom() {
     );
 }
 
-const FoundPlayerForMatchSchema = z.object({
-    opponentUser: z.object({
-        id: z.string(),
-        username: z.string(),
-        profilePic: z.object({
-            URL: z.string(),
-            id: z.string().optional(),
-        }),
-        winPoints: z.number().min(0),
-    }),
-    matchId: z.string(),
-});
-
 export function useSearchMatch() {
     const { socket, isConnected } = useContext(SocketContext);
     const { isAuthenticated, user } = useUser();
@@ -65,9 +102,7 @@ export function useSearchMatch() {
     const cancelSearch = useCallback(
         function () {
             if (socket) {
-                socket.emit("leaveSearchPlayerForGame", {
-                    userId: user?.id,
-                });
+                socket.emit("leaveSearchPlayerForGame", { userId: user?.id });
             }
         },
         [socket, user]
@@ -139,7 +174,7 @@ export function useSearchMatch() {
     return { cancelSearch };
 }
 
-export function useGetMatch() {
+export function useFetchMatch() {
     const params = useParams();
     const { isAuthenticated, user } = useUser();
     const navigate = useNavigate();
@@ -150,16 +185,19 @@ export function useGetMatch() {
         queryKey: [params.matchId, isAuthenticated],
         enabled: isAuthenticated && !!params.matchId,
         queryFn: async () => {
-            const [ok, err] = await matchService.getById(params.matchId!);
+            const [ok, err] = await matchService.getMatch(params.matchId!);
 
             if (err || !ok) {
                 errorToast(err?.message ?? "Failed to get match");
                 navigate("/");
                 return null;
             } else {
+                // The last moves in match is the latest match board state
                 const latestBoard = ok.match.moves[ok.match.moves.length - 1];
-                const data = latestBoard.board.map((row, i) =>
-                    row.map((col, j) => {
+
+                // Add color to each block
+                const data = latestBoard.board.map(function (row, i) {
+                    return row.map(function addColor(col, j) {
                         const color =
                             (i + j) % 2 == 0
                                 ? CHESS_PIECE_COLOR.BLACK
@@ -168,10 +206,7 @@ export function useGetMatch() {
                         return {
                             id: uuid(),
                             piece: col.type
-                                ? {
-                                      type: col.type,
-                                      color: col.color!,
-                                  }
+                                ? { type: col.type, color: col.color! }
                                 : null,
                             color: color,
                             selected: false,
@@ -179,10 +214,10 @@ export function useGetMatch() {
                             showExplosion: false,
                             showKingDangerPath: false,
                         };
-                    })
-                );
+                    });
+                });
 
-                dispatch(matchActions.changeBoard(data));
+                dispatch(matchActions.setBoard(data));
 
                 // The latest turn would be last played turn, which means now we can change turn
                 dispatch(
@@ -193,7 +228,7 @@ export function useGetMatch() {
                     )
                 );
 
-                dispatch(matchActions.changeMatchStatus(ok.match.status));
+                dispatch(matchActions.setMatchStatus(ok.match.status));
 
                 if (ok.match.startedAt) {
                     const diff =
@@ -202,13 +237,15 @@ export function useGetMatch() {
 
                     if (diff > 1000 * 60 * 5) {
                         dispatch(
-                            matchActions.changeMatchStatus(MATCH_STATUS.TIMEOUT)
+                            matchActions.setMatchStatus(MATCH_STATUS.TIMEOUT)
                         );
                     } else {
-                        dispatch(matchActions.changeTime(1000 * 60 * 5 - diff));
+                        dispatch(
+                            matchActions.setStartTime(1000 * 60 * 5 - diff)
+                        );
                     }
                 } else {
-                    dispatch(matchActions.changeTime(1000 * 60 * 5));
+                    dispatch(matchActions.setStartTime(1000 * 60 * 5));
                 }
 
                 return ok;
@@ -260,7 +297,7 @@ export function useGetMatch() {
 export function useMatchRoom() {
     const { socket, isConnected } = useContext(SocketContext);
     const { isAuthenticated, user } = useUser();
-    const { matchId } = useGetMatch();
+    const { matchId } = useFetchMatch();
 
     useEffect(
         function handleSearchMatchSocket() {
@@ -286,45 +323,10 @@ export function useMatchRoom() {
     );
 }
 
-const MatchChessMoveSchema = z
-    .object({
-        matchId: z.string(),
-        playerId: z.string(),
-        move: z.object({
-            turn: z.nativeEnum(CHESS_PIECE_COLOR),
-            board: z.array(
-                z.array(
-                    z.object({
-                        color: z.nativeEnum(CHESS_PIECE_COLOR).nullable(),
-                        type: z.nativeEnum(CHESS_PIECES).nullable(),
-                    })
-                )
-            ),
-        }),
-        status: z.nativeEnum(MATCH_STATUS),
-    })
-    .strict({ message: "Extra fields not allowed" });
-
-const MatchChessEndSchema = z
-    .object({
-        matchId: z.string(),
-        newStatus: z.nativeEnum(MATCH_STATUS),
-        metadata: z.object({
-            reason: z.string(),
-            byPlayer: z
-                .object({
-                    username: z.string(),
-                    id: z.string(),
-                })
-                .optional(),
-        }),
-    })
-    .strict({ message: "Extra fields not allowed" });
-
 export function useListenMatchRoom() {
     const { socket, isConnected } = useContext(SocketContext);
     const { isAuthenticated, user } = useUser();
-    const { matchId } = useGetMatch();
+    const { matchId } = useFetchMatch();
     const board = useAppSelector(matchSelectors.board);
     const currentTurn = useAppSelector(matchSelectors.currentTurn);
     const status = useAppSelector(matchSelectors.status);
@@ -352,8 +354,8 @@ export function useListenMatchRoom() {
                     if (matchId === matchId && playerId !== user?.id) {
                         dispatch(matchActions.changeTurn(move.turn));
 
-                        const data = move.board.map((row, i) =>
-                            row.map((col, j) => {
+                        const data = move.board.map(function (row, i) {
+                            return row.map(function addColor(col, j) {
                                 const color =
                                     (i + j) % 2 == 0
                                         ? CHESS_PIECE_COLOR.BLACK
@@ -362,10 +364,7 @@ export function useListenMatchRoom() {
                                 return {
                                     id: uuid(),
                                     piece: col.type
-                                        ? {
-                                              type: col.type,
-                                              color: col.color!,
-                                          }
+                                        ? { type: col.type, color: col.color! }
                                         : null,
                                     color: color,
                                     selected: false,
@@ -373,10 +372,10 @@ export function useListenMatchRoom() {
                                     showExplosion: false,
                                     showKingDangerPath: false,
                                 };
-                            })
-                        );
+                            });
+                        });
 
-                        dispatch(matchActions.changeBoard(data));
+                        dispatch(matchActions.setBoard(data));
                     }
                 }
             }
@@ -446,11 +445,11 @@ export function useListenMatchRoom() {
                     const { matchId, metadata, newStatus } = result.data;
 
                     if (matchId === matchId) {
-                        dispatch(matchActions.changeMatchStatus(newStatus));
+                        dispatch(matchActions.setMatchStatus(newStatus));
 
                         if (metadata) {
                             dispatch(
-                                matchActions.changeMatchEndedMetadata(metadata)
+                                matchActions.setMatchEndedMetadata(metadata)
                             );
                         }
                     }
