@@ -1,10 +1,17 @@
-import { HTTP_METHOD, api } from "../lib/api";
 import * as z from "zod";
-import { UserSchema } from "../utils/zod";
 
-const getLoggedInUserProfileSchema = z.object({ user: UserSchema });
+import { HTTP_METHOD, api } from "@/lib/api";
+import { UserSchema } from "@/utils/schemas";
 
-const getUserPublicProfileSchema = z.object({
+// ===================================
+// Schemas
+// ===================================
+
+const GetLoggedInUserProfileResponseSchema = z.object({
+    user: UserSchema,
+});
+
+const GetUserPublicProfileResponseSchema = z.object({
     user: z.object({
         id: z.string(),
         username: z.string().optional(),
@@ -24,7 +31,7 @@ const getUserPublicProfileSchema = z.object({
     }),
 });
 
-const searchPlayersSchema = z.object({
+const SearchPlayersResponseSchema = z.object({
     players: z.array(
         z
             .object({
@@ -41,32 +48,37 @@ const searchPlayersSchema = z.object({
     nextPageOffset: z.number().min(0),
 });
 
-export type GetLoggedInUserProfile = z.infer<
-    typeof getLoggedInUserProfileSchema
+export type GetUserPublicProfileResponse = z.infer<
+    typeof GetUserPublicProfileResponseSchema
 >;
-export type GetUserPublicProfile = z.infer<typeof getUserPublicProfileSchema>;
-export type SearchPlayers = z.infer<typeof searchPlayersSchema>;
+
+// ===================================
+// Service
+// ===================================
 
 class UserService {
     constructor() {}
 
     async getLoggedInUserProfile() {
         return await api.fetch<
-            GetLoggedInUserProfile,
+            z.infer<typeof GetLoggedInUserProfileResponseSchema>,
             "GET_LOGGED_IN_USER_PROFILE"
         >(
             "GET_LOGGED_IN_USER_PROFILE",
             { method: HTTP_METHOD.GET },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "user" in data,
-            getLoggedInUserProfileSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "user" in data
+                );
+            },
+            GetLoggedInUserProfileResponseSchema
         );
     }
 
-    async updateProfile(payload: FormData) {
+    async patchLoggedInUserProfile(payload: FormData) {
         return await api.fetch(
             "UPDATE_USER_PROFILE",
             { method: HTTP_METHOD.PATCH, isProtected: true, data: payload },
@@ -74,19 +86,22 @@ class UserService {
         );
     }
 
-    async getPlayerProfile(userId: string) {
+    async getPlayerPublicProfile(userId: string) {
         const [ok, err] = await api.fetch<
-            GetUserPublicProfile,
+            z.infer<typeof GetUserPublicProfileResponseSchema>,
             "GET_PUBLIC_PROFILE"
         >(
             "GET_PUBLIC_PROFILE",
             { method: HTTP_METHOD.GET, urlPayload: { userId } },
-            (data, status) =>
-                status === 200 &&
-                data !== null &&
-                typeof data === "object" &&
-                "user" in data,
-            getUserPublicProfileSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    data !== null &&
+                    typeof data === "object" &&
+                    "user" in data
+                );
+            },
+            GetUserPublicProfileResponseSchema
         );
 
         if (!ok || err) {
@@ -97,23 +112,31 @@ class UserService {
     }
 
     async searchPlayers(queryText: string, limit: number, offset: number) {
-        const [ok] = await api.fetch<SearchPlayers, "SEARCH_PLAYERS">(
+        const [ok] = await api.fetch<
+            z.infer<typeof SearchPlayersResponseSchema>,
+            "SEARCH_PLAYERS"
+        >(
             "SEARCH_PLAYERS",
             { method: HTTP_METHOD.GET, params: { limit, offset, queryText } },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "players" in data &&
-                "totalCount" in data &&
-                "nextPageOffset" in data,
-            searchPlayersSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "players" in data &&
+                    "totalCount" in data &&
+                    "nextPageOffset" in data
+                );
+            },
+            SearchPlayersResponseSchema
         );
 
         if (!ok) {
             return {
                 nextPageOffset: 0,
-                players: [] as SearchPlayers["players"],
+                players: [] as z.infer<
+                    typeof SearchPlayersResponseSchema
+                >["players"],
                 totalCount: 0,
             };
         } else {
@@ -122,4 +145,5 @@ class UserService {
     }
 }
 
+/** Interact with user endpoints. */
 export const userService = new UserService();

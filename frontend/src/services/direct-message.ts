@@ -1,55 +1,47 @@
 import { z } from "zod";
-import { HTTP_METHOD, api } from "../lib/api";
 
-const getManySchema = z.object({
+import { HTTP_METHOD, api } from "@/lib/api";
+import { DirectMessage } from "@/utils/schemas";
+
+// ===================================
+// Schemas
+// ===================================
+
+const GetManyDMsResponseSchema = z.object({
     nextPageOffset: z.number().min(0),
     totalCount: z.number().min(0),
-    directMessages: z.array(
-        z.object({
-            id: z.string(),
-            friend: z.string(),
-            previousMessage: z.string().nullable().optional(),
-            createdAt: z.string(),
-            updatedAt: z.string(),
-            messages: z.array(
-                z.object({
-                    _id: z.string(),
-                    user: z.string(),
-                    text: z.string(),
-                    createdAt: z.string(),
-                    updatedAt: z.string(),
-                    reactions: z.array(z.any()),
-                })
-            ),
-        })
-    ),
+    directMessages: z.array(DirectMessage),
 });
 
-type GetMany = z.infer<typeof getManySchema>;
-export type DirectMessage = GetMany["directMessages"][number];
-export type Message = GetMany["directMessages"][number]["messages"][number];
-export type MessageReaction =
-    GetMany["directMessages"][number]["messages"][number]["reactions"][number];
+// ===================================
+// Service
+// ===================================
 
 class DirectMessageService {
     constructor() {}
 
-    async getMany(limit: number, offset: number, friendId: string) {
-        const [ok] = await api.fetch<GetMany, "GET_DIRECT_MESSAGES">(
+    async getDMs(limit: number, offset: number, friendId: string) {
+        const [ok] = await api.fetch<
+            z.infer<typeof GetManyDMsResponseSchema>,
+            "GET_DIRECT_MESSAGES"
+        >(
             "GET_DIRECT_MESSAGES",
             {
                 method: HTTP_METHOD.GET,
                 params: { limit, offset, friendId },
                 isProtected: true,
             },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "directMessages" in data &&
-                "totalCount" in data &&
-                "nextPageOffset" in data,
-            getManySchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "directMessages" in data &&
+                    "totalCount" in data &&
+                    "nextPageOffset" in data
+                );
+            },
+            GetManyDMsResponseSchema
         );
 
         if (!ok) {
@@ -60,4 +52,5 @@ class DirectMessageService {
     }
 }
 
+/** Interact with direct messages endpoints. */
 export const directMessageService = new DirectMessageService();

@@ -1,9 +1,10 @@
-import { EmailSignupInputs } from "../components/auth/SignupForm";
-import { HTTP_METHOD, api } from "../lib/api";
 import * as z from "zod";
-import { UserSchema } from "../utils/zod";
+
 import { CompleteOAuthSignupInputs } from "../components/auth/CompleteOAuthSignupForm";
 import { EmailLoginInputs } from "../components/auth/LogintForm";
+import { EmailSignupInputs } from "../components/auth/SignupForm";
+import { HTTP_METHOD, api } from "../lib/api";
+import { UserSchema } from "../utils/schemas";
 
 const GetNewAccessTokenSchema = z.object({
     accessToken: z.string(),

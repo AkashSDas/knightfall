@@ -1,86 +1,50 @@
 import * as z from "zod";
-import { NOTIFICATION_TYPE } from "../utils/notification";
-import { HTTP_METHOD, api } from "../lib/api";
 
-const NotificationBaseSchema = z.object({
-    id: z.string(),
-    user: z.string(),
-    title: z.string(),
-    seen: z.boolean(),
-    createdAt: z.string().transform((val) => new Date(val)),
-});
+import { HTTP_METHOD, api } from "@/lib/api";
+import { NotificationSchema } from "@/utils/schemas";
 
-const DefaultNotificationSchema = z
-    .object({ type: z.literal(NOTIFICATION_TYPE.DEFAULT) })
-    .merge(NotificationBaseSchema);
+// ===================================
+// Schemas
+// ===================================
 
-const LoginWelcomeBackNotificationSchema = z
-    .object({ type: z.literal(NOTIFICATION_TYPE.LOGIN_WELCOME_BACK) })
-    .merge(NotificationBaseSchema);
-
-const SignupWelcomeNotificationSchema = z
-    .object({ type: z.literal(NOTIFICATION_TYPE.SIGNUP_WELCOME) })
-    .merge(NotificationBaseSchema);
-
-const ReceivedFriendRequestNotificationSchema = z
-    .object({
-        type: z.literal(NOTIFICATION_TYPE.RECEIVED_FRIEND_REQUEST),
-        metadata: z.object({
-            friendRequestId: z.string(),
-            userId: z.string(),
-            profilePicURL: z.string(),
-        }),
-    })
-    .merge(NotificationBaseSchema);
-
-const AcceptedFriendRequestNotificationSchema = z
-    .object({
-        type: z.literal(NOTIFICATION_TYPE.ACCEPTED_FRIEND_REQUEST),
-        metadata: z.object({
-            friendRequestId: z.string(),
-            userId: z.string(),
-            profilePicURL: z.string(),
-        }),
-    })
-    .merge(NotificationBaseSchema);
-
-export const NotificationSchema = z.union([
-    DefaultNotificationSchema,
-    LoginWelcomeBackNotificationSchema,
-    SignupWelcomeNotificationSchema,
-    ReceivedFriendRequestNotificationSchema,
-    AcceptedFriendRequestNotificationSchema,
-]);
-
-const GetNotificationsSchema = z.object({
+const GetNotificationsResponseSchema = z.object({
     totalCount: z.number().min(0),
     nextPageOffset: z.number().min(0),
     notifications: z.array(NotificationSchema),
 });
 
-type GetMany = z.infer<typeof GetNotificationsSchema>;
-
-export type Notification = GetMany["notifications"][number];
+// ===================================
+// Service
+// ===================================
 
 class NotificationService {
     constructor() {}
 
-    async getMany(limit: number, offset: number): Promise<GetMany> {
-        const [ok] = await api.fetch<GetMany, "GET_NOTIFICATIONS">(
+    async getLoggedInUserNotifications(
+        limit: number,
+        offset: number
+    ): Promise<z.infer<typeof GetNotificationsResponseSchema>> {
+        const [ok] = await api.fetch<
+            z.infer<typeof GetNotificationsResponseSchema>,
+            "GET_NOTIFICATIONS"
+        >(
             "GET_NOTIFICATIONS",
             {
                 method: HTTP_METHOD.GET,
                 params: { limit, offset },
                 isProtected: true,
             },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "notifications" in data &&
-                "totalCount" in data &&
-                "nextPageOffset" in data,
-            GetNotificationsSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "notifications" in data &&
+                    "totalCount" in data &&
+                    "nextPageOffset" in data
+                );
+            },
+            GetNotificationsResponseSchema
         );
 
         if (!ok) {
@@ -103,4 +67,5 @@ class NotificationService {
     }
 }
 
+/** Interact with notifications endpoints. */
 export const notificationService = new NotificationService();

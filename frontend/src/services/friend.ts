@@ -1,6 +1,14 @@
 import { z } from "zod";
-import { HTTP_METHOD, api } from "../lib/api";
-import { FRIEND_REQUEST_STATUS } from "../utils/friend";
+
+import { HTTP_METHOD, api } from "@/lib/api";
+import {
+    FRIEND_REQUEST_STATUS,
+    type FriendRequestStatus,
+} from "@/utils/friend";
+
+// ===================================
+// Schemas
+// ===================================
 
 const FriendUserSchema = z.object({
     id: z.string(),
@@ -11,7 +19,7 @@ const FriendUserSchema = z.object({
     achievements: z.array(z.string()),
 });
 
-const GetFriendRequestsSchema = z.object({
+const GetFriendRequestsResponseSchema = z.object({
     friends: z.array(
         z.object({
             id: z.string(),
@@ -23,15 +31,19 @@ const GetFriendRequestsSchema = z.object({
     ),
 });
 
+// ===================================
+// Service
+// ===================================
+
 class FriendService {
     constructor() {}
 
-    async getFriendRequests(
-        requestStatus: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
+    async getFriendRequestsForLoggedInUser(
+        requestStatus: FriendRequestStatus,
         type: "from" | "to"
     ) {
         return await api.fetch<
-            z.infer<typeof GetFriendRequestsSchema>,
+            z.infer<typeof GetFriendRequestsResponseSchema>,
             "GET_FRIEND_REQUESTS"
         >(
             "GET_FRIEND_REQUESTS",
@@ -40,28 +52,37 @@ class FriendService {
                 params: { requestStatus, type },
                 isProtected: true,
             },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "friends" in data,
-            GetFriendRequestsSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "friends" in data
+                );
+            },
+            GetFriendRequestsResponseSchema
         );
     }
 
-    async sendFriendRequest(sendRequestToUserId: string) {
+    /**
+     * @param toUserId Send friend request to user (id)
+     */
+    async sendFriendRequest(toUserId: string) {
         const [ok, err] = await api.fetch(
             "SEND_FRIEND_REQUEST",
             {
                 method: HTTP_METHOD.POST,
-                data: { toUserId: sendRequestToUserId },
+                data: { toUserId: toUserId },
                 isProtected: true,
             },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "message" in data
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "message" in data
+                );
+            }
         );
 
         if (err || !ok) {
@@ -80,7 +101,7 @@ class FriendService {
     }
 
     async updateFriendRequestStatus(
-        requestStatus: (typeof FRIEND_REQUEST_STATUS)[keyof typeof FRIEND_REQUEST_STATUS],
+        requestStatus: FriendRequestStatus,
         friendId: string
     ): Promise<string> {
         const [ok, err] = await api.fetch("UPDATE_FRIEND_REQUEST_STATUS", {
@@ -105,7 +126,7 @@ class FriendService {
 
     async searchFriendsByUsernameOrUserId(queryText: string) {
         return await api.fetch<
-            z.infer<typeof GetFriendRequestsSchema>,
+            z.infer<typeof GetFriendRequestsResponseSchema>,
             "SEARCH_FRIENDS"
         >(
             "SEARCH_FRIENDS",
@@ -114,14 +135,18 @@ class FriendService {
                 params: { queryText },
                 isProtected: true,
             },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "friends" in data,
-            GetFriendRequestsSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "friends" in data
+                );
+            },
+            GetFriendRequestsResponseSchema
         );
     }
 }
 
+/** Interact with friend endpoints. */
 export const friendService = new FriendService();

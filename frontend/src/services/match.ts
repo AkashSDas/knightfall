@@ -1,8 +1,13 @@
 import { z } from "zod";
-import { HTTP_METHOD, api } from "../lib/api";
-import { CHESS_PIECES, CHESS_PIECE_COLOR, MATCH_STATUS } from "../utils/chess";
 
-const GetMatchSchema = z.object({
+import { HTTP_METHOD, api } from "@/lib/api";
+import { CHESS_PIECES, CHESS_PIECE_COLOR, MATCH_STATUS } from "@/utils/chess";
+
+// ===================================
+// Schemas
+// ===================================
+
+const GetMatchResponseSchema = z.object({
     match: z.object({
         status: z.nativeEnum(MATCH_STATUS),
         player1: z.object({
@@ -44,25 +49,36 @@ const GetMatchSchema = z.object({
     }),
 });
 
+// ===================================
+// Service
+// ===================================
+
 class MatchService {
     constructor() {}
 
-    async getById(matchId: string) {
-        return await api.fetch<z.infer<typeof GetMatchSchema>, "GET_MATCH">(
+    async getMatch(matchId: string) {
+        return await api.fetch<
+            z.infer<typeof GetMatchResponseSchema>,
+            "GET_MATCH"
+        >(
             "GET_MATCH",
             {
                 method: HTTP_METHOD.GET,
                 isProtected: true,
                 urlPayload: { matchId },
             },
-            (data, status) =>
-                status === 200 &&
-                typeof data === "object" &&
-                data !== null &&
-                "match" in data,
-            GetMatchSchema
+            function (data, status) {
+                return (
+                    status === 200 &&
+                    typeof data === "object" &&
+                    data !== null &&
+                    "match" in data
+                );
+            },
+            GetMatchResponseSchema
         );
     }
 }
 
+/** Interact with match endpoints. */
 export const matchService = new MatchService();
