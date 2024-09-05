@@ -28,6 +28,7 @@
         "declaration": false,
 
         /* Others */
+        "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         }

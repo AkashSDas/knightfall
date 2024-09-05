@@ -81,20 +81,33 @@
         "prettier": "^3.3.2",
         "storybook": "^8.1.11",
         "ts-jest": "^29.1.5",
+        "ts-node": "^10.9.2",
         "typescript": "^5.2.2",
         "vite": "^5.3.1"
     },
     "jest": {
         "moduleNameMapper": {
             "^.+\\.svg$": "jest-svg-transformer",
-            "^.+\\.(css|less|scss)$": "identity-obj-proxy"
+            "^.+\\.(css|less|scss)$": "identity-obj-proxy",
+            "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
+            "^@/(.*)$": "<rootDir>/src/$1"
         },
+        "rootDir": ".",
         "testEnvironment": "jsdom",
         "setupFilesAfterEnv": [
             "<rootDir>/setupTests.ts"
         ],
         "transform": {
-            "^.+\\.tsx?$": "ts-jest"
+            "^.+\\.tsx?$": [
+                "ts-jest",
+                {
+                    "diagnostics": {
+                        "ignoreCodes": [
+                            "TS151001"
+                        ]
+                    }
+                }
+            ]
         },
         "clearMocks": true
     },
