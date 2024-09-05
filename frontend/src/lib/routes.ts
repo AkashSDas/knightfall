@@ -1,18 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 
 // Pages
-import { HomePage } from "../pages";
-import { SignupPage } from "../pages/auth/signup";
-import { LoginPage } from "../pages/auth/login";
-import { NotificationsPage } from "../pages/user/notifications";
-import { SettingsPage } from "../pages/user/settings";
-import { HistoryPage } from "../pages/user/history";
-import { FriendsPage } from "../pages/user/friends";
-import { UserPublicProfilePage } from "../pages/public/user-public-profile";
-import { GlobalChatPage } from "../pages/public/global-chat";
-import { SearchPlayersPage } from "../pages/public/search-players";
-import { LobbyPage } from "../pages/match/lobby";
-import { MatchRoomPage } from "../pages/match/match-room";
+import { HomePage } from "@/pages";
+import { LoginPage } from "@/pages/auth/login";
+import { SignupPage } from "@/pages/auth/signup";
+import { LobbyPage } from "@/pages/match/lobby";
+import { MatchRoomPage } from "@/pages/match/match-room";
+import { GlobalChatPage } from "@/pages/public/global-chat";
+import { SearchPlayersPage } from "@/pages/public/search-players";
+import { UserPublicProfilePage } from "@/pages/public/user-public-profile";
+import { FriendsPage } from "@/pages/user/friends";
+import { HistoryPage } from "@/pages/user/history";
+import { NotificationsPage } from "@/pages/user/notifications";
+import { SettingsPage } from "@/pages/user/settings";
 
 export const routes: Parameters<typeof createBrowserRouter>[0] = [
     {

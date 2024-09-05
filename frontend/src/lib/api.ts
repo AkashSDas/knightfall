@@ -1,6 +1,12 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
-import { AnyZodObject } from "zod";
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "../utils/auth";
+import axios, {
+    AxiosError,
+    type AxiosInstance,
+    type AxiosRequestConfig,
+} from "axios";
+import { type AnyZodObject } from "zod";
+
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "@/utils/auth";
+import { envVariables } from "@/utils/env";
 
 const endpoints = {
     // Auth
@@ -60,6 +66,7 @@ type FetchConfig<U extends keyof typeof endpoints> =
         ? AxiosRequestConfig & { isProtected?: boolean }
         : AxiosRequestConfig & {
               isProtected?: boolean;
+              /** Payload that will be used to create url. */
               urlPayload: EndpointPayload<(typeof endpoints)[U]>;
           };
 
@@ -75,7 +82,7 @@ class APIProvider {
 
     constructor() {
         this.api = axios.create({
-            baseURL: import.meta.env.VITE_BACKEND_URL,
+            baseURL: envVariables.VITE_BACKEND_URL,
             withCredentials: true,
             timeout: 3000, // 3 seconds
             timeoutErrorMessage: "Request timed out",
@@ -187,4 +194,5 @@ class APIProvider {
     }
 }
 
+/** Interact with API. */
 export const api = new APIProvider();
