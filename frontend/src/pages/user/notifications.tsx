@@ -8,21 +8,22 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "../../hooks/auth";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+import { EmptyNotification } from "@/components/notification/EmptyNotification";
+import { NotificationCard } from "@/components/notification/NotificationCard";
+import { ChessBoardBackground } from "@/components/shared/chess-board-background/ChessBoardBackground";
+import { AuthProtectedBaseLayout } from "@/components/shared/layout/AuthProtectedBaseLayout";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useUser } from "@/hooks/auth";
 import {
     useListenToNotifications,
     useNotificationRoom,
     useNotifications,
-} from "../../hooks/notification";
-import { notificationService } from "../../services/notification";
-import { EmptyNotification } from "../../components/notification/EmptyNotification";
-import { NotificationCard } from "../../components/notification/NotificationCard";
-import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
-import { textShadowStyle } from "../../lib/chakra";
-import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import InfiniteScroll from "react-infinite-scroll-component";
+} from "@/hooks/notification";
+import { textShadowStyle } from "@/lib/chakra";
+import { notificationService } from "@/services/notification";
 
 export function NotificationsPage() {
     return (
@@ -46,7 +47,7 @@ function NotificationContent() {
     const { user } = useUser();
 
     const mutation = useMutation({
-        mutationFn: () => notificationService.markAsSeen(),
+        mutationFn: notificationService.markAsSeen,
         onSuccess() {
             queryClient.invalidateQueries({
                 queryKey: ["notifications", user?.id],
@@ -56,8 +57,6 @@ function NotificationContent() {
 
     useNotificationRoom();
     useListenToNotifications();
-
-    console.log({ totalCount, n: notifications.length, hasMore });
 
     return (
         <BaseLayout>

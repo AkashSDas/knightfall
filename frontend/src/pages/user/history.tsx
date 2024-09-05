@@ -1,5 +1,6 @@
-import { Center, VStack, Heading } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
+import { Center, Heading, VStack } from "@chakra-ui/react";
+
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
 
 export function HistoryPage() {
     return (

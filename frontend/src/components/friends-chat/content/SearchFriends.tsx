@@ -11,15 +11,16 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
-import { useSearchFriends } from "../../../hooks/friend";
 import { faCommentDots, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { motion } from "framer-motion";
-import { getWinPointsSrc } from "../../../utils/achievements";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+import { useSearchLoggedInUserFriends } from "../../../hooks/friend";
+import { getWinPointsSrc } from "../../../utils/achievements";
 
 const schema = z.object({
     queryText: z.string({}).min(2, "Too short").max(256, "Too long"),
@@ -33,7 +34,8 @@ export function SearchFriends() {
 
     const navigate = useNavigate();
 
-    const { changeSearchText, isLoading, friends } = useSearchFriends();
+    const { changeSearchText, isLoading, friends } =
+        useSearchLoggedInUserFriends();
 
     const submit = form.handleSubmit((data) =>
         changeSearchText(data.queryText ?? "")

@@ -1,5 +1,6 @@
 import { Center, Heading, VStack } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
+
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
 
 export function GlobalChatPage() {
     return (

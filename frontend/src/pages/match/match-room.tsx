@@ -1,8 +1,9 @@
 import { Center, Spinner, VStack } from "@chakra-ui/react";
-import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import { useGetMatch } from "../../hooks/match";
-import { GameSection } from "../../components/match/GameSection";
+
+import { GameSection } from "@/components/match/GameSection";
+import { AuthProtectedBaseLayout } from "@/components/shared/layout/AuthProtectedBaseLayout";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useFetchMatch } from "@/hooks/match";
 
 export function MatchRoomPage() {
     return (
@@ -13,7 +14,7 @@ export function MatchRoomPage() {
 }
 
 function MatchRoomContent() {
-    const { isLoading, players } = useGetMatch();
+    const { isLoading, players } = useFetchMatch();
 
     return (
         <BaseLayout>

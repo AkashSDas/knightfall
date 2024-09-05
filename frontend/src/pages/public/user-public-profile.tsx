@@ -1,21 +1,22 @@
 import {
     Center,
-    VStack,
-    Spinner,
-    Text,
+    Divider,
     HStack,
     Image,
-    Divider,
+    Spinner,
+    Text,
+    VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { userService } from "../../services/user";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fa0, fa4 } from "@fortawesome/free-solid-svg-icons";
-import { AchievementsBoard } from "../../components/player-profile/AchievementBoard";
-import { ActionButton } from "../../components/player-profile/ActionButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+
+import { AchievementsBoard } from "@/components/player-profile/AchievementBoard";
+import { ActionButton } from "@/components/player-profile/ActionButton";
+import { ChessBoardBackground } from "@/components/shared/chess-board-background/ChessBoardBackground";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { userService } from "@/services/user";
 
 export function UserPublicProfilePage() {
     const params = useParams();
@@ -23,7 +24,7 @@ export function UserPublicProfilePage() {
     const { isLoading, data } = useQuery({
         enabled: typeof params.playerId === "string",
         queryKey: ["user", params.playerId],
-        queryFn: () => userService.getPlayerProfile(params.playerId!),
+        queryFn: () => userService.getPlayerPublicProfile(params.playerId!),
         staleTime: 1000 * 60 * 5, // 5mins
     });
 

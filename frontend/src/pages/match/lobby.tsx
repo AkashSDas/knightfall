@@ -6,15 +6,16 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import { useUser } from "../../hooks/auth";
-import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import { motion, useAnimation } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChessBishop, faCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { motion, useAnimation } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useSearchMatch, useSearchMatchRoom } from "../../hooks/match";
 import { useNavigate } from "react-router-dom";
+
+import { ChessBoardBackground } from "@/components/shared/chess-board-background/ChessBoardBackground";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useUser } from "@/hooks/auth";
+import { useSearchMatch, useSearchMatchRoom } from "@/hooks/match";
 
 // Keep this height outside of the component because when you hover over the button
 // there's state change for `bounchChessIcon` which starts the chess board animation
@@ -31,9 +32,9 @@ export function LobbyPage() {
     const controls = useAnimation();
     const [bounchChessIcon, setBounceChessIcon] = useState(false);
     const navigate = useNavigate();
+    const { cancelSearch } = useSearchMatch();
 
     useSearchMatchRoom();
-    const { cancelSearch } = useSearchMatch();
 
     function handleMouseDown() {
         controls.start({

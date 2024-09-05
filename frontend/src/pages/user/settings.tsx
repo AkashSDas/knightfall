@@ -1,21 +1,22 @@
 import {
     Center,
-    VStack,
     Heading,
-    Tabs,
-    TabList,
     Tab,
+    TabList,
     TabPanel,
     TabPanels,
+    Tabs,
+    VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHashtag, faSkull } from "@fortawesome/free-solid-svg-icons";
-import { UpdateUserProfileForm } from "../../components/settings/profile/UpdateUserProfileForm";
-import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
-import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import { textShadowStyle } from "../../lib/chakra";
-import { SocialLogins } from "../../components/settings/profile/SocialLogins";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { SocialLogins } from "@/components/settings/profile/SocialLogins";
+import { UpdateUserProfileForm } from "@/components/settings/profile/UpdateUserProfileForm";
+import { ChessBoardBackground } from "@/components/shared/chess-board-background/ChessBoardBackground";
+import { AuthProtectedBaseLayout } from "@/components/shared/layout/AuthProtectedBaseLayout";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { textShadowStyle } from "@/lib/chakra";
 
 export function SettingsPage() {
     return (

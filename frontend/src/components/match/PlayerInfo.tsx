@@ -1,10 +1,11 @@
 import { Avatar, HStack, Text } from "@chakra-ui/react";
-import { useGetMatch } from "../../hooks/match";
+
+import { useFetchMatch } from "../../hooks/match";
 
 export function PlayerInfo(props: {
     player:
-        | NonNullable<ReturnType<typeof useGetMatch>["players"]>["opponent"]
-        | NonNullable<ReturnType<typeof useGetMatch>["players"]>["me"];
+        | NonNullable<ReturnType<typeof useFetchMatch>["players"]>["opponent"]
+        | NonNullable<ReturnType<typeof useFetchMatch>["players"]>["me"];
 }) {
     const { player } = props;
 

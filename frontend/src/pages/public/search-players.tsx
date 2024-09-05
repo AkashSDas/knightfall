@@ -13,10 +13,6 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import { object, string, z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
     faCircle,
     faCommentDots,
@@ -24,21 +20,25 @@ import {
     faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { useSearchPlayers } from "../../hooks/search";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { getWinPointsSrc } from "../../utils/achievements";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { Link, useNavigate } from "react-router-dom";
-import { useFriendManager } from "../../hooks/friend";
+import { object, string, z } from "zod";
 
-const schema = object({ queryText: string({}).optional() });
-export type SearchInputs = z.infer<typeof schema>;
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useFriendManager } from "@/hooks/friend";
+import { useSearchPlayers } from "@/hooks/search";
+import { getWinPointsSrc } from "@/utils/achievements";
+
+const inputSchema = object({ queryText: string({}).optional() });
 
 export function SearchPlayersPage() {
-    const form = useForm<SearchInputs>({
+    const form = useForm<z.infer<typeof inputSchema>>({
         defaultValues: { queryText: "" },
-        resolver: zodResolver(schema),
+        resolver: zodResolver(inputSchema),
     });
     const [searchText, setSearchText] = useState("");
     const { getStatusForFriendRequest, sendRequest, friends } =
@@ -54,9 +54,9 @@ export function SearchPlayersPage() {
         isFetchingMore,
     } = useSearchPlayers({ searchText });
 
-    const submit = form.handleSubmit((data) =>
-        setSearchText(data.queryText ?? "")
-    );
+    const submit = form.handleSubmit(function (data) {
+        setSearchText(data.queryText ?? "");
+    });
 
     return (
         <BaseLayout>

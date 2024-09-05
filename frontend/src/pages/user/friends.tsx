@@ -1,17 +1,18 @@
 import { VStack, useBreakpointValue, useTheme } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sidebar } from "../../components/friends-chat/sidebar/FriendsChatSidebar";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+
+import { FriendsChatContent } from "@/components/friends-chat/content/FriendsChatContent";
+import { Sidebar } from "@/components/friends-chat/sidebar/FriendsChatSidebar";
+import { AuthProtectedBaseLayout } from "@/components/shared/layout/AuthProtectedBaseLayout";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useFriendManager } from "@/hooks/friend";
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import {
     friendsChatActions,
     friendsChatSelectors,
-} from "../../store/friends-chat/slice";
-import { useAppDispatch, useAppSelector } from "../../hooks/store";
-import { FriendsChatContent } from "../../components/friends-chat/content/FriendsChatContent";
-import { AuthProtectedBaseLayout } from "../../components/shared/layout/AuthProtectedBaseLayout";
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useFriendManager } from "../../hooks/friend";
+} from "@/store/friends-chat/slice";
 
 export function FriendsPage() {
     return (

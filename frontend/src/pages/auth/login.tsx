@@ -7,23 +7,25 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import GoogleSvg from "../../assets/images/google.svg";
-import { useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+
+import GoogleSvg from "@/assets/images/google.svg";
+import { LoginForm } from "@/components/auth/LogintForm";
+import { ChessBoardBackground } from "@/components/shared/chess-board-background/ChessBoardBackground";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useMagicLinkLogin } from "@/hooks/auth";
+import { useAppToast } from "@/hooks/ui";
 import {
     OAUTH_LOGIN_FAILED_PARAM_KEY,
     OAUTH_LOGIN_FAILED_PARAM_VALUE,
-} from "../../utils/auth";
-import { useAppToast } from "../../hooks/ui";
-import { LoginForm } from "../../components/auth/LogintForm";
-import { useMagicLinkLogin } from "../../hooks/auth";
-import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import { motion } from "framer-motion";
+} from "@/utils/auth";
+import { envVariables } from "@/utils/env";
 
 function openLoginWindow(): void {
     window.open(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login/google`,
+        `${envVariables.VITE_BACKEND_URL}/api/auth/login/google`,
         "_self"
     );
 }

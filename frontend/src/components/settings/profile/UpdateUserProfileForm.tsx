@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-import { useUser } from "../../../hooks/auth";
 import {
     Box,
     Button,
@@ -12,13 +10,16 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
-import { z } from "zod";
-import { useAppToast } from "../../../hooks/ui";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { useUser } from "../../../hooks/auth";
+import { useAppToast } from "../../../hooks/ui";
 import { userService } from "../../../services/user";
 
 export type ProfileInputs = {
@@ -55,7 +56,7 @@ export function UpdateUserProfileForm() {
                 formData.append("profilePic", profilePic);
             }
 
-            return userService.updateProfile(formData);
+            return userService.patchLoggedInUserProfile(formData);
         },
         onSuccess(data, _variables, _context) {
             const [ok, err] = data;

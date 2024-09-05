@@ -12,26 +12,27 @@ import {
     VStack,
     useDisclosure,
 } from "@chakra-ui/react";
-import { Timer } from "./Timer";
-import { TurnText } from "./TurnText";
-import { PlayerInfo } from "./PlayerInfo";
+import { motion, useAnimation } from "framer-motion";
+import { useContext, useEffect } from "react";
+
+import { useUser } from "../../hooks/auth";
 import {
-    useGetMatch,
+    useFetchMatch,
     useListenMatchRoom,
     useMatchRoom,
 } from "../../hooks/match";
 import { useAppDispatch, useAppSelector } from "../../hooks/store";
-import { matchActions, matchSelectors } from "../../store/match/slice";
-import { ChessBoard } from "./ChessBoard";
-import { useContext, useEffect } from "react";
 import { SocketContext } from "../../lib/websocket";
+import { matchActions, matchSelectors } from "../../store/match/slice";
 import { MATCH_STATUS } from "../../utils/chess";
-import { useUser } from "../../hooks/auth";
-import { motion, useAnimation } from "framer-motion";
+import { ChessBoard } from "./ChessBoard";
+import { PlayerInfo } from "./PlayerInfo";
+import { Timer } from "./Timer";
+import { TurnText } from "./TurnText";
 
 export function GameSection() {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { players, matchId } = useGetMatch();
+    const { players, matchId } = useFetchMatch();
     const time = useAppSelector(matchSelectors.startTimeInMs);
     const { socket } = useContext(SocketContext);
     const { user } = useUser();
@@ -90,12 +91,12 @@ export function GameSection() {
                             });
 
                             dispatch(
-                                matchActions.changeMatchStatus(
+                                matchActions.setMatchStatus(
                                     MATCH_STATUS.TIMEOUT
                                 )
                             );
                             dispatch(
-                                matchActions.changeMatchEndedMetadata({
+                                matchActions.setMatchEndedMetadata({
                                     reason: "Timeout",
                                 })
                             );
@@ -163,12 +164,12 @@ export function GameSection() {
                                 onClose();
 
                                 dispatch(
-                                    matchActions.changeMatchStatus(
+                                    matchActions.setMatchStatus(
                                         MATCH_STATUS.CANCELLED
                                     )
                                 );
                                 dispatch(
-                                    matchActions.changeMatchEndedMetadata({
+                                    matchActions.setMatchEndedMetadata({
                                         reason: "Game ended",
                                         byPlayer: {
                                             username: user!.username!,

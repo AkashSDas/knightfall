@@ -7,20 +7,22 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { BaseLayout } from "../../components/shared/layout/BaseLayout";
-import { SignupForm } from "../../components/auth/SignupForm";
-import { useUser } from "../../hooks/auth";
-import { CancelOAuthText } from "../../components/auth/CancelOAuthText";
-import { CompleteOAuthSignupForm } from "../../components/auth/CompleteOAuthSignupForm";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChessBoardBackground } from "../../components/shared/chess-board-background/ChessBoardBackground";
-import GoogleSvg from "../../assets/images/google.svg";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import GoogleSvg from "@/assets/images/google.svg";
+import { CancelOAuthText } from "@/components/auth/CancelOAuthText";
+import { CompleteOAuthSignupForm } from "@/components/auth/CompleteOAuthSignupForm";
+import { SignupForm } from "@/components/auth/SignupForm";
+import { ChessBoardBackground } from "@/components/shared/chess-board-background/ChessBoardBackground";
+import { BaseLayout } from "@/components/shared/layout/BaseLayout";
+import { useUser } from "@/hooks/auth";
+import { envVariables } from "@/utils/env";
 
 function openSignupWindow(): void {
     window.open(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup/google`,
+        `${envVariables.VITE_BACKEND_URL}/api/auth/signup/google`,
         "_self"
     );
 }
