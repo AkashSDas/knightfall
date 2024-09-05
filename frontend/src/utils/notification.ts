@@ -1,3 +1,5 @@
+import { type ValueOf } from "./types";
+
 export const NOTIFICATION_TYPE = {
     /** Will only display title and no additional info */
     DEFAULT: "default",
@@ -10,3 +12,5 @@ export const NOTIFICATION_TYPE = {
     RECEIVED_FRIEND_REQUEST: "receivedFriendRequest",
     ACCEPTED_FRIEND_REQUEST: "acceptedFriendRequest",
 } as const;
+
+export type NotificationType = ValueOf<typeof NOTIFICATION_TYPE>;

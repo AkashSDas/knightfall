@@ -1,54 +1,60 @@
-import GameRoom_Bishop_Black from "../assets/pieces/gameroom-bishop-black.png";
-import GameRoom_Bishop_White from "../assets/pieces/gameroom-bishop-white.png";
-import GameRoom_King_Black from "../assets/pieces/gameroom-king-black.png";
-import GameRoom_King_White from "../assets/pieces/gameroom-king-white.png";
-import GameRoom_Knight_Black from "../assets/pieces/gameroom-knight-black.png";
-import GameRoom_Knight_White from "../assets/pieces/gameroom-knight-white.png";
-import GameRoom_Pawn_Black from "../assets/pieces/gameroom-pawn-black.png";
-import GameRoom_Pawn_White from "../assets/pieces/gameroom-pawn-white.png";
-import GameRoom_Queen_Black from "../assets/pieces/gameroom-queen-black.png";
-import GameRoom_Queen_White from "../assets/pieces/gameroom-queen-white.png";
-import GameRoom_Rook_Black from "../assets/pieces/gameroom-rook-black.png";
-import GameRoom_Rook_White from "../assets/pieces/gameroom-rook-white.png";
-import Glass_Bishop_Black from "../assets/pieces/glass-bishop-black.png";
-import Glass_Bishop_White from "../assets/pieces/glass-bishop-white.png";
-import Glass_King_Black from "../assets/pieces/glass-king-black.png";
-import Glass_King_White from "../assets/pieces/glass-king-white.png";
-import Glass_Knight_Black from "../assets/pieces/glass-knight-black.png";
-import Glass_Knight_White from "../assets/pieces/glass-knight-white.png";
-import Glass_Pawn_Black from "../assets/pieces/glass-pawn-black.png";
-import Glass_Pawn_White from "../assets/pieces/glass-pawn-white.png";
-import Glass_Queen_Black from "../assets/pieces/glass-queen-black.png";
-import Glass_Queen_White from "../assets/pieces/glass-queen-white.png";
-import Glass_Rook_Black from "../assets/pieces/glass-rook-black.png";
-import Glass_Rook_White from "../assets/pieces/glass-rook-white.png";
-import Neo_Bishop_Black from "../assets/pieces/neo-bishop-black.png";
-import Neo_Bishop_White from "../assets/pieces/neo-bishop-white.png";
-import Neo_King_Black from "../assets/pieces/neo-king-black.png";
-import Neo_King_White from "../assets/pieces/neo-king-white.png";
-import Neo_Knight_Black from "../assets/pieces/neo-knight-black.png";
-import Neo_Knight_White from "../assets/pieces/neo-knight-white.png";
-import Neo_Pawn_Black from "../assets/pieces/neo-pawn-black.png";
-import Neo_Pawn_White from "../assets/pieces/neo-pawn-white.png";
-import Neo_Queen_Black from "../assets/pieces/neo-queen-black.png";
-import Neo_Queen_White from "../assets/pieces/neo-queen-white.png";
-import Neo_Rook_Black from "../assets/pieces/neo-rook-black.png";
-import Neo_Rook_White from "../assets/pieces/neo-rook-white.png";
-import Wood_Bishop_Black from "../assets/pieces/wood-bishop-black.png";
-import Wood_Bishop_White from "../assets/pieces/wood-bishop-white.png";
-import Wood_King_Black from "../assets/pieces/wood-king-black.png";
-import Wood_King_White from "../assets/pieces/wood-king-white.png";
-import Wood_Knight_Black from "../assets/pieces/wood-knight-black.png";
-import Wood_Knight_White from "../assets/pieces/wood-knight-white.png";
-import Wood_Pawn_Black from "../assets/pieces/wood-pawn-black.png";
-import Wood_Pawn_White from "../assets/pieces/wood-pawn-white.png";
-import Wood_Queen_Black from "../assets/pieces/wood-queen-black.png";
-import Wood_Queen_White from "../assets/pieces/wood-queen-white.png";
-import Wood_Rook_Black from "../assets/pieces/wood-rook-black.png";
-import Wood_Rook_White from "../assets/pieces/wood-rook-white.png";
-import { ChessBlock, MatchState } from "../store/match/slice";
-
 import { v4 as uuid } from "uuid";
+
+import GameRoom_Bishop_Black from "@/assets/pieces/gameroom-bishop-black.png";
+import GameRoom_Bishop_White from "@/assets/pieces/gameroom-bishop-white.png";
+import GameRoom_King_Black from "@/assets/pieces/gameroom-king-black.png";
+import GameRoom_King_White from "@/assets/pieces/gameroom-king-white.png";
+import GameRoom_Knight_Black from "@/assets/pieces/gameroom-knight-black.png";
+import GameRoom_Knight_White from "@/assets/pieces/gameroom-knight-white.png";
+import GameRoom_Pawn_Black from "@/assets/pieces/gameroom-pawn-black.png";
+import GameRoom_Pawn_White from "@/assets/pieces/gameroom-pawn-white.png";
+import GameRoom_Queen_Black from "@/assets/pieces/gameroom-queen-black.png";
+import GameRoom_Queen_White from "@/assets/pieces/gameroom-queen-white.png";
+import GameRoom_Rook_Black from "@/assets/pieces/gameroom-rook-black.png";
+import GameRoom_Rook_White from "@/assets/pieces/gameroom-rook-white.png";
+import Glass_Bishop_Black from "@/assets/pieces/glass-bishop-black.png";
+import Glass_Bishop_White from "@/assets/pieces/glass-bishop-white.png";
+import Glass_King_Black from "@/assets/pieces/glass-king-black.png";
+import Glass_King_White from "@/assets/pieces/glass-king-white.png";
+import Glass_Knight_Black from "@/assets/pieces/glass-knight-black.png";
+import Glass_Knight_White from "@/assets/pieces/glass-knight-white.png";
+import Glass_Pawn_Black from "@/assets/pieces/glass-pawn-black.png";
+import Glass_Pawn_White from "@/assets/pieces/glass-pawn-white.png";
+import Glass_Queen_Black from "@/assets/pieces/glass-queen-black.png";
+import Glass_Queen_White from "@/assets/pieces/glass-queen-white.png";
+import Glass_Rook_Black from "@/assets/pieces/glass-rook-black.png";
+import Glass_Rook_White from "@/assets/pieces/glass-rook-white.png";
+import Neo_Bishop_Black from "@/assets/pieces/neo-bishop-black.png";
+import Neo_Bishop_White from "@/assets/pieces/neo-bishop-white.png";
+import Neo_King_Black from "@/assets/pieces/neo-king-black.png";
+import Neo_King_White from "@/assets/pieces/neo-king-white.png";
+import Neo_Knight_Black from "@/assets/pieces/neo-knight-black.png";
+import Neo_Knight_White from "@/assets/pieces/neo-knight-white.png";
+import Neo_Pawn_Black from "@/assets/pieces/neo-pawn-black.png";
+import Neo_Pawn_White from "@/assets/pieces/neo-pawn-white.png";
+import Neo_Queen_Black from "@/assets/pieces/neo-queen-black.png";
+import Neo_Queen_White from "@/assets/pieces/neo-queen-white.png";
+import Neo_Rook_Black from "@/assets/pieces/neo-rook-black.png";
+import Neo_Rook_White from "@/assets/pieces/neo-rook-white.png";
+import Wood_Bishop_Black from "@/assets/pieces/wood-bishop-black.png";
+import Wood_Bishop_White from "@/assets/pieces/wood-bishop-white.png";
+import Wood_King_Black from "@/assets/pieces/wood-king-black.png";
+import Wood_King_White from "@/assets/pieces/wood-king-white.png";
+import Wood_Knight_Black from "@/assets/pieces/wood-knight-black.png";
+import Wood_Knight_White from "@/assets/pieces/wood-knight-white.png";
+import Wood_Pawn_Black from "@/assets/pieces/wood-pawn-black.png";
+import Wood_Pawn_White from "@/assets/pieces/wood-pawn-white.png";
+import Wood_Queen_Black from "@/assets/pieces/wood-queen-black.png";
+import Wood_Queen_White from "@/assets/pieces/wood-queen-white.png";
+import Wood_Rook_Black from "@/assets/pieces/wood-rook-black.png";
+import Wood_Rook_White from "@/assets/pieces/wood-rook-white.png";
+import { ChessBlock, MatchState } from "@/store/match/slice";
+
+import { ValueOf } from "./types";
+
+// ===================================
+// Constants
+// ===================================
 
 export const MATCH_STATUS = {
     PENDING: "pending",
@@ -82,9 +88,19 @@ export const CHESS_PIECE_COLOR = {
     WHITE: "white",
 } as const;
 
+export type ChessPieceColor = ValueOf<typeof CHESS_PIECE_COLOR>;
+export type ChessBoardType = ValueOf<typeof CHESS_BOARD_TYPE>;
+export type ChessPiece = ValueOf<typeof CHESS_PIECES>;
+export type MatchStatus = ValueOf<typeof MATCH_STATUS>;
+
+// ===================================
+// Utilities
+// ===================================
+
+/** Get image based on chess piece type. */
 export function getImageForChessPiece(
-    boardType: (typeof CHESS_BOARD_TYPE)[keyof typeof CHESS_BOARD_TYPE],
-    piece: (typeof CHESS_PIECES)[keyof typeof CHESS_PIECES]
+    boardType: ChessBoardType,
+    piece: ChessPiece
 ): {
     black: string;
     white: string;
@@ -340,15 +356,15 @@ export function getInitialChessBoard(): ChessBlock[][] {
     return board;
 }
 
-// ================================================
+// ===================================
 // Chess Moves
-// ================================================
+// ===================================
 
 function getPawnMoves(
     board: ChessBlock[][],
     row: number,
     col: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ) {
     const moves = [];
     const direction = color === CHESS_PIECE_COLOR.WHITE ? -1 : 1;
@@ -389,7 +405,7 @@ function getKnightMoves(
     board: ChessBlock[][],
     row: number,
     col: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ) {
     const moves = [];
     const knightMoves = [
@@ -421,7 +437,7 @@ function getRookMoves(
     board: ChessBlock[][],
     row: number,
     col: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ) {
     const moves = [];
 
@@ -457,7 +473,7 @@ function getBishopMoves(
     board: ChessBlock[][],
     row: number,
     col: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ) {
     const moves = [];
     const directions = [
@@ -491,7 +507,7 @@ function getQueenMoves(
     board: ChessBlock[][],
     row: number,
     col: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ) {
     return [
         ...getRookMoves(board, row, col, color),
@@ -503,7 +519,7 @@ function getKingMoves(
     board: ChessBlock[][],
     row: number,
     col: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ) {
     const moves = [];
     const kingMoves = [
@@ -587,7 +603,7 @@ function isMoveDangerous(
     startCol: number,
     endRow: number,
     endCol: number,
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ): boolean {
     const newBoard = board.map((row) =>
         row.map((block) => ({
@@ -659,7 +675,7 @@ function isMoveDangerous(
 
 export function isKingInDanger(
     board: ChessBlock[][],
-    color: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    color: ChessPieceColor
 ): boolean {
     // Find the king's position
     let kingRow: number | null = null;
@@ -715,11 +731,11 @@ export function isKingInDanger(
 
 export function checkGameOver(
     board: ChessBlock[][],
-    currentTurn: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR]
+    currentTurn: ChessPieceColor
 ): {
     isGameOver: boolean;
     result: MatchState["status"];
-    winner: (typeof CHESS_PIECE_COLOR)[keyof typeof CHESS_PIECE_COLOR] | null;
+    winner: ChessPieceColor | null;
 } {
     // Check ifH the current player's king is in check
     const isKingInCheck = isKingInDanger(board, currentTurn);
@@ -772,10 +788,3 @@ export function checkGameOver(
         winner: null,
     };
 }
-
-// 1. change match status and show winner or game over
-// 2. close game
-// 3. get all games history of a player
-// 4. watch a game play
-// 6. add more animations
-// 5. complete the project

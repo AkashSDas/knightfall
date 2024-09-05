@@ -1,22 +1,19 @@
-import Badge_PlayerRank_Bronze from "../assets/badges/badge-player-rank-bronze.png";
-import Badge_PlayerRank_Gold from "../assets/badges/badge-player-rank-gold.png";
-import Badge_PlayerRank_Iron from "../assets/badges/badge-player-rank-iron.png";
-import Badge_PlayerRank_Silver from "../assets/badges/badge-player-rank-silver.png";
-
-import Badge_Top_1 from "../assets/badges/badge-top-1.png";
-import Badge_Top_2 from "../assets/badges/badge-top-2.png";
-import Badge_Top_3 from "../assets/badges/badge-top-3.png";
-import Badge_Top_10 from "../assets/badges/badge-top-10.png";
-import Badge_Top_50 from "../assets/badges/badge-top-50.png";
-import Badge_Top_100 from "../assets/badges/badge-top-100.png";
-
-import Badge_PlayerRank_Casual from "../assets/badges/badge-player-type-casual.png";
-import Badge_PlayerRank_Speed from "../assets/badges/badge-player-type-speed.png";
-import Badge_PlayerRank_Strategist from "../assets/badges/badge-player-type-strategist.png";
-import Badge_PlayerRank_Survivor from "../assets/badges/badge-player-type-survivor.png";
-import Badge_PlayerRank_Warrior from "../assets/badges/badge-player-type-warrior.png";
-
-import { GetUserPublicProfile } from "../services/user";
+import Badge_PlayerRank_Bronze from "@/assets/badges/badge-player-rank-bronze.png";
+import Badge_PlayerRank_Gold from "@/assets/badges/badge-player-rank-gold.png";
+import Badge_PlayerRank_Iron from "@/assets/badges/badge-player-rank-iron.png";
+import Badge_PlayerRank_Silver from "@/assets/badges/badge-player-rank-silver.png";
+import Badge_PlayerRank_Casual from "@/assets/badges/badge-player-type-casual.png";
+import Badge_PlayerRank_Speed from "@/assets/badges/badge-player-type-speed.png";
+import Badge_PlayerRank_Strategist from "@/assets/badges/badge-player-type-strategist.png";
+import Badge_PlayerRank_Survivor from "@/assets/badges/badge-player-type-survivor.png";
+import Badge_PlayerRank_Warrior from "@/assets/badges/badge-player-type-warrior.png";
+import Badge_Top_1 from "@/assets/badges/badge-top-1.png";
+import Badge_Top_2 from "@/assets/badges/badge-top-2.png";
+import Badge_Top_3 from "@/assets/badges/badge-top-3.png";
+import Badge_Top_10 from "@/assets/badges/badge-top-10.png";
+import Badge_Top_50 from "@/assets/badges/badge-top-50.png";
+import Badge_Top_100 from "@/assets/badges/badge-top-100.png";
+import { type GetUserPublicProfileResponse } from "@/services/user";
 
 export function getAchievementsBoardImages(): string[] {
     return [
@@ -53,7 +50,7 @@ export function getWinPointsSrc(winPoints: number): string {
 }
 
 export function getRankImageSrc(
-    rank: GetUserPublicProfile["user"]["rank"]
+    rank: GetUserPublicProfileResponse["user"]["rank"]
 ): string | null {
     switch (rank) {
         case "Top 1":
@@ -74,10 +71,10 @@ export function getRankImageSrc(
 }
 
 export function getAchievementImages(
-    achievements: GetUserPublicProfile["user"]["achievements"]
+    achievements: GetUserPublicProfileResponse["user"]["achievements"]
 ): string[] {
     return achievements
-        .map((achievement) => {
+        .map(function (achievement) {
             switch (achievement) {
                 case "casual":
                     return Badge_PlayerRank_Casual;
