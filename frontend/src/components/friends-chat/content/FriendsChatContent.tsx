@@ -7,29 +7,30 @@ import {
     VStack,
     useBreakpointValue,
 } from "@chakra-ui/react";
-import { useAppDispatch, useAppSelector } from "../../../hooks/store";
-import { FriendRequestsReceivedAndSent } from "./FriendRequestsReceivedAndSent";
-import { FriendRequestsRejected } from "./FriendRequestsRejected";
+import {
+    IconDefinition,
+    faArrowLeft,
+    faBan,
+    faInbox,
+    faSearch,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import {
     FriendsChatState,
     friendsChatActions,
-} from "../../../store/friends-chat/slice";
-import {
-    faArrowLeft,
-    faSearch,
-    faInbox,
-    faBan,
-    IconDefinition,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+} from "@/store/friends-chat/slice";
+
+import { ChatRoom } from "../direct-message/ChatRoom";
+import { FriendRequestsReceivedAndSent } from "./FriendRequestsReceivedAndSent";
+import { FriendRequestsRejected } from "./FriendRequestsRejected";
 import { FriendsList } from "./FriendsList";
 import { SearchFriends } from "./SearchFriends";
-import { ChatRoom } from "../direct-message/ChatRoom";
 
 export function FriendsChatContent() {
     const dispatch = useAppDispatch();
     const isMd = useBreakpointValue({ base: false, md: true }, { ssr: false });
-
     const { type } = useAppSelector((state) => state.friendsChat.mainContent);
 
     function openContent(payload: FriendsChatState["mainContent"]) {

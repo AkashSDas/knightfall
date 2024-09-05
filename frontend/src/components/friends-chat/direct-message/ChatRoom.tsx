@@ -1,39 +1,33 @@
 import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-
-import { Link } from 'react-router-dom';
-
+    Avatar,
+    Box,
+    HStack,
+    IconButton,
+    Spinner,
+    Text,
+    Tooltip,
+    VStack,
+} from "@chakra-ui/react";
 import {
-  Avatar,
-  Box,
-  HStack,
-  IconButton,
-  Spinner,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
-import {
-  faArrowDownLong,
-  faPaperPlane,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+    faArrowDownLong,
+    faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { useUser } from '../../../hooks/auth';
+import { useUser } from "@/hooks/auth";
 import {
-  useDirectMessageRoom,
-  useDirectMessages,
-  useListenToDirectMessages,
-} from '../../../hooks/direct-message';
-import { useFriendManager } from '../../../hooks/friend';
-import { useAppSelector } from '../../../hooks/store';
-import { FriendsChatState } from '../../../store/friends-chat/slice';
-import { formatNotificationDate } from '../../../utils/datetime';
-import { MessageInput } from './MessageInput';
+    useDirectMessageRoom,
+    useDirectMessages,
+    useListenToDirectMessages,
+} from "@/hooks/direct-message";
+import { useFriendManager } from "@/hooks/friend";
+import { useAppSelector } from "@/hooks/store";
+import { FriendsChatState } from "@/store/friends-chat/slice";
+import { formatNotificationDate } from "@/utils/datetime";
+
+import { MessageInput } from "./MessageInput";
 
 export function ChatRoom() {
     const { friendId } = useAppSelector(
@@ -69,11 +63,14 @@ export function ChatRoom() {
     const [isVisible, setIsVisible] = useState(false);
     const initLoadRef = useRef(false);
 
-    useEffect(() => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: "instant" });
-        }
-    }, [chat]);
+    useEffect(
+        function scrollDownToLatestMessages() {
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollIntoView({ behavior: "instant" });
+            }
+        },
+        [chat]
+    );
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -104,15 +101,19 @@ export function ChatRoom() {
         };
     }, []);
 
-    useEffect(() => {
-        if (isVisible) {
-            fetchMore();
-        }
-    }, [isVisible]);
+    useEffect(
+        function loadMoreMessages() {
+            if (isVisible) {
+                fetchMore();
+            }
+        },
+        [isVisible]
+    );
 
+    /** Scroll to bottom (to latest messages) */
     const [showScrollButton, setShowScrollButton] = useState(false);
 
-    useEffect(() => {
+    useEffect(function identifyScrollPositionToShowScrollDownButton() {
         const handleScroll = () => {
             const scrollTop = window.scrollY; // Current scroll position from top
             const windowHeight = window.innerHeight; // Height of the visible window
@@ -134,6 +135,7 @@ export function ChatRoom() {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
     return (
         <VStack
             w="100%"

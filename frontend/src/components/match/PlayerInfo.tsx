@@ -1,6 +1,6 @@
 import { Avatar, HStack, Text } from "@chakra-ui/react";
 
-import { useFetchMatch } from "../../hooks/match";
+import { useFetchMatch } from "@/hooks/match";
 
 export function PlayerInfo(props: {
     player:

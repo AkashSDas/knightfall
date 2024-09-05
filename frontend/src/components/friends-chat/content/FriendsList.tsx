@@ -8,11 +8,12 @@ import {
     Tooltip,
     VStack,
 } from "@chakra-ui/react";
-import { useFriendManager } from "../../../hooks/friend";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { useAppDispatch, useAppSelector } from "../../../hooks/store";
-import { friendsChatActions } from "../../../store/friends-chat/slice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { useFriendManager } from "@/hooks/friend";
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
+import { friendsChatActions } from "@/store/friends-chat/slice";
 
 export function FriendsList() {
     const { friends } = useFriendManager();

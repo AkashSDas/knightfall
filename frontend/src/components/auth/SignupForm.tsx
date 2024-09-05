@@ -7,17 +7,18 @@ import {
     VStack,
     useToast,
 } from "@chakra-ui/react";
-import { useMutation } from "@tanstack/react-query";
-import { object, string, z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { authService } from "../../services/auth";
-import { useButtonAnimatedIcon } from "../../hooks/ui";
-import { motion } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChessKing } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { object, string, z } from "zod";
 
-const schema = object({
+import { useButtonAnimatedIcon } from "@/hooks/ui";
+import { authService } from "@/services/auth";
+
+const inputSchema = object({
     email: string({ required_error: "Required" }).email({
         message: "Invalid email",
     }),
@@ -26,13 +27,13 @@ const schema = object({
         .max(256, { message: "Too long" }),
 });
 
-export type EmailSignupInputs = z.infer<typeof schema>;
+export type EmailSignupInputs = z.infer<typeof inputSchema>;
 
 export function SignupForm() {
     const toast = useToast();
     const form = useForm<EmailSignupInputs>({
         defaultValues: { email: "", username: "" },
-        resolver: zodResolver(schema),
+        resolver: zodResolver(inputSchema),
     });
 
     const btn = useButtonAnimatedIcon();

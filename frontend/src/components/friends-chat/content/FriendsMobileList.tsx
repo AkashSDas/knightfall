@@ -9,18 +9,20 @@ import {
     useBreakpointValue,
 } from "@chakra-ui/react";
 import {
-    faSearch,
-    faInbox,
-    faBan,
     IconDefinition,
     faArrowLeft,
+    faBan,
+    faInbox,
+    faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAppDispatch } from "../../../hooks/store";
+
+import { useAppDispatch } from "@/hooks/store";
 import {
     FriendsChatState,
     friendsChatActions,
-} from "../../../store/friends-chat/slice";
+} from "@/store/friends-chat/slice";
+
 import { FriendsList } from "./FriendsList";
 
 export function FriendsMobileList() {

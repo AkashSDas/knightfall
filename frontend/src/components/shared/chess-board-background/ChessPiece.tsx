@@ -1,12 +1,13 @@
 import { Center, Image } from "@chakra-ui/react";
 import { motion, useAnimate } from "framer-motion";
 import { useEffect } from "react";
+
 import {
-    getImageForChessPiece,
     CHESS_BOARD_TYPE,
-    CHESS_PIECE_COLOR,
     CHESS_PIECES,
-} from "../../../utils/chess";
+    CHESS_PIECE_COLOR,
+    getImageForChessPiece,
+} from "@/utils/chess";
 
 const ANIMATION_DURATION = 30;
 

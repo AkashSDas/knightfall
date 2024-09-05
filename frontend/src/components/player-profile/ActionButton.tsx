@@ -1,22 +1,22 @@
 import { Button, HStack, Text } from "@chakra-ui/react";
-import { faPaperPlane, faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../hooks/auth";
-import { useFriendManager } from "../../hooks/friend";
+
+import { useUser } from "@/hooks/auth";
+import { useFriendManager } from "@/hooks/friend";
 
 /**
  * A lot of actions here are same as search player list in search players page
  */
 export function ActionButton(props: { friendUserId: string | undefined }) {
     const { friendUserId } = props;
+    const navigate = useNavigate();
+    const { isAuthenticated, pushToLogin } = useUser();
     const { getStatusForFriendRequest, sendRequest, friends } =
         useFriendManager();
-    const { isAuthenticated, pushToLogin } = useUser();
 
-    const navigate = useNavigate();
     const friend = friends.find((f) => f.friend.id === friendUserId);
-
     const info = getStatusForFriendRequest(friendUserId ?? "");
 
     async function handleAddFriendClick() {

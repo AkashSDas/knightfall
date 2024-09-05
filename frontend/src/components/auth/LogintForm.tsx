@@ -6,28 +6,29 @@ import {
     Input,
     VStack,
 } from "@chakra-ui/react";
-import { useMutation } from "@tanstack/react-query";
-import { object, string, z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { authService } from "../../services/auth";
-import { useAppToast, useButtonAnimatedIcon } from "../../hooks/ui";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { motion } from "framer-motion";
 import { faChessKnight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { object, string, z } from "zod";
 
-const schema = object({
+import { useAppToast, useButtonAnimatedIcon } from "@/hooks/ui";
+import { authService } from "@/services/auth";
+
+const inputSchema = object({
     email: string({ required_error: "Required" }).email({
         message: "Invalid email",
     }),
 });
 
-export type EmailLoginInputs = z.infer<typeof schema>;
+export type EmailLoginInputs = z.infer<typeof inputSchema>;
 
 export function LoginForm() {
     const form = useForm<EmailLoginInputs>({
         defaultValues: { email: "" },
-        resolver: zodResolver(schema),
+        resolver: zodResolver(inputSchema),
     });
     const { errorToast, successToast } = useAppToast();
 

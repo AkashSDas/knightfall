@@ -15,19 +15,21 @@ import {
 } from "@chakra-ui/react";
 import { faArrowCircleRight, faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useButtonAnimatedIcon } from "../../hooks/ui";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
-import { EmptyNotification } from "./EmptyNotification";
+
+import { useUser } from "@/hooks/auth";
 import {
     useListenToNotifications,
     useNotificationRoom,
     useNotifications,
-} from "../../hooks/notification";
+} from "@/hooks/notification";
+import { useButtonAnimatedIcon } from "@/hooks/ui";
+import { notificationService } from "@/services/notification";
+
+import { EmptyNotification } from "./EmptyNotification";
 import { NotificationCard } from "./NotificationCard";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { notificationService } from "../../services/notification";
-import { useUser } from "../../hooks/auth";
 
 export function NotificationMenu() {
     const btn = useButtonAnimatedIcon();

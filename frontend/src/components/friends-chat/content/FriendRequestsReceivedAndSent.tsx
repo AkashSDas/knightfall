@@ -8,11 +8,12 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { useFriendManager } from "../../../hooks/friend";
-import { Link } from "react-router-dom";
-import { formatNotificationDate } from "../../../utils/datetime";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInbox } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
+
+import { useFriendManager } from "@/hooks/friend";
+import { formatNotificationDate } from "@/utils/datetime";
 
 export function FriendRequestsReceivedAndSent() {
     const {

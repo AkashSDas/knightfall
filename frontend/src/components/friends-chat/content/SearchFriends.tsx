@@ -19,27 +19,26 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-import { useSearchLoggedInUserFriends } from "../../../hooks/friend";
-import { getWinPointsSrc } from "../../../utils/achievements";
+import { useSearchLoggedInUserFriends } from "@/hooks/friend";
+import { getWinPointsSrc } from "@/utils/achievements";
 
-const schema = z.object({
+const inputSchema = z.object({
     queryText: z.string({}).min(2, "Too short").max(256, "Too long"),
 });
 
 export function SearchFriends() {
-    const form = useForm<z.infer<typeof schema>>({
-        defaultValues: { queryText: "" },
-        resolver: zodResolver(schema),
-    });
-
     const navigate = useNavigate();
+    const form = useForm<z.infer<typeof inputSchema>>({
+        defaultValues: { queryText: "" },
+        resolver: zodResolver(inputSchema),
+    });
 
     const { changeSearchText, isLoading, friends } =
         useSearchLoggedInUserFriends();
 
-    const submit = form.handleSubmit((data) =>
-        changeSearchText(data.queryText ?? "")
-    );
+    const submit = form.handleSubmit((data) => {
+        return changeSearchText(data.queryText ?? "");
+    });
 
     return (
         <VStack w="100%">

@@ -1,8 +1,8 @@
 import {
-    VStack,
-    Tooltip,
-    IconButton,
     Button,
+    IconButton,
+    Tooltip,
+    VStack,
     useBreakpointValue,
 } from "@chakra-ui/react";
 import {
@@ -14,13 +14,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import { useAppDispatch, useAppSelector } from "../../../hooks/store";
+import { useEffect } from "react";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import {
     FriendsChatState,
     friendsChatActions,
     friendsChatSelectors,
-} from "../../../store/friends-chat/slice";
-import { useEffect } from "react";
+} from "@/store/friends-chat/slice";
+
 import { FriendsList } from "../content/FriendsList";
 
 export function Sidebar() {

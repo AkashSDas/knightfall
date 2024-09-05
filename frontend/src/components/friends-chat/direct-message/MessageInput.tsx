@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import { MutableRefObject, useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SocketContext } from "../../../lib/websocket";
-import { useUser } from "../../../hooks/auth";
-import { useFriendManager } from "../../../hooks/friend";
 
-const schema = z.object({
+import { useUser } from "@/hooks/auth";
+import { useFriendManager } from "@/hooks/friend";
+import { SocketContext } from "@/lib/websocket";
+
+const inputSchema = z.object({
     text: z.string({}).min(1, "Too short").max(256, "Too long"),
 });
 
@@ -21,12 +22,11 @@ export function MessageInput(props: {
     containerRef: MutableRefObject<HTMLDivElement | null>;
 }) {
     const { user } = useUser();
-    const form = useForm<z.infer<typeof schema>>({
+    const form = useForm<z.infer<typeof inputSchema>>({
         defaultValues: { text: "" },
-        resolver: zodResolver(schema),
+        resolver: zodResolver(inputSchema),
     });
     const { friends } = useFriendManager();
-
     const { socket } = useContext(SocketContext);
 
     const submit = form.handleSubmit(({ text }) => {
@@ -49,15 +49,15 @@ export function MessageInput(props: {
         }
     };
 
-    useEffect(() => {
+    const username = friends.find((f) => f.id === props.friendId)?.friend
+        .username;
+
+    useEffect(function onWindowResizeChangeInputWidth() {
         updateChildWidth();
         window.addEventListener("resize", updateChildWidth);
 
         return () => window.removeEventListener("resize", updateChildWidth);
     }, []);
-
-    const username = friends.find((f) => f.id === props.friendId)?.friend
-        .username;
 
     return (
         <HStack

@@ -1,19 +1,35 @@
-import { VStack, Heading, Wrap, Image, Text } from "@chakra-ui/react";
+import { Heading, Image, Text, VStack, Wrap } from "@chakra-ui/react";
 import { faTrophy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
-import { GetUserPublicProfile } from "../../services/user";
+
+import { type GetUserPublicProfileResponse } from "@/services/user";
 import {
-    getWinPointsSrc,
-    getRankImageSrc,
     getAchievementImages,
     getAchievementsBoardImages,
-} from "../../utils/achievements";
+    getRankImageSrc,
+    getWinPointsSrc,
+} from "@/utils/achievements";
+
+const container = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.03,
+        },
+    },
+};
+
+const item = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1 },
+};
 
 export function AchievementsBoard(
     props: Pick<
-        GetUserPublicProfile["user"],
+        GetUserPublicProfileResponse["user"],
         "achievements" | "rank" | "winPoints"
     >
 ) {
@@ -56,21 +72,6 @@ export function AchievementsBoard(
         },
         [imgs]
     );
-
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.03,
-            },
-        },
-    };
-
-    const item = {
-        hidden: { opacity: 0 },
-        show: { opacity: 1 },
-    };
 
     return (
         <VStack alignItems="start" gap="12px" p={{ base: "10px", md: "1rem" }}>

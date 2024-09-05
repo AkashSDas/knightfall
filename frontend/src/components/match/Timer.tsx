@@ -2,7 +2,7 @@ import { Center, Text } from "@chakra-ui/react";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const formatTime = (totalSeconds: number): string => {
     const minutes = Math.floor(totalSeconds / 60);
@@ -13,23 +13,32 @@ const formatTime = (totalSeconds: number): string => {
 export function Timer(props: { timeInMs: number; onTimeOut: () => void }) {
     const [seconds, setSeconds] = useState(Math.floor(props.timeInMs / 1000));
 
-    useEffect(() => {
-        setSeconds(Math.floor(props.timeInMs / 1000));
-    }, [props.timeInMs]);
+    useEffect(
+        function setInitialTimer() {
+            setSeconds(Math.floor(props.timeInMs / 1000));
+        },
+        [props.timeInMs]
+    );
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setSeconds((prev) => Math.max(prev - 1, 0));
-        }, 1000);
+    useEffect(
+        function updateTimer() {
+            const interval = setInterval(() => {
+                setSeconds((prev) => Math.max(prev - 1, 0));
+            }, 1000);
 
-        return () => clearInterval(interval);
-    }, [props.timeInMs]);
+            return () => clearInterval(interval);
+        },
+        [props.timeInMs]
+    );
 
-    useEffect(() => {
-        if (seconds === 0) {
-            props.onTimeOut();
-        }
-    }, [seconds]);
+    useEffect(
+        function timeout() {
+            if (seconds === 0) {
+                props.onTimeOut();
+            }
+        },
+        [seconds]
+    );
 
     const timeString = formatTime(seconds);
 

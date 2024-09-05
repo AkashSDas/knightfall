@@ -1,10 +1,11 @@
-import { HStack, Center, VStack, Text, Avatar, Button } from "@chakra-ui/react";
+import { Avatar, Button, Center, HStack, Text, VStack } from "@chakra-ui/react";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Notification } from "../../services/notification";
-import { formatNotificationDate } from "../../utils/datetime";
 import { Link } from "react-router-dom";
-import { useFriendManager } from "../../hooks/friend";
+
+import { useFriendManager } from "@/hooks/friend";
+import { formatNotificationDate } from "@/utils/datetime";
+import { type Notification } from "@/utils/schemas";
 
 export function ReceivedFriendRequestNotificationCard(props: {
     notification: Extract<

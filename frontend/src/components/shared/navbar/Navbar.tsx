@@ -15,9 +15,6 @@ import {
     Tooltip,
     useDisclosure,
 } from "@chakra-ui/react";
-import LogoImg from "../../../assets/images/chess-logo.png";
-import { Link, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
     faBell,
@@ -29,7 +26,12 @@ import {
     faTrophy,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { useUser } from "../../../hooks/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link, useNavigate } from "react-router-dom";
+
+import LogoImg from "@/assets/images/chess-logo.png";
+import { useUser } from "@/hooks/auth";
+
 import { NotificationMenu } from "../../notification/NotificationMenu";
 import { UserProfileMenu } from "./UserProfileMenu";
 

@@ -18,21 +18,14 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useUser } from "../../../hooks/auth";
-import { useAppToast } from "../../../hooks/ui";
-import { userService } from "../../../services/user";
+import { useUser } from "@/hooks/auth";
+import { useAppToast } from "@/hooks/ui";
+import { userService } from "@/services/user";
 
-export type ProfileInputs = {
-    username: string;
-    email: string;
-};
+type ProfileInputs = { username: string; email: string };
+const defaultValues: ProfileInputs = { username: "", email: "" };
 
-const defaultValues: ProfileInputs = {
-    username: "",
-    email: "",
-};
-
-const schema = z.object({
+const inputSchema = z.object({
     username: z.string().min(3, { message: "Too short" }).optional(),
     email: z.string().email({ message: "Invalid" }).optional(),
 });
@@ -43,12 +36,12 @@ export function UpdateUserProfileForm() {
     const { user, isAuthenticated } = useUser();
     const form = useForm<ProfileInputs>({
         defaultValues,
-        resolver: zodResolver(schema),
+        resolver: zodResolver(inputSchema),
     });
     const { errorToast, successToast } = useAppToast();
 
     const update = useMutation({
-        mutationFn: (payload: ProfileInputs) => {
+        mutationFn(payload: ProfileInputs) {
             const formData = new FormData();
 
             formData.append("username", payload.username);

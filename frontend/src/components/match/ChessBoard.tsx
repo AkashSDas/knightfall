@@ -3,19 +3,19 @@ import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 
-import { useFetchMatch } from "../../hooks/match";
-import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { useFetchMatch } from "@/hooks/match";
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import {
     type ChessPiece,
     matchActions,
     matchSelectors,
-} from "../../store/match/slice";
+} from "@/store/match/slice";
 import {
     CHESS_BOARD_TYPE,
     CHESS_PIECE_COLOR,
     MATCH_STATUS,
     getImageForChessPiece,
-} from "../../utils/chess";
+} from "@/utils/chess";
 
 // const generateRandomRotation = () => ({
 //     rotateX: [0, Math.random() * 50 - 25, 0, Math.random() * 40 - 15, 0],

@@ -10,16 +10,18 @@ import {
     Text,
     Tooltip,
 } from "@chakra-ui/react";
-import { useUser } from "../../../hooks/auth";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import {
     faGear,
     faPeopleGroup,
     faRightFromBracket,
     faTrophy,
 } from "@fortawesome/free-solid-svg-icons";
-import { UserProfileMenuItem } from "./UserProfileMenuItem";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
+
+import { useUser } from "@/hooks/auth";
+
+import { UserProfileMenuItem } from "./UserProfileMenuItem";
 
 export function UserProfileMenu() {
     const { isAuthenticated, user, logoutMutation } = useUser();

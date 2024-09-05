@@ -7,33 +7,34 @@ import {
     VStack,
     useToast,
 } from "@chakra-ui/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { object, string, z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { authService } from "../../services/auth";
-import { useUser } from "../../hooks/auth";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useButtonAnimatedIcon } from "../../hooks/ui";
-import { motion } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChessQueen } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { object, string, z } from "zod";
 
-const schema = object({
+import { useUser } from "@/hooks/auth";
+import { useButtonAnimatedIcon } from "@/hooks/ui";
+import { authService } from "@/services/auth";
+
+const inputSchema = object({
     username: string({ required_error: "Required" })
         .min(2, { message: "Too short" })
         .max(256, { message: "Too long" }),
 });
 
-export type CompleteOAuthSignupInputs = z.infer<typeof schema>;
+export type CompleteOAuthSignupInputs = z.infer<typeof inputSchema>;
 
 export function CompleteOAuthSignupForm() {
     const toast = useToast();
     const { user } = useUser();
     const form = useForm<CompleteOAuthSignupInputs>({
         defaultValues: { username: "" },
-        resolver: zodResolver(schema),
+        resolver: zodResolver(inputSchema),
     });
     const navigate = useNavigate();
     const queryClient = useQueryClient();

@@ -1,8 +1,9 @@
 import { Center, HStack, Text, VStack } from "@chakra-ui/react";
-import { Notification } from "../../services/notification";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { formatNotificationDate } from "../../utils/datetime";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { formatNotificationDate } from "@/utils/datetime";
+import { type Notification } from "@/utils/schemas";
 
 export function DefaultNotificationCard(props: {
     notification: Extract<

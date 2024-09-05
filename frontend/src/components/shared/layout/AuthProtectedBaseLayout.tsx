@@ -1,7 +1,9 @@
-import { PropsWithChildren, useEffect } from "react";
-import { useUser } from "../../../hooks/auth";
-import { useNavigate } from "react-router-dom";
 import { Center, Spinner } from "@chakra-ui/react";
+import { PropsWithChildren, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useUser } from "@/hooks/auth";
+
 import { BaseLayout } from "./BaseLayout";
 
 export function AuthProtectedBaseLayout(props: PropsWithChildren<unknown>) {

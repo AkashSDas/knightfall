@@ -1,8 +1,10 @@
 import { Box, Spacer } from "@chakra-ui/react";
 import { PropsWithChildren, useMemo } from "react";
-import { Navbar } from "../navbar";
-import ChessBg from "../../../assets/images/chess-board-bg.png";
 import { useLocation } from "react-router-dom";
+
+import ChessBg from "@/assets/images/chess-board-bg.png";
+
+import { Navbar } from "../navbar";
 
 const pathnames: string[] = ["/"];
 

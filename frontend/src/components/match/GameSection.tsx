@@ -15,16 +15,13 @@ import {
 import { motion, useAnimation } from "framer-motion";
 import { useContext, useEffect } from "react";
 
-import { useUser } from "../../hooks/auth";
-import {
-    useFetchMatch,
-    useListenMatchRoom,
-    useMatchRoom,
-} from "../../hooks/match";
-import { useAppDispatch, useAppSelector } from "../../hooks/store";
-import { SocketContext } from "../../lib/websocket";
-import { matchActions, matchSelectors } from "../../store/match/slice";
-import { MATCH_STATUS } from "../../utils/chess";
+import { useUser } from "@/hooks/auth";
+import { useFetchMatch, useListenMatchRoom, useMatchRoom } from "@/hooks/match";
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
+import { SocketContext } from "@/lib/websocket";
+import { matchActions, matchSelectors } from "@/store/match/slice";
+import { MATCH_STATUS } from "@/utils/chess";
+
 import { ChessBoard } from "./ChessBoard";
 import { PlayerInfo } from "./PlayerInfo";
 import { Timer } from "./Timer";
@@ -57,6 +54,32 @@ export function GameSection() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [isPending]
     );
+
+    function endMatch() {
+        socket?.emit("matchChessEnd", {
+            matchId,
+            newStatus: MATCH_STATUS.CANCELLED,
+            metadata: {
+                reason: "Game ended",
+                byPlayer: {
+                    username: user?.username,
+                    id: user?.id,
+                },
+            },
+        });
+
+        onClose();
+        dispatch(matchActions.setMatchStatus(MATCH_STATUS.CANCELLED));
+        dispatch(
+            matchActions.setMatchEndedMetadata({
+                reason: "Game ended",
+                byPlayer: {
+                    username: user!.username!,
+                    id: user!.id!,
+                },
+            })
+        );
+    }
 
     useMatchRoom();
     useListenMatchRoom();
@@ -147,39 +170,7 @@ export function GameSection() {
                         <Button variant="contained" onClick={onClose} w="100%">
                             No
                         </Button>
-                        <Button
-                            variant="error"
-                            onClick={() => {
-                                socket?.emit("matchChessEnd", {
-                                    matchId,
-                                    newStatus: MATCH_STATUS.CANCELLED,
-                                    metadata: {
-                                        reason: "Game ended",
-                                        byPlayer: {
-                                            username: user?.username,
-                                            id: user?.id,
-                                        },
-                                    },
-                                });
-                                onClose();
-
-                                dispatch(
-                                    matchActions.setMatchStatus(
-                                        MATCH_STATUS.CANCELLED
-                                    )
-                                );
-                                dispatch(
-                                    matchActions.setMatchEndedMetadata({
-                                        reason: "Game ended",
-                                        byPlayer: {
-                                            username: user!.username!,
-                                            id: user!.id!,
-                                        },
-                                    })
-                                );
-                            }}
-                            w="100%"
-                        >
+                        <Button variant="error" onClick={endMatch} w="100%">
                             Yes
                         </Button>
                     </ModalFooter>

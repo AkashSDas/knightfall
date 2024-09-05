@@ -1,4 +1,5 @@
-import { Notification } from "../../services/notification";
+import { type Notification } from "@/utils/schemas";
+
 import { DefaultNotificationCard } from "./DefaultNotificationCard";
 import { ReceivedFriendRequestNotificationCard } from "./ReceivedFriendRequestNotificationCard";
 

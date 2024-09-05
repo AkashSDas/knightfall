@@ -1,6 +1,7 @@
 import { Center, CenterProps, HStack, VStack } from "@chakra-ui/react";
-import { ChessPiece } from "./ChessPiece";
 import React from "react";
+
+import { ChessPiece } from "./ChessPiece";
 
 export const ChessBoardBackground = React.memo(function ChessBoardBackground({
     h = { base: "480px", sm: "640px" },

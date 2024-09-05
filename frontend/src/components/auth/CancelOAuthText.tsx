@@ -1,6 +1,7 @@
 import { Button, Text } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authService } from "../../services/auth";
+
+import { authService } from "@/services/auth";
 
 export function CancelOAuthText(props: { email: string | null | undefined }) {
     const queryClient = useQueryClient();

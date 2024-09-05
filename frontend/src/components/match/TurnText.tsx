@@ -3,9 +3,9 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 
-import { useFetchMatch } from "../../hooks/match";
-import { useAppSelector } from "../../hooks/store";
-import { matchSelectors } from "../../store/match/slice";
+import { useFetchMatch } from "@/hooks/match";
+import { useAppSelector } from "@/hooks/store";
+import { matchSelectors } from "@/store/match/slice";
 
 export function TurnText(props: {
     player: NonNullable<ReturnType<typeof useFetchMatch>["players"]>["me"];
