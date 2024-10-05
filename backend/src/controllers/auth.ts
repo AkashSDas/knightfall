@@ -100,9 +100,9 @@ export async function completeMagicLinkLoginCtrl(
     >,
     res: Response,
 ) {
-    const unhased = createHash("sha256").update(req.params.token).digest("hex");
+    const hash = createHash("sha256").update(req.params.token).digest("hex");
     const user = await User.findOne({
-        magicLinkToken: unhased,
+        magicLinkToken: hash,
         magicLinkTokenExpiresAt: { $gt: new Date() },
     });
 
